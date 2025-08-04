@@ -347,33 +347,45 @@ class ConfesAppTester:
         """Test role-based access control"""
         self.log("Testing role-based access control...")
         
-        # Test faithful trying to create slot (should fail)
-        if self.faithful_token:
-            tomorrow = datetime.now() + timedelta(days=1)
-            start_time = tomorrow.replace(hour=18, minute=0, second=0, microsecond=0)
-            end_time = start_time + timedelta(hours=1)
+        # Create a fresh faithful user for this test to avoid token issues
+        faithful_data = {
+            "email": f"role.test.{int(time.time())}@test.com",
+            "password": "RoleTest123",
+            "firstName": "Role",
+            "lastName": "Test",
+            "role": "faithful"
+        }
+        
+        # Register the user
+        reg_response = self.make_request("POST", "/auth/register", faithful_data)
+        if not reg_response or reg_response.status_code != 201:
+            self.log("❌ Cannot test role access: Failed to register test user", "ERROR")
+            return False
             
-            slot_data = {
-                "startTime": start_time.isoformat(),
-                "endTime": end_time.isoformat(),
-                "location": "Test Location"
-            }
-            
-            try:
-                response = self.make_request("POST", "/confession-slots", slot_data, self.faithful_token)
-                
-                if response and response.status_code == 403:
-                    self.log("✅ Role-based access working: Faithful cannot create slots")
-                    return True
-                else:
-                    status = response.status_code if response else "No response"
-                    self.log(f"❌ Role-based access failed: Expected 403, got {status}", "ERROR")
-                    return False
-            except Exception as e:
-                self.log(f"❌ Role-based access test failed with exception: {e}", "ERROR")
-                return False
+        test_token = reg_response.json().get("access_token")
+        if not test_token:
+            self.log("❌ Cannot test role access: No token received", "ERROR")
+            return False
+        
+        # Try to create slot (should fail with 403)
+        tomorrow = datetime.now() + timedelta(days=1)
+        start_time = tomorrow.replace(hour=19, minute=0, second=0, microsecond=0)
+        end_time = start_time + timedelta(hours=1)
+        
+        slot_data = {
+            "startTime": start_time.isoformat(),
+            "endTime": end_time.isoformat(),
+            "location": "Role Test Location"
+        }
+        
+        response = self.make_request("POST", "/confession-slots", slot_data, test_token)
+        
+        if response and response.status_code == 403:
+            self.log("✅ Role-based access working: Faithful cannot create slots")
+            return True
         else:
-            self.log("❌ Cannot test role access: No faithful token", "ERROR")
+            status = response.status_code if response else "No response"
+            self.log(f"❌ Role-based access failed: Expected 403, got {status}", "ERROR")
             return False
             
     def test_cancel_confession(self):
