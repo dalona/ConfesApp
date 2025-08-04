@@ -1,38 +1,211 @@
-.App {
-    text-align: center;
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+:root {
+  /* Liturgical Colors */
+  --purple-deep: #4B2E83;
+  --blue-dark: #1F2A44;
+  --gold-muted: #D4AF37;
+  --ivory: #FAF9F6;
+  
+  /* Dark Mode */
+  --dark-bg: #121826;
+  --dark-surface: #1A202C;
+  --dark-border: #2D3748;
 }
 
-.App-logo {
-    height: 40vmin;
-    pointer-events: none;
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-        animation: App-logo-spin infinite 20s linear;
-    }
+body {
+  font-family: 'Poppins', sans-serif;
+  line-height: 1.6;
+  color: #2D3748;
+  background: linear-gradient(135deg, #FAF9F6 0%, #E6E6FA 100%);
 }
 
-.App-header {
-    background-color: #0f0f10;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
+.dark body {
+  background: linear-gradient(135deg, var(--dark-bg) 0%, #2A1B3D 100%);
+  color: #E2E8F0;
 }
 
-.App-link {
-    color: #61dafb;
+.font-serif {
+  font-family: 'Playfair Display', serif;
 }
 
-@keyframes App-logo-spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: var(--dark-surface);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--purple-deep);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #6B46C1;
+}
+
+/* Custom shadows */
+.shadow-3xl {
+  box-shadow: 0 35px 60px -12px rgba(75, 46, 131, 0.25);
+}
+
+.dark .shadow-3xl {
+  box-shadow: 0 35px 60px -12px rgba(0, 0, 0, 0.5);
+}
+
+/* Animations */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Liturgical accents */
+.liturgical-accent {
+  position: relative;
+}
+
+.liturgical-accent::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, var(--purple-deep) 0%, var(--gold-muted) 50%, var(--blue-dark) 100%);
+}
+
+/* Custom button styles */
+.btn-liturgical {
+  background: linear-gradient(135deg, var(--purple-deep) 0%, var(--blue-dark) 100%);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-liturgical::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.btn-liturgical:hover::before {
+  left: 100%;
+}
+
+/* Responsive design improvements */
+@media (max-width: 768px) {
+  .text-6xl {
+    font-size: 2.5rem;
+  }
+  
+  .text-7xl {
+    font-size: 3rem;
+  }
+  
+  .px-12 {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+  
+  .py-16 {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+  }
+}
+
+/* Loading animations */
+.loading-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: .5;
+  }
+}
+
+/* Form improvements */
+input:focus, 
+textarea:focus, 
+select:focus {
+  box-shadow: 0 0 0 3px rgba(75, 46, 131, 0.1);
+}
+
+.dark input:focus, 
+.dark textarea:focus, 
+.dark select:focus {
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.3);
+}
+
+/* Card hover effects */
+.card-hover {
+  transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px -12px rgba(75, 46, 131, 0.25);
+}
+
+.dark .card-hover:hover {
+  box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.4);
+}
+
+/* Status badges */
+.status-available {
+  background: linear-gradient(135deg, #10B981, #059669);
+  color: white;
+}
+
+.status-booked {
+  background: linear-gradient(135deg, #F59E0B, #D97706);
+  color: white;
+}
+
+.status-completed {
+  background: linear-gradient(135deg, #6B7280, #4B5563);
+  color: white;
+}
+
+/* Dark mode specific improvements */
+.dark .bg-white\/50 {
+  background-color: rgba(26, 32, 44, 0.5);
+}
+
+.dark .bg-white\/80 {
+  background-color: rgba(26, 32, 44, 0.8);
 }
