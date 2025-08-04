@@ -42,7 +42,12 @@ export class UsersService {
     });
   }
 
-  async update(id: string, updateData: Partial<User>): Promise<User> {
+  async update(id: string, updateData: any): Promise<User> {
+    // Convert date strings to Date objects if present
+    if (updateData.ordinationDate) {
+      updateData.ordinationDate = new Date(updateData.ordinationDate);
+    }
+    
     await this.usersRepository.update(id, updateData);
     return this.findOne(id);
   }
