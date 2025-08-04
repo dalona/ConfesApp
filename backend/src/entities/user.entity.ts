@@ -28,8 +28,7 @@ export class User {
   lastName: string;
 
   @Column({
-    type: 'enum',
-    enum: UserRole,
+    type: 'varchar',
     default: UserRole.FAITHFUL,
   })
   role: UserRole;
