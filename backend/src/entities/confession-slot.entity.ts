@@ -24,8 +24,7 @@ export class ConfessionSlot {
   endTime: Date;
 
   @Column({
-    type: 'enum',
-    enum: SlotStatus,
+    type: 'varchar',
     default: SlotStatus.AVAILABLE,
   })
   status: SlotStatus;
