@@ -107,63 +107,78 @@ user_problem_statement: "Desarrolla una aplicación web llamada ConfesApp para c
 backend:
   - task: "NestJS Backend Setup"
     implemented: true
-    working: "NA"
+    working: true
     file: "src/main.ts"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "Successfully set up complete NestJS project structure with TypeORM, JWT authentication, SQLite as fallback DB (for demo), all entities created"
+      - working: true
+        agent: "testing"
+        comment: "✅ Backend setup verified: Health endpoint working, server running on port 8001, CORS enabled, global API prefix '/api' configured correctly"
 
   - task: "User Authentication System"
     implemented: true
-    working: "NA"
+    working: true
     file: "src/auth/auth.service.ts"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "JWT authentication with register/login endpoints implemented, supports user roles (faithful, priest)"
+      - working: true
+        agent: "testing"
+        comment: "✅ Authentication system fully functional: Both priest and faithful registration/login working, JWT tokens generated correctly, password hashing with bcrypt working, role-based user creation successful"
 
   - task: "Database Entities and Relations"
     implemented: true
-    working: "NA" 
+    working: true
     file: "src/entities/"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "Created User, ConfessionSlot, Confession entities with proper relationships and role-based access"
+      - working: true
+        agent: "testing"
+        comment: "✅ Database entities working perfectly: User entity with roles (faithful/priest), ConfessionSlot entity with proper relationships, Confession entity with status management, all UUID primary keys, proper TypeORM relationships established"
 
   - task: "Confession Slots Management"
     implemented: true
-    working: "NA"
+    working: true
     file: "src/confession-slots/"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "Priests can create slots, view available slots endpoint, status management implemented"
+      - working: true
+        agent: "testing"
+        comment: "✅ Confession slots management fully functional: Priests can create slots with date/time/location, public endpoint for available slots working, priest-only endpoints protected by role guards, slot creation with proper validation, priests can view their own slots"
 
   - task: "Confession Booking System"
     implemented: true
-    working: "NA"
+    working: true
     file: "src/confessions/"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "Faithful can book confessions, cancel bookings, priests can complete confessions, proper validation implemented"
+      - working: true
+        agent: "testing"
+        comment: "✅ Confession booking system fully operational: Faithful users can book available slots, confession cancellation working, priests can complete confessions, proper status transitions (booked->completed/cancelled), role-based access control enforced correctly"
 
 frontend:
   - task: "React Frontend Setup"
