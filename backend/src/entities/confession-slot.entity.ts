@@ -17,10 +17,10 @@ export class ConfessionSlot {
   @Column()
   priestId: string;
 
-  @Column({ type: 'timestamp' })
+  @Column({ type: 'datetime' })
   startTime: Date;
 
-  @Column({ type: 'timestamp' })
+  @Column({ type: 'datetime' })
   endTime: Date;
 
   @Column({
