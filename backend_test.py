@@ -359,14 +359,18 @@ class ConfesAppTester:
                 "location": "Test Location"
             }
             
-            response = self.make_request("POST", "/confession-slots", slot_data, self.faithful_token)
-            
-            if response and response.status_code == 403:
-                self.log("✅ Role-based access working: Faithful cannot create slots")
-                return True
-            else:
-                status = response.status_code if response else "No response"
-                self.log(f"❌ Role-based access failed: Expected 403, got {status}", "ERROR")
+            try:
+                response = self.make_request("POST", "/confession-slots", slot_data, self.faithful_token)
+                
+                if response and response.status_code == 403:
+                    self.log("✅ Role-based access working: Faithful cannot create slots")
+                    return True
+                else:
+                    status = response.status_code if response else "No response"
+                    self.log(f"❌ Role-based access failed: Expected 403, got {status}", "ERROR")
+                    return False
+            except Exception as e:
+                self.log(f"❌ Role-based access test failed with exception: {e}", "ERROR")
                 return False
         else:
             self.log("❌ Cannot test role access: No faithful token", "ERROR")
