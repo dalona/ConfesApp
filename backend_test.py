@@ -365,7 +365,8 @@ class ConfesAppTester:
                 self.log("✅ Role-based access working: Faithful cannot create slots")
                 return True
             else:
-                self.log(f"❌ Role-based access failed: Faithful should not be able to create slots", "ERROR")
+                status = response.status_code if response else "No response"
+                self.log(f"❌ Role-based access failed: Expected 403, got {status}", "ERROR")
                 return False
         else:
             self.log("❌ Cannot test role access: No faithful token", "ERROR")
