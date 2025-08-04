@@ -22,8 +22,7 @@ export class Confession {
   confessionSlotId: string;
 
   @Column({
-    type: 'enum',
-    enum: ConfessionStatus,
+    type: 'varchar',
     default: ConfessionStatus.BOOKED,
   })
   status: ConfessionStatus;
