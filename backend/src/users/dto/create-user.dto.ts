@@ -1,4 +1,4 @@
-import { IsEmail, IsString, IsEnum, IsOptional } from 'class-validator';
+import { IsEmail, IsString, IsEnum, IsOptional, IsBoolean, IsDateString } from 'class-validator';
 import { UserRole } from '../../entities/user.entity';
 
 export class CreateUserDto {
@@ -24,9 +24,43 @@ export class CreateUserDto {
 
   @IsString()
   @IsOptional()
-  parishId?: string;
+  dioceseId?: string;
+
+  @IsString()
+  @IsOptional()
+  currentParishId?: string;
 
   @IsString()
   @IsOptional()
   language?: string;
+
+  // Priest-specific fields
+  @IsBoolean()
+  @IsOptional()
+  canConfess?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  available?: boolean;
+
+  @IsDateString()
+  @IsOptional()
+  ordinationDate?: string;
+
+  // Contact information
+  @IsString()
+  @IsOptional()
+  address?: string;
+
+  @IsString()
+  @IsOptional()
+  city?: string;
+
+  @IsString()
+  @IsOptional()
+  state?: string;
+
+  @IsString()
+  @IsOptional()
+  country?: string;
 }
