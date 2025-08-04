@@ -890,7 +890,7 @@ const ParishStaffDashboard = () => {
         </div>
       </motion.div>
     );
-  };
+  }
 
   if (loading) {
     return <div className="min-h-screen flex items-center justify-center">
