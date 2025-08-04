@@ -13,21 +13,24 @@ import { ConfessionsModule } from './confessions/confessions.module';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    TypeOrmModule.forRoot({
-      type: process.env.NODE_ENV === 'production' ? 'postgres' : 'sqlite',
-      ...(process.env.NODE_ENV === 'production' 
+    TypeOrmModule.forRoot(
+      process.env.NODE_ENV === 'production' 
         ? {
+            type: 'postgres',
             url: process.env.DATABASE_URL,
+            entities: [__dirname + '/**/*.entity{.ts,.js}'],
+            synchronize: true,
             ssl: { rejectUnauthorized: false },
-          }
+            logging: process.env.NODE_ENV === 'development',
+          } as any
         : {
+            type: 'sqlite',
             database: 'confes_app.db',
-          }
-      ),
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      synchronize: true, // Only for development
-      logging: process.env.NODE_ENV === 'development',
-    }),
+            entities: [__dirname + '/**/*.entity{.ts,.js}'],
+            synchronize: true,
+            logging: process.env.NODE_ENV === 'development',
+          } as any
+    ),
     AuthModule,
     UsersModule,
     ConfessionSlotsModule,
