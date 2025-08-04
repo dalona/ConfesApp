@@ -37,7 +37,7 @@ export class UsersService {
 
   async findPriests(): Promise<User[]> {
     return this.usersRepository.find({
-      where: { role: 'priest', isActive: true },
+      where: { role: UserRole.PRIEST, isActive: true },
       select: ['id', 'email', 'firstName', 'lastName', 'role'],
     });
   }
