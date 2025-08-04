@@ -27,7 +27,7 @@ export class Confession {
   })
   status: ConfessionStatus;
 
-  @Column({ type: 'timestamp' })
+  @Column({ type: 'datetime' })
   scheduledTime: Date;
 
   @Column({ nullable: true })
