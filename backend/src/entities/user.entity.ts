@@ -1,6 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, OneToOne } from 'typeorm';
 import { ConfessionSlot } from './confession-slot.entity';
 import { Confession } from './confession.entity';
+import { Diocese } from './diocese.entity';
+import { ParishStaff } from './parish-staff.entity';
+import { PriestParishRequest } from './priest-parish-request.entity';
+import { PriestParishHistory } from './priest-parish-history.entity';
 
 export enum UserRole {
   FAITHFUL = 'faithful',
@@ -40,10 +44,36 @@ export class User {
   phone: string;
 
   @Column({ nullable: true })
-  parishId: string;
+  dioceseId: string;
+
+  @Column({ nullable: true })
+  currentParishId: string;
 
   @Column({ default: 'es' })
   language: string;
+
+  // Priest-specific fields
+  @Column({ default: false })
+  canConfess: boolean;
+
+  @Column({ default: true })
+  available: boolean;
+
+  @Column({ nullable: true })
+  ordinationDate: Date;
+
+  // Contact information
+  @Column({ nullable: true })
+  address: string;
+
+  @Column({ nullable: true })
+  city: string;
+
+  @Column({ nullable: true })
+  state: string;
+
+  @Column({ nullable: true })
+  country: string;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -57,4 +87,16 @@ export class User {
 
   @OneToMany(() => Confession, confession => confession.faithful)
   confessions: Confession[];
+
+  @OneToOne(() => Diocese, diocese => diocese.bishop)
+  diocese: Diocese;
+
+  @OneToMany(() => ParishStaff, parishStaff => parishStaff.user)
+  parishStaffRoles: ParishStaff[];
+
+  @OneToMany(() => PriestParishRequest, request => request.priest)
+  parishRequests: PriestParishRequest[];
+
+  @OneToMany(() => PriestParishHistory, history => history.priest)
+  parishHistory: PriestParishHistory[];
 }
