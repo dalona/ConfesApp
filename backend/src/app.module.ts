@@ -14,13 +14,18 @@ import { ConfessionsModule } from './confessions/confessions.module';
       isGlobal: true,
     }),
     TypeOrmModule.forRoot({
-      type: 'postgres',
-      url: process.env.DATABASE_URL,
+      type: process.env.NODE_ENV === 'production' ? 'postgres' : 'sqlite',
+      ...(process.env.NODE_ENV === 'production' 
+        ? {
+            url: process.env.DATABASE_URL,
+            ssl: { rejectUnauthorized: false },
+          }
+        : {
+            database: 'confes_app.db',
+          }
+      ),
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true, // Only for development
-      ssl: {
-        rejectUnauthorized: false,
-      },
       logging: process.env.NODE_ENV === 'development',
     }),
     AuthModule,
