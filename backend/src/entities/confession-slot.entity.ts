@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 import { User } from './user.entity';
 import { Confession } from './confession.entity';
+import { Parish } from './parish.entity';
 
 export enum SlotStatus {
   AVAILABLE = 'available',
@@ -51,6 +52,10 @@ export class ConfessionSlot {
   @ManyToOne(() => User, user => user.confessionSlots)
   @JoinColumn({ name: 'priestId' })
   priest: User;
+
+  @ManyToOne(() => Parish, parish => parish.confessionSlots)
+  @JoinColumn({ name: 'parishId' })
+  parish: Parish;
 
   @OneToMany(() => Confession, confession => confession.confessionSlot)
   confessions: Confession[];
