@@ -251,6 +251,20 @@ const RoleSelector = ({ onRoleSelect, onBack }) => {
       description: 'Gestionar horarios de confesión',
       icon: Cross,
       gradient: 'from-purple-600 to-indigo-600'
+    },
+    {
+      id: 'parish_staff',
+      title: 'Coordinador Parroquial',
+      description: 'Administrar parroquia',
+      icon: Users,
+      gradient: 'from-indigo-600 to-blue-600'
+    },
+    {
+      id: 'bishop',
+      title: 'Obispo',
+      description: 'Gestionar diócesis',
+      icon: Cross,
+      gradient: 'from-purple-800 to-purple-600'
     }
   ];
 
@@ -261,7 +275,7 @@ const RoleSelector = ({ onRoleSelect, onBack }) => {
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
-        className="max-w-4xl mx-auto text-center"
+        className="max-w-6xl mx-auto text-center"
       >
         <h2 className="text-4xl md:text-5xl font-bold text-purple-900 dark:text-purple-100 mb-4 font-serif">
           ¿Cómo deseas usar ConfesApp?
@@ -270,25 +284,25 @@ const RoleSelector = ({ onRoleSelect, onBack }) => {
           Selecciona tu rol para comenzar
         </p>
 
-        <div className="grid md:grid-cols-2 gap-8 mb-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {roles.map((role, index) => (
             <motion.div
               key={role.id}
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.2 }}
+              transition={{ delay: index * 0.1 }}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => onRoleSelect(role.id)}
-              className="cursor-pointer p-8 bg-white dark:bg-gray-800 rounded-3xl shadow-2xl hover:shadow-purple-500/25 transition-all duration-300"
+              className="cursor-pointer p-6 bg-white dark:bg-gray-800 rounded-3xl shadow-2xl hover:shadow-purple-500/25 transition-all duration-300"
             >
-              <div className={`w-20 h-20 rounded-full bg-gradient-to-r ${role.gradient} flex items-center justify-center mx-auto mb-6`}>
-                <role.icon className="w-10 h-10 text-white" />
+              <div className={`w-16 h-16 rounded-full bg-gradient-to-r ${role.gradient} flex items-center justify-center mx-auto mb-4`}>
+                <role.icon className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-2xl font-bold text-purple-900 dark:text-purple-100 mb-3">
+              <h3 className="text-xl font-bold text-purple-900 dark:text-purple-100 mb-2">
                 {role.title}
               </h3>
-              <p className="text-gray-600 dark:text-gray-400">
+              <p className="text-gray-600 dark:text-gray-400 text-sm">
                 {role.description}
               </p>
             </motion.div>
