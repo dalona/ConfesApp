@@ -568,13 +568,13 @@ const BishopDashboard = () => {
             </div>
             
             {/* Diocese Hero Image */}
-            <div className="rounded-2xl overflow-hidden shadow-2xl mb-6">
+            <div className="rounded-2xl overflow-hidden shadow-2xl mb-6 relative">
               <img 
                 src="https://images.unsplash.com/photo-1549875328-abc4f7307c2b?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1ODF8MHwxfHNlYXJjaHw0fHxjYXRoZWRyYWx8ZW58MHx8fHB1cnBsZXwxNzU0MzM0MDE0fDA&ixlib=rb-4.1.0&q=85"
                 alt="Catedral diocesana"
                 className="w-full h-64 object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-900/70 to-blue-900/70 rounded-2xl"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-900/70 to-blue-900/70"></div>
             </div>
           </div>
 
@@ -681,178 +681,14 @@ const BishopDashboard = () => {
               >
                 <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
                   <h3 className="text-2xl font-bold text-purple-900 dark:text-purple-100 mb-4">
-                    Información de la Diócesis
+                    Dashboard del Obispo - Información de la Diócesis
                   </h3>
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <div>
-                      <p className="text-gray-600 dark:text-gray-400 mb-2">
-                        <strong>Nombre:</strong> {dioceseInfo?.name || 'N/A'}
-                      </p>
-                      <p className="text-gray-600 dark:text-gray-400 mb-2">
-                        <strong>Ciudad:</strong> {dioceseInfo?.city || 'N/A'}
-                      </p>
-                      <p className="text-gray-600 dark:text-gray-400 mb-2">
-                        <strong>Teléfono:</strong> {dioceseInfo?.phone || 'N/A'}
-                      </p>
-                      <p className="text-gray-600 dark:text-gray-400">
-                        <strong>Email:</strong> {dioceseInfo?.email || 'N/A'}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-gray-600 dark:text-gray-400 mb-2">
-                        <strong>Dirección:</strong> {dioceseInfo?.address || 'N/A'}
-                      </p>
-                      <p className="text-gray-600 dark:text-gray-400 mb-2">
-                        <strong>Sitio Web:</strong> {dioceseInfo?.website || 'N/A'}
-                      </p>
-                      <p className="text-gray-600 dark:text-gray-400">
-                        <strong>Estado:</strong> {dioceseInfo?.isActive ? 'Activa' : 'Inactiva'}
-                      </p>
-                    </div>
+                  <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
+                    <p className="text-blue-800 dark:text-blue-200 text-sm">
+                      💡 <strong>Próximamente:</strong> Funciones completas de gestión diocesana, 
+                      estadísticas detalladas, informes parroquiales y más.
+                    </p>
                   </div>
-                </div>
-              </motion.div>
-            )}
-
-            {activeTab === 'parishes' && (
-              <motion.div
-                key="parishes"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-              >
-                <h2 className="text-2xl font-bold text-purple-900 dark:text-purple-100 mb-6">
-                  Parroquias de la Diócesis
-                </h2>
-
-                <div className="grid gap-6">
-                  {parishes.map((parish) => (
-                    <motion.div
-                      key={parish.id}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg"
-                    >
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <h3 className="font-bold text-purple-900 dark:text-purple-100 text-xl mb-2">
-                            {parish.name}
-                          </h3>
-                          <p className="text-gray-600 dark:text-gray-400 mb-1">
-                            📍 {parish.address || 'Dirección no especificada'}
-                          </p>
-                          <p className="text-gray-600 dark:text-gray-400 mb-1">
-                            📞 {parish.phone || 'Teléfono no disponible'}
-                          </p>
-                          <p className="text-gray-600 dark:text-gray-400">
-                            👥 Personal: {parish.parishStaff?.length || 0} miembros
-                          </p>
-                          {parish.description && (
-                            <p className="text-gray-600 dark:text-gray-400 text-sm mt-2">
-                              {parish.description}
-                            </p>
-                          )}
-                        </div>
-                        <div className="text-right">
-                          <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                            parish.isActive 
-                              ? 'bg-green-100 text-green-800' 
-                              : 'bg-red-100 text-red-800'
-                          }`}>
-                            {parish.isActive ? 'Activa' : 'Inactiva'}
-                          </span>
-                        </div>
-                      </div>
-                    </motion.div>
-                  ))}
-
-                  {parishes.length === 0 && (
-                    <div className="text-center py-12">
-                      <Users className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                      <p className="text-gray-500 dark:text-gray-400">
-                        No hay parroquias registradas
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </motion.div>
-            )}
-
-            {activeTab === 'requests' && (
-              <motion.div
-                key="requests"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-              >
-                <h2 className="text-2xl font-bold text-purple-900 dark:text-purple-100 mb-6">
-                  Solicitudes de Asignación Parroquial
-                </h2>
-
-                <div className="grid gap-6">
-                  {pendingRequests.map((request) => (
-                    <motion.div
-                      key={request.id}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border-l-4 border-yellow-500"
-                    >
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <h3 className="font-bold text-purple-900 dark:text-purple-100 text-lg mb-2">
-                            {request.priest?.firstName} {request.priest?.lastName}
-                          </h3>
-                          <p className="text-gray-600 dark:text-gray-400 mb-2">
-                            📧 {request.priest?.email}
-                          </p>
-                          <p className="text-gray-600 dark:text-gray-400 mb-2">
-                            ⛪ Solicita asignación a: <strong>{request.parish?.name}</strong>
-                          </p>
-                          <p className="text-gray-600 dark:text-gray-400 mb-2">
-                            📅 Solicitado: {new Date(request.createdAt).toLocaleDateString('es-ES')}
-                          </p>
-                          {request.requestedStartDate && (
-                            <p className="text-gray-600 dark:text-gray-400 mb-2">
-                              🗓️ Fecha deseada de inicio: {new Date(request.requestedStartDate).toLocaleDateString('es-ES')}
-                            </p>
-                          )}
-                          {request.message && (
-                            <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3 mt-3">
-                              <p className="text-sm text-gray-600 dark:text-gray-400">
-                                <strong>Mensaje:</strong> {request.message}
-                              </p>
-                            </div>
-                          )}
-                        </div>
-                        <div className="flex flex-col space-y-2">
-                          <button
-                            onClick={() => handleRequestReview(request.id, 'accepted', 'Solicitud aprobada por el Obispo')}
-                            className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors"
-                          >
-                            ✓ Aprobar
-                          </button>
-                          <button
-                            onClick={() => {
-                              const reason = prompt('Motivo del rechazo (opcional):');
-                              handleRequestReview(request.id, 'rejected', reason || 'Solicitud rechazada');
-                            }}
-                            className="bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-700 transition-colors"
-                          >
-                            ✗ Rechazar
-                          </button>
-                        </div>
-                      </div>
-                    </motion.div>
-                  ))}
-
-                  {pendingRequests.length === 0 && (
-                    <div className="text-center py-12">
-                      <Calendar className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                      <p className="text-gray-500 dark:text-gray-400">
-                        No hay solicitudes pendientes
-                      </p>
-                    </div>
-                  )}
                 </div>
               </motion.div>
             )}
@@ -864,42 +700,12 @@ const BishopDashboard = () => {
 };
 
 const ParishStaffDashboard = () => {
-  const [activeTab, setActiveTab] = useState('overview');
-  const [parishInfo, setParishInfo] = useState(null);
-  const [parishRequests, setParishRequests] = useState([]);
-  const [parishSlots, setParishSlots] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { token, user } = useAuth();
 
   useEffect(() => {
-    fetchParishData();
+    // Simulate loading
+    setTimeout(() => setLoading(false), 1000);
   }, []);
-
-  const fetchParishData = async () => {
-    try {
-      // For now, we'll use a mock parish ID - in real implementation, 
-      // this would come from user's currentParishId
-      const mockParishId = 'parish-1';
-      
-      const [parishResponse, requestsResponse, slotsResponse] = await Promise.all([
-        axios.get(`${API}/parishes/${mockParishId}`).catch(() => ({ data: null })),
-        axios.get(`${API}/priest-requests/parish/${mockParishId}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        }).catch(() => ({ data: [] })),
-        axios.get(`${API}/confession-slots`, {
-          headers: { Authorization: `Bearer ${token}` }
-        }).catch(() => ({ data: [] }))
-      ]);
-
-      setParishInfo(parishResponse.data);
-      setParishRequests(requestsResponse.data);
-      setParishSlots(slotsResponse.data);
-    } catch (error) {
-      console.error('Error fetching parish data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   if (loading) {
     return <div className="min-h-screen flex items-center justify-center">
@@ -923,66 +729,12 @@ const ParishStaffDashboard = () => {
                   Dashboard del Coordinador
                 </h1>
                 <p className="text-gray-600 dark:text-gray-400">
-                  {parishInfo?.name || 'Parroquia'}
+                  Coordinador Parroquial
                 </p>
               </div>
             </div>
           </div>
 
-          {/* Statistics */}
-          <div className="grid md:grid-cols-3 gap-6 mb-8">
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg"
-            >
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Personal Parroquial</p>
-                  <p className="text-2xl font-bold text-purple-900 dark:text-purple-100">
-                    {parishInfo?.parishStaff?.length || 0}
-                  </p>
-                </div>
-                <Users className="w-8 h-8 text-purple-600" />
-              </div>
-            </motion.div>
-
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg"
-            >
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Solicitudes</p>
-                  <p className="text-2xl font-bold text-yellow-600">
-                    {parishRequests.length}
-                  </p>
-                </div>
-                <Calendar className="w-8 h-8 text-yellow-600" />
-              </div>
-            </motion.div>
-
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg"
-            >
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Horarios Activos</p>
-                  <p className="text-2xl font-bold text-green-600">
-                    {parishSlots.filter(slot => slot.status === 'available').length}
-                  </p>
-                </div>
-                <Cross className="w-8 h-8 text-green-600" />
-              </div>
-            </motion.div>
-          </div>
-
-          {/* Simple content for now */}
           <div className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-lg text-center">
             <Users className="w-16 h-16 text-purple-600 mx-auto mb-4" />
             <h3 className="text-2xl font-bold text-purple-900 dark:text-purple-100 mb-4">
