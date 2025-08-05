@@ -831,7 +831,7 @@ const LoginForm = ({ role, isLogin: isLoginMode, priestRegistrationType, onBack,
                 onClick={onBack}
                 className="text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
               >
-                ← Cambiar rol
+                ← {role === 'priest' ? 'Cambiar opción' : 'Cambiar rol'}
               </button>
             </div>
           </div>
