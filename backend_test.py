@@ -580,8 +580,8 @@ class ConfesAppTester:
         """Test direct priest application"""
         self.log("Testing direct priest application...")
         
-        # Get diocese ID (using test UUID)
-        diocese_id = "550e8400-e29b-41d4-a716-446655440000"
+        # Get diocese ID (using actual diocese ID from seed)
+        diocese_id = "a81d2bd3-c2e2-42ac-b4e7-66b44e4ad358"
         
         priest_data = {
             "email": f"padre.directo.{int(time.time())}@ejemplo.com",
