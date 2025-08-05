@@ -458,6 +458,12 @@ const LoginForm = ({ role, isLogin: isLoginMode, priestRegistrationType, onBack,
     
     fieldsToValidate.forEach(field => validateField(field, formData[field]));
     
+    // Debug: log para verificar errores
+    console.log('Errores después de validación:', errors);
+    console.log('Campos validados:', fieldsToValidate);
+    console.log('FormData:', formData);
+    console.log('isLogin:', isLogin);
+    
     // Verificar si hay errores
     const hasErrors = Object.keys(errors).length > 0;
     if (hasErrors) {
