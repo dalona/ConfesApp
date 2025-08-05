@@ -506,7 +506,7 @@ const LoginForm = ({ role, onBack, onSuccess }) => {
           <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl p-8">
             <div className="text-center mb-8">
               <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                {role === 'priest' || role === 'bishop' ? <Cross className="w-8 h-8 text-white" /> : <User className="w-8 h-8 text-white" />}
+                {role === 'priest' ? <Cross className="w-8 h-8 text-white" /> : <User className="w-8 h-8 text-white" />}
               </div>
               <h2 className="text-2xl font-bold text-purple-900 dark:text-purple-100">
                 {isLogin ? 'Iniciar Sesión' : 'Registrarse'} - {getRoleTitle()}
