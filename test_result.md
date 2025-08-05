@@ -278,9 +278,7 @@ metadata:
   run_ui: false
 
 test_plan:
-  current_focus:
-    - "Priest Invitation System (Backend)"
-    - "Priest Direct Application System (Backend)"
+  current_focus: []
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
