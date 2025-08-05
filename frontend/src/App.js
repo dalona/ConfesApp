@@ -427,7 +427,17 @@ const LoginForm = ({ role, priestRegistrationType, onBack, onSuccess }) => {
     e.preventDefault();
     
     // Validar todos los campos antes de enviar
-    const fieldsToValidate = isLogin ? ['email', 'password'] : ['email', 'password', 'firstName', 'lastName'];
+    let fieldsToValidate = isLogin ? ['email', 'password'] : ['email', 'password', 'firstName', 'lastName'];
+    
+    // Agregar validaciones específicas para sacerdotes
+    if (!isLogin && role === 'priest') {
+      if (priestRegistrationType === 'invitation') {
+        fieldsToValidate.push('invitationToken');
+      } else if (priestRegistrationType === 'direct') {
+        fieldsToValidate.push('dioceseId');
+      }
+    }
+    
     fieldsToValidate.forEach(field => validateField(field, formData[field]));
     
     // Verificar si hay errores
@@ -441,10 +451,42 @@ const LoginForm = ({ role, priestRegistrationType, onBack, onSuccess }) => {
     setGeneralError('');
 
     try {
-      const endpoint = isLogin ? '/auth/login' : '/auth/register';
-      const payload = isLogin ? 
-        { email: formData.email, password: formData.password } :
-        { ...formData, role };
+      let endpoint = '/auth/login';
+      let payload = { email: formData.email, password: formData.password };
+
+      if (!isLogin) {
+        if (role === 'priest' && priestRegistrationType === 'invitation') {
+          // Registro desde invitación
+          endpoint = `/auth/register-from-invite/${formData.invitationToken}`;
+          payload = {
+            password: formData.password,
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            phone: formData.phone,
+            bio: formData.bio,
+            specialties: formData.specialties,
+            languages: formData.languages
+          };
+        } else if (role === 'priest' && priestRegistrationType === 'direct') {
+          // Solicitud directa de sacerdote
+          endpoint = '/auth/register-priest';
+          payload = {
+            email: formData.email,
+            password: formData.password,
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            phone: formData.phone,
+            dioceseId: formData.dioceseId,
+            bio: formData.bio,
+            specialties: formData.specialties,
+            languages: formData.languages
+          };
+        } else {
+          // Registro normal (fieles)
+          endpoint = '/auth/register';
+          payload = { ...formData, role };
+        }
+      }
 
       console.log('Enviando solicitud a:', `${API}${endpoint}`);
       console.log('Payload:', payload);
@@ -454,6 +496,10 @@ const LoginForm = ({ role, priestRegistrationType, onBack, onSuccess }) => {
       if (response.data.access_token) {
         login(response.data.user, response.data.access_token);
         onSuccess();
+      } else if (response.data.success && role === 'priest' && priestRegistrationType === 'direct') {
+        // Solicitud directa exitosa pero sin token (pendiente aprobación)
+        setGeneralError('');
+        alert('¡Solicitud enviada exitosamente! Tu solicitud está pendiente de aprobación por el obispo de la diócesis. Te notificaremos cuando sea revisada.');
       } else {
         setGeneralError('Respuesta inesperada del servidor');
       }
