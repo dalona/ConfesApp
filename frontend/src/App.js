@@ -500,9 +500,16 @@ const LoginForm = ({ role, isLogin: isLoginMode, priestRegistrationType, onBack,
             languages: formData.languages
           };
         } else {
-          // Registro normal (fieles)
+          // Registro normal (fieles) - solo enviar campos necesarios
           endpoint = '/auth/register';
-          payload = { ...formData, role };
+          payload = {
+            email: formData.email,
+            password: formData.password,
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            phone: formData.phone,
+            role
+          };
         }
       }
 
