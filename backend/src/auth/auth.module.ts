@@ -12,6 +12,7 @@ import { InvitesModule } from '../invites/invites.module';
 @Module({
   imports: [
     UsersModule,
+    InvitesModule,
     PassportModule,
     JwtModule.registerAsync({
       useFactory: async (configService: ConfigService) => ({
