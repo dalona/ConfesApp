@@ -23,4 +23,28 @@ export class AuthController {
   async login(@Request() req, @Body() loginDto: LoginDto) {
     return this.authService.login(req.user);
   }
+
+  @Post('register-priest')
+  async registerPriestRequest(@Body() registerPriestRequestDto: RegisterPriestRequestDto) {
+    return this.authService.registerPriestRequest(registerPriestRequestDto);
+  }
+
+  @Post('register-from-invite/:token')
+  async registerFromInvite(
+    @Param('token') token: string,
+    @Body() registerFromInviteDto: RegisterFromInviteDto
+  ) {
+    return this.authService.registerFromInvite(token, registerFromInviteDto);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('bishop', 'admin')
+  @Patch('approve-priest/:userId')
+  async approvePriestRequest(
+    @Param('userId') userId: string,
+    @Body() body: { approved: boolean },
+    @Request() req
+  ) {
+    return this.authService.approvePriestRequest(userId, body.approved, req.user.id);
+  }
 }
