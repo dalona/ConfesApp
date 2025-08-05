@@ -14,6 +14,8 @@ export class InvitesService {
   constructor(
     @InjectRepository(Invite)
     private invitesRepository: Repository<Invite>,
+    @InjectRepository(ParishStaff)
+    private parishStaffRepository: Repository<ParishStaff>,
     private usersService: UsersService,
   ) {}
 
