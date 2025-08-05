@@ -115,6 +115,66 @@ export async function runSeed(dataSource: DataSource) {
     const savedParish2 = await parishRepository.save(parish2);
     console.log(`✅ Parroquias creadas: ${savedParish1.name}, ${savedParish2.name}`);
 
+    // 3.5. Crear Sacerdote asignado a parroquia para poder invitar coordinadores
+    console.log('👨‍💼 Creando sacerdote asignado...');
+    
+    const assignedPriest = userRepository.create({
+      email: 'padre.parroco@sanmiguel.es',
+      password: hashedPassword,
+      firstName: 'José',
+      lastName: 'Martínez',
+      role: UserRole.PRIEST,
+      phone: '+34 123 987 654',
+      isActive: true,
+      canConfess: true,
+      available: true,
+      dioceseId: savedDiocese.id,
+      currentParishId: savedParish1.id,
+      address: 'Calle San Miguel, 15',
+      city: 'Madrid',
+      state: 'Madrid',
+      country: 'España',
+    });
+    
+    const savedAssignedPriest = await userRepository.save(assignedPriest);
+
+    // Crear asignación en parish_staff para este sacerdote
+    const priestAssignment = parishStaffRepository.create({
+      userId: savedAssignedPriest.id,
+      parishId: savedParish1.id,
+      role: ParishStaffRole.PRIEST,
+      startDate: new Date('2023-01-01'),
+      isActive: true,
+      responsibilities: 'Párroco titular, administración de sacramentos',
+      assignedByUserId: savedBishop.id,
+    });
+    
+    await parishStaffRepository.save(priestAssignment);
+    console.log(`✅ Sacerdote asignado: ${savedAssignedPriest.firstName} ${savedAssignedPriest.lastName} → ${savedParish1.name}`);
+
+    // 3.6. Crear invitación de coordinador
+    console.log('📧 Creando invitación para coordinador...');
+    
+    const coordinatorToken = crypto.randomBytes(32).toString('hex');
+    const coordinatorExpiresAt = new Date();
+    coordinatorExpiresAt.setDate(coordinatorExpiresAt.getDate() + 7);
+    
+    const coordinatorInvite = inviteRepository.create({
+      email: 'coordinador@ejemplo.com',
+      role: InviteRole.PARISH_COORDINATOR,
+      dioceseId: savedDiocese.id,
+      parishId: savedParish1.id,
+      token: coordinatorToken,
+      expiresAt: coordinatorExpiresAt,
+      createdByUserId: savedAssignedPriest.id,
+      status: InviteStatus.PENDING,
+      message: 'Te invitamos a ser coordinador parroquial de la Parroquia de San Miguel',
+    });
+    
+    await inviteRepository.save(coordinatorInvite);
+    console.log(`✅ Invitación de coordinador creada para: ${coordinatorInvite.email}`);
+    console.log(`🔗 Token coordinador: ${coordinatorToken}`);
+
     // 4. Crear Invitación Activa para Sacerdote
     console.log('📧 Creando invitación activa...');
     
