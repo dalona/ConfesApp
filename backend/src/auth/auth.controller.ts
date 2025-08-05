@@ -48,4 +48,12 @@ export class AuthController {
   ) {
     return this.authService.approvePriestRequest(userId, body.approved, req.user.id);
   }
+
+  @Post('register-coordinator/:token')
+  async registerCoordinator(
+    @Param('token') token: string,
+    @Body() acceptDto: AcceptCoordinatorInviteDto
+  ) {
+    return this.authService.registerCoordinator(token, acceptDto);
+  }
 }
