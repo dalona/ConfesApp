@@ -194,4 +194,197 @@ export class InvitesService {
       expired: parseInt(stats.expired),
     };
   }
+
+  // Métodos específicos para Coordinadores Parroquiales
+  async createCoordinatorInvite(
+    createCoordinatorInviteDto: CreateCoordinatorInviteDto, 
+    createdByUserId: string
+  ): Promise<Invite> {
+    // 1. Verificar que el sacerdote esté asignado a la parroquia
+    const priestParishAssignment = await this.parishStaffRepository.findOne({
+      where: {
+        userId: createdByUserId,
+        parishId: createCoordinatorInviteDto.parishId,
+        role: ParishStaffRole.PRIEST,
+        isActive: true
+      }
+    });
+
+    if (!priestParishAssignment) {
+      throw new ForbiddenException('Solo puedes invitar coordinadores para parroquias donde estés asignado como sacerdote');
+    }
+
+    // 2. Verificar si ya existe una invitación pendiente para este email y parroquia
+    const existingInvite = await this.invitesRepository.findOne({
+      where: {
+        email: createCoordinatorInviteDto.email,
+        parishId: createCoordinatorInviteDto.parishId,
+        role: InviteRole.PARISH_COORDINATOR,
+        status: InviteStatus.PENDING,
+      },
+    });
+
+    if (existingInvite) {
+      throw new BadRequestException('Ya existe una invitación pendiente de coordinador para este correo y parroquia');
+    }
+
+    // 3. Verificar si el usuario ya es coordinador de esta parroquia
+    const existingUser = await this.usersService.findByEmail(createCoordinatorInviteDto.email);
+    if (existingUser) {
+      const existingCoordinator = await this.parishStaffRepository.findOne({
+        where: {
+          userId: existingUser.id,
+          parishId: createCoordinatorInviteDto.parishId,
+          role: ParishStaffRole.PARISH_COORDINATOR,
+          isActive: true
+        }
+      });
+
+      if (existingCoordinator) {
+        throw new BadRequestException('Este usuario ya es coordinador de esta parroquia');
+      }
+    }
+
+    // 4. Generar token único
+    const token = this.generateInviteToken();
+    
+    // 5. Calcular expiración (7 días por defecto o fecha especificada)
+    const expiresAt = createCoordinatorInviteDto.expiresAt 
+      ? new Date(createCoordinatorInviteDto.expiresAt)
+      : (() => {
+          const date = new Date();
+          date.setDate(date.getDate() + 7);
+          return date;
+        })();
+
+    // 6. Obtener dioceseId de la parroquia
+    const parish = await this.invitesRepository.manager.findOne('Parish', {
+      where: { id: createCoordinatorInviteDto.parishId },
+      relations: ['diocese']
+    });
+
+    if (!parish) {
+      throw new NotFoundException('Parroquia no encontrada');
+    }
+
+    const invite = this.invitesRepository.create({
+      email: createCoordinatorInviteDto.email,
+      role: InviteRole.PARISH_COORDINATOR,
+      dioceseId: parish.dioceseId,
+      parishId: createCoordinatorInviteDto.parishId,
+      token,
+      expiresAt,
+      createdByUserId,
+      message: createCoordinatorInviteDto.message || `Te invitamos a ser coordinador parroquial de ${parish.name}`,
+    });
+
+    const savedInvite = await this.invitesRepository.save(invite);
+
+    // TODO: Enviar email de invitación específico para coordinadores
+    console.log(`Invitación de coordinador enviada: ${createCoordinatorInviteDto.email}`);
+    console.log(`Token: ${token}`);
+    console.log(`URL: ${process.env.FRONTEND_URL || 'http://localhost:3000'}/registro-coordinador/${token}`);
+
+    return this.findOne(savedInvite.id);
+  }
+
+  async acceptCoordinatorInvite(token: string, acceptDto: AcceptCoordinatorInviteDto): Promise<{ user: any; invite: Invite; isNewUser: boolean }> {
+    const invite = await this.findByToken(token);
+
+    if (invite.role !== InviteRole.PARISH_COORDINATOR) {
+      throw new BadRequestException('Este token no es válido para invitaciones de coordinador');
+    }
+
+    // Verificar si el usuario ya existe
+    const existingUser = await this.usersService.findByEmail(invite.email);
+    let user;
+    let isNewUser = false;
+
+    if (existingUser) {
+      // Usuario existente - solo agregar rol de coordinador
+      user = existingUser;
+      
+      // Verificar que no sea ya coordinador de esta parroquia
+      const existingCoordinator = await this.parishStaffRepository.findOne({
+        where: {
+          userId: user.id,
+          parishId: invite.parishId,
+          role: ParishStaffRole.PARISH_COORDINATOR,
+          isActive: true
+        }
+      });
+
+      if (existingCoordinator) {
+        throw new BadRequestException('Ya eres coordinador de esta parroquia');
+      }
+
+    } else {
+      // Usuario nuevo - crear cuenta
+      if (!acceptDto.password || !acceptDto.firstName || !acceptDto.lastName) {
+        throw new BadRequestException('Se requieren password, firstName y lastName para usuarios nuevos');
+      }
+
+      user = await this.usersService.create({
+        email: invite.email,
+        password: acceptDto.password,
+        firstName: acceptDto.firstName,
+        lastName: acceptDto.lastName,
+        phone: acceptDto.phone,
+        role: 'faithful', // Rol base es faithful
+        dioceseId: invite.dioceseId,
+        isActive: true,
+      });
+      isNewUser = true;
+    }
+
+    // Crear registro en parish_staff como coordinador
+    const coordinatorAssignment = this.parishStaffRepository.create({
+      userId: user.id,
+      parishId: invite.parishId,
+      role: ParishStaffRole.PARISH_COORDINATOR,
+      startDate: new Date(),
+      isActive: true,
+      responsibilities: 'Coordinación parroquial, gestión de confesiones y actividades pastorales',
+      assignedByUserId: invite.createdByUserId,
+    });
+
+    await this.parishStaffRepository.save(coordinatorAssignment);
+
+    // Marcar invitación como aceptada
+    await this.invitesRepository.update(invite.id, {
+      status: InviteStatus.ACCEPTED,
+      acceptedByUserId: user.id,
+      acceptedAt: new Date(),
+    });
+
+    return { user, invite, isNewUser };
+  }
+
+  // Método auxiliar para verificar si un usuario es coordinador de una parroquia
+  async isParishCoordinator(userId: string, parishId: string): Promise<boolean> {
+    const coordinatorRole = await this.parishStaffRepository.findOne({
+      where: {
+        userId,
+        parishId,
+        role: ParishStaffRole.PARISH_COORDINATOR,
+        isActive: true
+      }
+    });
+
+    return !!coordinatorRole;
+  }
+
+  // Obtener parroquias donde el usuario es coordinador
+  async getUserCoordinatorParishes(userId: string): Promise<any[]> {
+    const coordinatorRoles = await this.parishStaffRepository.find({
+      where: {
+        userId,
+        role: ParishStaffRole.PARISH_COORDINATOR,
+        isActive: true
+      },
+      relations: ['parish']
+    });
+
+    return coordinatorRoles.map(role => role.parish);
+  }
 }
