@@ -262,9 +262,8 @@ export class InvitesService {
         })();
 
     // 6. Obtener dioceseId de la parroquia
-    const parish = await this.invitesRepository.manager.findOne('Parish', {
+    const parish = await this.parishRepository.findOne({
       where: { id: createCoordinatorInviteDto.parishId },
-      select: ['id', 'name', 'dioceseId']
     });
 
     if (!parish) {
