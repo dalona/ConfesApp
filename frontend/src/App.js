@@ -585,6 +585,96 @@ const LoginForm = ({ role, priestRegistrationType, onBack, onSuccess }) => {
                       <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
                     )}
                   </div>
+
+                  {/* Campos específicos para sacerdotes */}
+                  {role === 'priest' && (
+                    <>
+                      {priestRegistrationType === 'invitation' && (
+                        <div>
+                          <input
+                            type="text"
+                            name="invitationToken"
+                            placeholder="Token de invitación *"
+                            required
+                            value={formData.invitationToken}
+                            onChange={handleChange}
+                            className={`w-full px-4 py-3 border rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all ${
+                              errors.invitationToken ? 'border-red-500' : 'border-purple-200 dark:border-purple-700'
+                            }`}
+                          />
+                          {errors.invitationToken && (
+                            <p className="text-red-500 text-sm mt-1">{errors.invitationToken}</p>
+                          )}
+                          <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                            Ingresa el token que recibiste en tu invitación
+                          </div>
+                        </div>
+                      )}
+
+                      {priestRegistrationType === 'direct' && (
+                        <div>
+                          <select
+                            name="dioceseId"
+                            required
+                            value={formData.dioceseId}
+                            onChange={handleChange}
+                            className={`w-full px-4 py-3 border rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all ${
+                              errors.dioceseId ? 'border-red-500' : 'border-purple-200 dark:border-purple-700'
+                            }`}
+                          >
+                            <option value="">Selecciona una diócesis *</option>
+                            <option value="b074ec8b-8aa0-496d-b8c7-1443ed1d54cb">Diócesis de Madrid</option>
+                          </select>
+                          {errors.dioceseId && (
+                            <p className="text-red-500 text-sm mt-1">{errors.dioceseId}</p>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Campos adicionales para sacerdotes */}
+                      <div>
+                        <textarea
+                          name="bio"
+                          placeholder="Biografía (opcional)"
+                          value={formData.bio}
+                          onChange={handleChange}
+                          rows="3"
+                          className="w-full px-4 py-3 border border-purple-200 dark:border-purple-700 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                        />
+                        <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                          Cuéntanos un poco sobre tu experiencia pastoral
+                        </div>
+                      </div>
+
+                      <div>
+                        <input
+                          type="text"
+                          name="specialties"
+                          placeholder="Especialidades (opcional)"
+                          value={formData.specialties}
+                          onChange={handleChange}
+                          className="w-full px-4 py-3 border border-purple-200 dark:border-purple-700 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                        />
+                        <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                          Ej: Confesión, Matrimonios, Catequesis
+                        </div>
+                      </div>
+
+                      <div>
+                        <input
+                          type="text"
+                          name="languages"
+                          placeholder="Idiomas (opcional)"
+                          value={formData.languages}
+                          onChange={handleChange}
+                          className="w-full px-4 py-3 border border-purple-200 dark:border-purple-700 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                        />
+                        <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                          Ej: Español, Inglés, Francés
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </>
               )}
               
