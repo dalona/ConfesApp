@@ -172,7 +172,7 @@ const LandingPage = ({ onRoleSelect }) => {
           >
             <div className="rounded-3xl overflow-hidden shadow-3xl">
               <img 
-                src="https://images.unsplash.com/photo-1524054886461-8938b72b6a74?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzh8MHwxfHNlYXJjaHwyfHxjYXRob2xpYyUyMGNodXJjaHxlbnwwfHx8cHVycGxlfDE3NTQzMzIxNjV8MA&ixlib=rb-4.1.0&q=85"
+                src="https://images.unsplash.com/photo-1709319575307-14a677cab867?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2Njl8MHwxfHNlYXJjaHwyfHxjYXRob2xpYyUyMGNvbmZlc3Npb258ZW58MHx8fHwxNzU0NDIxMzM1fDA&ixlib=rb-4.1.0&q=85"
                 alt="Catedral católica"
                 className="w-full h-96 object-cover"
               />
