@@ -716,7 +716,7 @@ class ConfesAppTester:
             "firstName": "Test",
             "lastName": "User",
             "phone": "+34 123 123 123",
-            "dioceseId": "550e8400-e29b-41d4-a716-446655440000",
+            "dioceseId": "a81d2bd3-c2e2-42ac-b4e7-66b44e4ad358",
         }
         
         response = self.make_request("POST", "/auth/register-priest", priest_data)
