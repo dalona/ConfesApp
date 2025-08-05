@@ -18,6 +18,8 @@ export class InvitesService {
     private invitesRepository: Repository<Invite>,
     @InjectRepository(ParishStaff)
     private parishStaffRepository: Repository<ParishStaff>,
+    @InjectRepository(Parish)
+    private parishRepository: Repository<Parish>,
     private usersService: UsersService,
   ) {}
 
