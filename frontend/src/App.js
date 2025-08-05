@@ -1351,15 +1351,21 @@ function App() {
         <LoginForm 
           key="login"
           role={selectedRole}
+          isLogin={isLogin}
           priestRegistrationType={priestRegistrationType}
           onBack={() => {
             if (selectedRole === 'priest') {
-              setCurrentView('priest-registration-type');
+              if (isLogin) {
+                setCurrentView('priest-action-select');
+              } else {
+                setCurrentView('priest-registration-type');
+              }
             } else {
               setCurrentView('role-select');
             }
           }}
           onSuccess={handleLoginSuccess}
+          onSwitchMode={(mode) => setCurrentView('priest-action-select')}
         />
       )}
     </AnimatePresence>
