@@ -254,6 +254,8 @@ agent_communication:
     message: "Frontend completed! Beautiful liturgical-themed React app with role-based dashboards, authentication flows, dark/light mode, and complete booking interface. Full-stack ConfesApp is now functional with backend + frontend working together."
   - agent: "main"
     message: "JERÁRQUICA ECLESIÁSTICA IMPLEMENTADA: Agregadas todas las entidades faltantes (Diocese, Parish, PriestParishRequest, PriestParishHistory, ParishStaff) al backend. Frontend expandido con dashboards para Obispo, Coordinador Parroquial, Sacerdote y Fiel. Imágenes litúrgicas integradas. Backend incluye sistema completo de asignación de sacerdotes, gestión diocesana y parroquial."
+  - agent: "main"
+    message: "SISTEMA DE REGISTRO DE SACERDOTES BACKEND COMPLETADO: Implementados dos flujos completos: 1) Invitación por obispo (endpoints /api/invites + /api/auth/register-from-invite/:token) 2) Solicitud directa (endpoint /api/auth/register-priest + aprobación por obispo). Creados datos fake con seed.ts que incluye 1 obispo, 2 parroquias, 1 invitación activa, 1 solicitud pendiente para poder probar ambos flujos. Backend listo para testing."
 
 metadata:
   completed_features:
