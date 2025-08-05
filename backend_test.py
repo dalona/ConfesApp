@@ -446,6 +446,279 @@ class ConfesAppTester:
             self.log(f"❌ Cancellation failed: {error_msg}", "ERROR")
             return False
             
+    def test_bishop_login(self):
+        """Test bishop login with seed data"""
+        self.log("Testing bishop login...")
+        
+        login_data = {
+            "email": "obispo@diocesis.com",
+            "password": "Pass123!"
+        }
+        
+        response = self.make_request("POST", "/auth/login", login_data)
+        
+        if response and response.status_code == 201:
+            data = response.json()
+            if data.get("access_token") and data.get("user"):
+                self.bishop_token = data["access_token"]
+                self.bishop_user = data["user"]
+                self.log(f"✅ Bishop login successful: {self.bishop_user['email']}")
+                return True
+            else:
+                self.log(f"❌ Bishop login failed: Missing token or user data", "ERROR")
+                return False
+        else:
+            error_msg = response.json() if response else "No response"
+            self.log(f"❌ Bishop login failed: {error_msg}", "ERROR")
+            return False
+
+    def test_bishop_create_invitation(self):
+        """Test bishop creating priest invitation"""
+        if not self.bishop_token:
+            self.log("❌ Cannot test invitation creation: No bishop token", "ERROR")
+            return False
+            
+        self.log("Testing bishop creating priest invitation...")
+        
+        # Get diocese ID from bishop user or use a test UUID
+        diocese_id = "550e8400-e29b-41d4-a716-446655440000"  # Test UUID
+        
+        invite_data = {
+            "email": f"nuevo.sacerdote.{int(time.time())}@parroquia.com",
+            "role": "priest",
+            "dioceseId": diocese_id,
+            "message": "Te invitamos a unirte como sacerdote a nuestra diócesis"
+        }
+        
+        response = self.make_request("POST", "/invites", invite_data, self.bishop_token)
+        
+        if response and response.status_code == 201:
+            data = response.json()
+            if data.get("id") and data.get("token"):
+                self.test_invite_token = data["token"]
+                self.test_invite_email = data["email"]
+                self.log(f"✅ Invitation created successfully: {data['email']}")
+                return True
+            else:
+                self.log(f"❌ Invitation creation failed: Missing ID or token", "ERROR")
+                return False
+        else:
+            error_msg = response.json() if response else "No response"
+            self.log(f"❌ Invitation creation failed: {error_msg}", "ERROR")
+            return False
+
+    def test_validate_invitation_token(self):
+        """Test validating invitation token"""
+        # Use the seed data token first
+        seed_token = "036d051a50b642c564378e5d046611acbe5957e23c7126535953a9fbadcba7b7"
+        
+        self.log("Testing invitation token validation...")
+        
+        response = self.make_request("GET", f"/invites/by-token/{seed_token}")
+        
+        if response and response.status_code == 200:
+            data = response.json()
+            if data.get("email") and data.get("role"):
+                self.log(f"✅ Invitation token validated: {data['email']} as {data['role']}")
+                self.validated_invite_token = seed_token
+                self.validated_invite_email = data["email"]
+                return True
+            else:
+                self.log(f"❌ Token validation failed: Missing email or role", "ERROR")
+                return False
+        else:
+            error_msg = response.json() if response else "No response"
+            self.log(f"❌ Token validation failed: {error_msg}", "ERROR")
+            return False
+
+    def test_register_from_invitation(self):
+        """Test priest registration from invitation"""
+        if not hasattr(self, 'validated_invite_token'):
+            self.log("❌ Cannot test registration from invite: No validated token", "ERROR")
+            return False
+            
+        self.log("Testing priest registration from invitation...")
+        
+        register_data = {
+            "password": "SacerdoteInvitado123",
+            "firstName": "Padre Invitado",
+            "lastName": "González",
+            "phone": "+34 666 777 888",
+            "bio": "Sacerdote con 10 años de experiencia",
+            "specialties": "Confesión, Matrimonios",
+            "languages": "Español, Inglés"
+        }
+        
+        response = self.make_request("POST", f"/auth/register-from-invite/{self.validated_invite_token}", register_data)
+        
+        if response and response.status_code == 201:
+            data = response.json()
+            if data.get("access_token") and data.get("user"):
+                self.invited_priest_token = data["access_token"]
+                self.invited_priest_user = data["user"]
+                self.log(f"✅ Priest registered from invitation: {self.invited_priest_user['email']}")
+                return True
+            else:
+                self.log(f"❌ Registration from invite failed: Missing token or user", "ERROR")
+                return False
+        else:
+            error_msg = response.json() if response else "No response"
+            self.log(f"❌ Registration from invite failed: {error_msg}", "ERROR")
+            return False
+
+    def test_direct_priest_application(self):
+        """Test direct priest application"""
+        self.log("Testing direct priest application...")
+        
+        # Get diocese ID (using test UUID)
+        diocese_id = "550e8400-e29b-41d4-a716-446655440000"
+        
+        priest_data = {
+            "email": f"padre.directo.{int(time.time())}@ejemplo.com",
+            "password": "PadreDirecto123",
+            "firstName": "Padre Directo",
+            "lastName": "Martínez",
+            "phone": "+34 555 666 777",
+            "dioceseId": diocese_id,
+            "bio": "Sacerdote recién ordenado buscando parroquia",
+            "specialties": "Juventud, Catequesis",
+            "languages": "Español"
+        }
+        
+        response = self.make_request("POST", "/auth/register-priest", priest_data)
+        
+        if response and response.status_code == 201:
+            data = response.json()
+            if data.get("success") and data.get("user"):
+                self.pending_priest_user = data["user"]
+                self.log(f"✅ Direct priest application successful: {self.pending_priest_user['email']}")
+                return True
+            else:
+                self.log(f"❌ Direct priest application failed: Missing success or user", "ERROR")
+                return False
+        else:
+            error_msg = response.json() if response else "No response"
+            self.log(f"❌ Direct priest application failed: {error_msg}", "ERROR")
+            return False
+
+    def test_bishop_approve_priest(self):
+        """Test bishop approving pending priest"""
+        if not self.bishop_token:
+            self.log("❌ Cannot test priest approval: No bishop token", "ERROR")
+            return False
+            
+        # Use seed data pending priest
+        pending_priest_id = "pending-priest-id"  # This would come from seed data
+        
+        self.log("Testing bishop approving pending priest...")
+        
+        approval_data = {
+            "approved": True
+        }
+        
+        # Try with a test user ID first, then fall back to creating one
+        response = self.make_request("PATCH", f"/auth/approve-priest/{pending_priest_id}", approval_data, self.bishop_token)
+        
+        if response and response.status_code == 200:
+            data = response.json()
+            if data.get("success"):
+                self.log("✅ Priest approval successful")
+                return True
+            else:
+                self.log(f"❌ Priest approval failed: No success flag", "ERROR")
+                return False
+        else:
+            # If the specific ID doesn't work, try with our created pending priest
+            if hasattr(self, 'pending_priest_user'):
+                response = self.make_request("PATCH", f"/auth/approve-priest/{self.pending_priest_user['id']}", approval_data, self.bishop_token)
+                if response and response.status_code == 200:
+                    data = response.json()
+                    if data.get("success"):
+                        self.log("✅ Priest approval successful (with created user)")
+                        return True
+            
+            error_msg = response.json() if response else "No response"
+            self.log(f"❌ Priest approval failed: {error_msg}", "ERROR")
+            return False
+
+    def test_bishop_reject_priest(self):
+        """Test bishop rejecting pending priest"""
+        if not self.bishop_token:
+            self.log("❌ Cannot test priest rejection: No bishop token", "ERROR")
+            return False
+            
+        self.log("Testing bishop rejecting pending priest...")
+        
+        # Create another direct application for rejection test
+        diocese_id = "550e8400-e29b-41d4-a716-446655440000"
+        
+        priest_data = {
+            "email": f"padre.rechazo.{int(time.time())}@ejemplo.com",
+            "password": "PadreRechazo123",
+            "firstName": "Padre Rechazo",
+            "lastName": "Test",
+            "phone": "+34 999 888 777",
+            "dioceseId": diocese_id,
+        }
+        
+        # Create the priest application
+        reg_response = self.make_request("POST", "/auth/register-priest", priest_data)
+        
+        if not reg_response or reg_response.status_code != 201:
+            self.log("❌ Cannot create priest for rejection test", "ERROR")
+            return False
+            
+        reject_user = reg_response.json().get("user")
+        if not reject_user:
+            self.log("❌ No user data for rejection test", "ERROR")
+            return False
+        
+        # Now reject the priest
+        rejection_data = {
+            "approved": False
+        }
+        
+        response = self.make_request("PATCH", f"/auth/approve-priest/{reject_user['id']}", rejection_data, self.bishop_token)
+        
+        if response and response.status_code == 200:
+            data = response.json()
+            if data.get("success"):
+                self.log("✅ Priest rejection successful")
+                return True
+            else:
+                self.log(f"❌ Priest rejection failed: No success flag", "ERROR")
+                return False
+        else:
+            error_msg = response.json() if response else "No response"
+            self.log(f"❌ Priest rejection failed: {error_msg}", "ERROR")
+            return False
+
+    def test_email_uniqueness_validation(self):
+        """Test email uniqueness validation"""
+        self.log("Testing email uniqueness validation...")
+        
+        # Try to register with an existing email
+        existing_email = "obispo@diocesis.com"  # Bishop's email from seed
+        
+        priest_data = {
+            "email": existing_email,
+            "password": "TestPassword123",
+            "firstName": "Test",
+            "lastName": "User",
+            "phone": "+34 123 123 123",
+            "dioceseId": "550e8400-e29b-41d4-a716-446655440000",
+        }
+        
+        response = self.make_request("POST", "/auth/register-priest", priest_data)
+        
+        if response and response.status_code == 401:  # Unauthorized for existing user
+            self.log("✅ Email uniqueness validation working")
+            return True
+        else:
+            status = response.status_code if response else "No response"
+            self.log(f"❌ Email uniqueness validation failed: Expected 401, got {status}", "ERROR")
+            return False
+
     def run_all_tests(self):
         """Run all tests in sequence"""
         self.log("🚀 Starting ConfesApp Backend Testing Suite")
@@ -453,6 +726,14 @@ class ConfesAppTester:
         
         tests = [
             ("Health Check", self.test_health_check),
+            ("Bishop Login", self.test_bishop_login),
+            ("Bishop Create Invitation", self.test_bishop_create_invitation),
+            ("Validate Invitation Token", self.test_validate_invitation_token),
+            ("Register from Invitation", self.test_register_from_invitation),
+            ("Direct Priest Application", self.test_direct_priest_application),
+            ("Bishop Approve Priest", self.test_bishop_approve_priest),
+            ("Bishop Reject Priest", self.test_bishop_reject_priest),
+            ("Email Uniqueness Validation", self.test_email_uniqueness_validation),
             ("Priest Registration", self.test_priest_registration),
             ("Faithful Registration", self.test_faithful_registration),
             ("Priest Login", self.test_priest_login),
