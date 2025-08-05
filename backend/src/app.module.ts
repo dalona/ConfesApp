@@ -10,6 +10,7 @@ import { ConfessionsModule } from './confessions/confessions.module';
 import { DiocesesModule } from './dioceses/dioceses.module';
 import { ParishesModule } from './parishes/parishes.module';
 import { PriestRequestsModule } from './priest-requests/priest-requests.module';
+import { InvitesModule } from './invites/invites.module';
 
 @Module({
   imports: [
