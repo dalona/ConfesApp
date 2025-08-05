@@ -301,7 +301,7 @@ const RoleSelector = ({ onRoleSelect, onBack }) => {
   );
 };
 
-const LoginForm = ({ role, onBack, onSuccess }) => {
+const LoginForm = ({ role, priestRegistrationType, onBack, onSuccess }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
     email: '',
