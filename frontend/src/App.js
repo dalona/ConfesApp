@@ -464,10 +464,6 @@ const LoginForm = ({ role, onBack, onSuccess }) => {
     switch(role) {
       case 'priest':
         return 'https://customer-assets.emergentagent.com/job_confesapp/artifacts/blj5h74p_Smiling%20Priest%20in%20Green%20Vestments.png';
-      case 'bishop':
-        return 'https://images.unsplash.com/photo-1549875328-abc4f7307c2b?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1ODF8MHwxfHNlYXJjaHw0fHxjYXRoZWRyYWx8ZW58MHx8fHB1cnBsZXwxNzU0MzM0MDE0fDA&ixlib=rb-4.1.0&q=85';
-      case 'parish_staff':
-        return 'https://customer-assets.emergentagent.com/job_confesapp/artifacts/bbinn7hj_ChatGPT%20Image%20Jul%2018%2C%202025%2C%2011_54_33%20AM.png';
       default:
         return null;
     }
@@ -476,8 +472,6 @@ const LoginForm = ({ role, onBack, onSuccess }) => {
   const getRoleTitle = () => {
     switch(role) {
       case 'priest': return 'Sacerdote';
-      case 'bishop': return 'Obispo';
-      case 'parish_staff': return 'Coordinador Parroquial';
       default: return 'Fiel';
     }
   };
