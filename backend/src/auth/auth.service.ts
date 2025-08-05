@@ -7,6 +7,7 @@ import { User, UserRole } from '../entities/user.entity';
 import { RegisterDto } from './dto/register.dto';
 import { RegisterPriestRequestDto } from './dto/register-priest-request.dto';
 import { RegisterFromInviteDto } from './dto/register-from-invite.dto';
+import { AcceptCoordinatorInviteDto } from '../invites/dto/accept-coordinator-invite.dto';
 
 @Injectable()
 export class AuthService {
