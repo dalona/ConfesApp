@@ -1307,6 +1307,7 @@ function App() {
 
   const handlePriestRegistrationType = (type) => {
     setPriestRegistrationType(type);
+    setIsLogin(false); // Siempre es registro cuando viene de aquí
     setCurrentView('login');
   };
 
