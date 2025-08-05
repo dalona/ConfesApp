@@ -29,6 +29,7 @@ import { InvitesModule } from './invites/invites.module';
     DiocesesModule,
     ParishesModule,
     PriestRequestsModule,
+    InvitesModule,
     ConfessionSlotsModule,
     ConfessionsModule,
   ],
