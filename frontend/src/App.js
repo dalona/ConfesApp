@@ -955,15 +955,20 @@ const FaithfulDashboard = () => {
 function App() {
   const [currentView, setCurrentView] = useState('landing');
   const [selectedRole, setSelectedRole] = useState(null);
+  const [priestRegistrationType, setPriestRegistrationType] = useState(null);
   const { user, loading } = useAuth();
 
   const handleRoleSelect = (role) => {
     if (role === 'role-select') {
       setCurrentView('role-select');
+    } else if (role === 'priest') {
+      setSelectedRole(role);
+      setCurrentView('priest-registration-type');
     } else {
       setSelectedRole(role);
       setCurrentView('login');
     }
+  };
   };
 
   const handleLoginSuccess = () => {
