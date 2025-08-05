@@ -56,4 +56,28 @@ export class InvitesController {
   cleanupExpired() {
     return this.invitesService.cleanExpiredInvites();
   }
+
+  // Endpoints específicos para Coordinadores Parroquiales
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('priest')
+  @Post('coordinator')
+  createCoordinatorInvite(@Body() createCoordinatorInviteDto: CreateCoordinatorInviteDto, @Request() req) {
+    return this.invitesService.createCoordinatorInvite(createCoordinatorInviteDto, req.user.id);
+  }
+
+  @Get('coordinator/token/:token')
+  findCoordinatorInviteByToken(@Param('token') token: string) {
+    return this.invitesService.findByToken(token);
+  }
+
+  @Post('coordinator/accept/:token')
+  acceptCoordinatorInvite(@Param('token') token: string, @Body() acceptDto: AcceptCoordinatorInviteDto) {
+    return this.invitesService.acceptCoordinatorInvite(token, acceptDto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('coordinator/parishes/:userId')
+  getUserCoordinatorParishes(@Param('userId') userId: string) {
+    return this.invitesService.getUserCoordinatorParishes(userId);
+  }
 }
