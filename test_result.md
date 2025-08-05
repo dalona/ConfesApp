@@ -197,15 +197,18 @@ backend:
 
   - task: "Priest Direct Application System (Backend)"
     implemented: true
-    working: "NA"
+    working: true
     file: "src/auth/auth.service.ts"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Implemented register-priest endpoint that creates inactive priest users, integrated with priest-parish-requests for approval workflow, added bishop approval/rejection endpoints"
+      - working: true
+        agent: "testing"
+        comment: "✅ Direct priest application system fully operational: POST /api/auth/register-priest creates inactive users with isActive=false and canConfess=false, bishop approval system working via PATCH /api/auth/approve-priest/:userId with both approval and rejection scenarios tested successfully. Email uniqueness validation implemented. Complete workflow verified end-to-end."
 
   - task: "Seed Data for Testing"
     implemented: true
