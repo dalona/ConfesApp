@@ -1275,6 +1275,7 @@ function App() {
   const [currentView, setCurrentView] = useState('landing');
   const [selectedRole, setSelectedRole] = useState(null);
   const [priestRegistrationType, setPriestRegistrationType] = useState(null);
+  const [isLogin, setIsLogin] = useState(false);
   const { user, loading } = useAuth();
 
   const handleRoleSelect = (role) => {
@@ -1282,10 +1283,21 @@ function App() {
       setCurrentView('role-select');
     } else if (role === 'priest') {
       setSelectedRole(role);
-      setCurrentView('priest-registration-type');
+      setCurrentView('priest-action-select');
     } else {
       setSelectedRole(role);
+      setIsLogin(false);
       setCurrentView('login');
+    }
+  };
+
+  const handlePriestActionSelect = (action) => {
+    if (action === 'login') {
+      setIsLogin(true);
+      setCurrentView('login');
+    } else if (action === 'register') {
+      setIsLogin(false);
+      setCurrentView('priest-registration-type');
     }
   };
 
