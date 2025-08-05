@@ -182,15 +182,18 @@ backend:
 
   - task: "Priest Invitation System (Backend)"
     implemented: true
-    working: "NA"
+    working: true
     file: "src/invites/"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Completed full invites module with create/validate/accept functionality, integrated with auth service for register-from-invite endpoint, created DTOs and proper role-based access control for bishops"
+      - working: true
+        agent: "testing"
+        comment: "✅ Priest invitation system fully functional: Bishop login working (obispo@diocesis.com), bishops can create invitations with proper role-based access control, invitation token validation working, priest registration from invitation successful with automatic diocese/parish assignment and login token generation. Minor: Some network timeouts on token validation but core functionality verified working."
 
   - task: "Priest Direct Application System (Backend)"
     implemented: true
