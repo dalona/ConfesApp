@@ -325,13 +325,129 @@ const LoginForm = ({ role, onBack, onSuccess }) => {
     phone: ''
   });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [errors, setErrors] = useState({});
+  const [generalError, setGeneralError] = useState('');
   const { login } = useAuth();
+
+  // Validación en tiempo real
+  const validateField = (name, value) => {
+    const newErrors = { ...errors };
+
+    switch (name) {
+      case 'email':
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!value) {
+          newErrors.email = 'El correo electrónico es requerido';
+        } else if (!emailRegex.test(value)) {
+          newErrors.email = 'Ingresa un correo electrónico válido';
+        } else {
+          delete newErrors.email;
+        }
+        break;
+
+      case 'password':
+        if (!value) {
+          newErrors.password = 'La contraseña es requerida';
+        } else if (value.length < 6) {
+          newErrors.password = 'La contraseña debe tener al menos 6 caracteres';
+        } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(value)) {
+          newErrors.password = 'La contraseña debe contener al menos: 1 minúscula, 1 mayúscula y 1 número';
+        } else {
+          delete newErrors.password;
+        }
+        break;
+
+      case 'firstName':
+        if (!value) {
+          newErrors.firstName = 'El nombre es requerido';
+        } else if (value.length < 2) {
+          newErrors.firstName = 'El nombre debe tener al menos 2 caracteres';
+        } else {
+          delete newErrors.firstName;
+        }
+        break;
+
+      case 'lastName':
+        if (!value) {
+          newErrors.lastName = 'El apellido es requerido';
+        } else if (value.length < 2) {
+          newErrors.lastName = 'El apellido debe tener al menos 2 caracteres';
+        } else {
+          delete newErrors.lastName;
+        }
+        break;
+
+      case 'phone':
+        if (value && !/^[\d\+\-\(\)\s]+$/.test(value)) {
+          newErrors.phone = 'Ingresa un número de teléfono válido';
+        } else {
+          delete newErrors.phone;
+        }
+        break;
+    }
+
+    setErrors(newErrors);
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    validateField(name, value);
+    setGeneralError(''); // Limpiar error general al cambiar campos
+  };
+
+  const getErrorMessage = (error) => {
+    if (typeof error === 'string') {
+      return error;
+    }
+
+    // Manejo de errores específicos del backend
+    if (error?.response?.data?.message) {
+      const message = error.response.data.message;
+      
+      if (Array.isArray(message)) {
+        return message.join(', ');
+      }
+      
+      // Traducir mensajes comunes del backend
+      switch (message) {
+        case 'User already exists':
+          return 'Ya existe una cuenta con este correo electrónico';
+        case 'Invalid credentials':
+          return 'Credenciales inválidas. Verifica tu correo y contraseña';
+        case 'User not found':
+          return 'No existe una cuenta con este correo electrónico';
+        case 'Unauthorized':
+          return 'Credenciales incorrectas';
+        default:
+          return message;
+      }
+    }
+
+    // Errores de red
+    if (error?.code === 'NETWORK_ERROR' || error?.message?.includes('Network Error')) {
+      return 'Error de conexión. Verifica tu conexión a internet';
+    }
+
+    return 'Error inesperado. Por favor, intenta nuevamente';
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validar todos los campos antes de enviar
+    const fieldsToValidate = isLogin ? ['email', 'password'] : ['email', 'password', 'firstName', 'lastName'];
+    fieldsToValidate.forEach(field => validateField(field, formData[field]));
+    
+    // Verificar si hay errores
+    const hasErrors = Object.keys(errors).length > 0;
+    if (hasErrors) {
+      setGeneralError('Por favor, corrige los errores antes de continuar');
+      return;
+    }
+
     setLoading(true);
-    setError('');
+    setGeneralError('');
 
     try {
       const endpoint = isLogin ? '/auth/login' : '/auth/register';
@@ -339,14 +455,20 @@ const LoginForm = ({ role, onBack, onSuccess }) => {
         { email: formData.email, password: formData.password } :
         { ...formData, role };
 
+      console.log('Enviando solicitud a:', `${API}${endpoint}`);
+      console.log('Payload:', payload);
+
       const response = await axios.post(`${API}${endpoint}`, payload);
       
       if (response.data.access_token) {
         login(response.data.user, response.data.access_token);
         onSuccess();
+      } else {
+        setGeneralError('Respuesta inesperada del servidor');
       }
     } catch (error) {
-      setError(error.response?.data?.message || 'Error en la autenticación');
+      console.error('Error de autenticación:', error);
+      setGeneralError(getErrorMessage(error));
     } finally {
       setLoading(false);
     }
@@ -391,7 +513,6 @@ const LoginForm = ({ role, onBack, onSuccess }) => {
                 alt={getRoleTitle()}
                 className="w-full h-96 object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-purple-900/30 to-transparent rounded-3xl"></div>
             </div>
           </motion.div>
         )}
@@ -410,39 +531,62 @@ const LoginForm = ({ role, onBack, onSuccess }) => {
               <h2 className="text-2xl font-bold text-purple-900 dark:text-purple-100">
                 {isLogin ? 'Iniciar Sesión' : 'Registrarse'} - {getRoleTitle()}
               </h2>
+              <p className="text-gray-600 dark:text-gray-400 mt-2 text-sm">
+                {isLogin ? 'Ingresa tus credenciales' : 'Crea tu cuenta nueva'}
+              </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-4">
               {!isLogin && (
                 <>
                   <div>
                     <input
                       type="text"
-                      placeholder="Nombre"
+                      name="firstName"
+                      placeholder="Nombre *"
                       required
                       value={formData.firstName}
-                      onChange={(e) => setFormData({...formData, firstName: e.target.value})}
-                      className="w-full px-4 py-3 border border-purple-200 dark:border-purple-700 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                      onChange={handleChange}
+                      className={`w-full px-4 py-3 border rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all ${
+                        errors.firstName ? 'border-red-500' : 'border-purple-200 dark:border-purple-700'
+                      }`}
                     />
+                    {errors.firstName && (
+                      <p className="text-red-500 text-sm mt-1">{errors.firstName}</p>
+                    )}
                   </div>
+
                   <div>
                     <input
                       type="text"
-                      placeholder="Apellidos"
+                      name="lastName"
+                      placeholder="Apellidos *"
                       required
                       value={formData.lastName}
-                      onChange={(e) => setFormData({...formData, lastName: e.target.value})}
-                      className="w-full px-4 py-3 border border-purple-200 dark:border-purple-700 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                      onChange={handleChange}
+                      className={`w-full px-4 py-3 border rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all ${
+                        errors.lastName ? 'border-red-500' : 'border-purple-200 dark:border-purple-700'
+                      }`}
                     />
+                    {errors.lastName && (
+                      <p className="text-red-500 text-sm mt-1">{errors.lastName}</p>
+                    )}
                   </div>
+
                   <div>
                     <input
                       type="tel"
+                      name="phone"
                       placeholder="Teléfono (opcional)"
                       value={formData.phone}
-                      onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                      className="w-full px-4 py-3 border border-purple-200 dark:border-purple-700 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                      onChange={handleChange}
+                      className={`w-full px-4 py-3 border rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all ${
+                        errors.phone ? 'border-red-500' : 'border-purple-200 dark:border-purple-700'
+                      }`}
                     />
+                    {errors.phone && (
+                      <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
+                    )}
                   </div>
                 </>
               )}
@@ -450,43 +594,81 @@ const LoginForm = ({ role, onBack, onSuccess }) => {
               <div>
                 <input
                   type="email"
-                  placeholder="Correo electrónico"
+                  name="email"
+                  placeholder="Correo electrónico *"
                   required
                   value={formData.email}
-                  onChange={(e) => setFormData({...formData, email: e.target.value})}
-                  className="w-full px-4 py-3 border border-purple-200 dark:border-purple-700 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                  onChange={handleChange}
+                  className={`w-full px-4 py-3 border rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all ${
+                    errors.email ? 'border-red-500' : 'border-purple-200 dark:border-purple-700'
+                  }`}
                 />
+                {errors.email && (
+                  <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+                )}
               </div>
               
               <div>
                 <input
                   type="password"
-                  placeholder="Contraseña"
+                  name="password"
+                  placeholder="Contraseña *"
                   required
                   value={formData.password}
-                  onChange={(e) => setFormData({...formData, password: e.target.value})}
-                  className="w-full px-4 py-3 border border-purple-200 dark:border-purple-700 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                  onChange={handleChange}
+                  className={`w-full px-4 py-3 border rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all ${
+                    errors.password ? 'border-red-500' : 'border-purple-200 dark:border-purple-700'
+                  }`}
                 />
+                {errors.password && (
+                  <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+                )}
+                {!isLogin && (
+                  <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                    • Mínimo 6 caracteres<br/>
+                    • Al menos 1 mayúscula, 1 minúscula y 1 número
+                  </div>
+                )}
               </div>
 
-              {error && (
-                <div className="text-red-600 dark:text-red-400 text-sm text-center">
-                  {error}
-                </div>
+              {generalError && (
+                <motion.div 
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4"
+                >
+                  <div className="flex">
+                    <div className="text-red-400">⚠️</div>
+                    <div className="ml-3">
+                      <p className="text-sm text-red-700 dark:text-red-300">{generalError}</p>
+                    </div>
+                  </div>
+                </motion.div>
               )}
 
               <button
                 type="submit"
-                disabled={loading}
-                className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 rounded-xl font-semibold hover:from-purple-700 hover:to-blue-700 transition-all disabled:opacity-50"
+                disabled={loading || Object.keys(errors).length > 0}
+                className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 rounded-xl font-semibold hover:from-purple-700 hover:to-blue-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? 'Procesando...' : (isLogin ? 'Iniciar Sesión' : 'Registrarse')}
+                {loading ? (
+                  <div className="flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                    Procesando...
+                  </div>
+                ) : (
+                  isLogin ? 'Iniciar Sesión' : 'Registrarse'
+                )}
               </button>
             </form>
 
             <div className="text-center mt-6">
               <button 
-                onClick={() => setIsLogin(!isLogin)}
+                onClick={() => {
+                  setIsLogin(!isLogin);
+                  setErrors({});
+                  setGeneralError('');
+                }}
                 className="text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-200 transition-colors"
               >
                 {isLogin ? '¿No tienes cuenta? Regístrate' : '¿Ya tienes cuenta? Inicia sesión'}
