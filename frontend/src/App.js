@@ -825,6 +825,19 @@ const LoginForm = ({ role, isLogin: isLoginMode, priestRegistrationType, onBack,
                   setIsLogin(!isLogin);
                   setErrors({});
                   setGeneralError('');
+                  // Reset form data when switching modes
+                  setFormData({
+                    email: '',
+                    password: '',
+                    firstName: '',
+                    lastName: '',
+                    phone: '',
+                    invitationToken: '',
+                    dioceseId: '',
+                    bio: '',
+                    specialties: '',
+                    languages: ''
+                  });
                 }}
                 className="text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-200 transition-colors"
               >
