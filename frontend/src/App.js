@@ -1333,11 +1333,18 @@ function App() {
           onBack={() => setCurrentView('landing')}
         />
       )}
+      {currentView === 'priest-action-select' && (
+        <PriestActionSelector 
+          key="priest-action-select"
+          onActionSelect={handlePriestActionSelect}
+          onBack={() => setCurrentView('role-select')}
+        />
+      )}
       {currentView === 'priest-registration-type' && (
         <PriestRegistrationTypeSelector 
           key="priest-registration-type"
           onTypeSelect={handlePriestRegistrationType}
-          onBack={() => setCurrentView('role-select')}
+          onBack={() => setCurrentView('priest-action-select')}
         />
       )}
       {currentView === 'login' && (
