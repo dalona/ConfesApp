@@ -675,10 +675,6 @@ const Dashboard = () => {
   
   if (user.role === 'priest') {
     return <PriestDashboard />;
-  } else if (user.role === 'bishop') {
-    return <BishopDashboard />;
-  } else if (user.role === 'parish_staff') {
-    return <ParishStaffDashboard />;
   } else {
     return <FaithfulDashboard />;
   }
