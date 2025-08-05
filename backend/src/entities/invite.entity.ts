@@ -13,6 +13,7 @@ export enum InviteStatus {
 export enum InviteRole {
   PRIEST = 'priest',
   PARISH_STAFF = 'parish_staff',
+  PARISH_COORDINATOR = 'parish_coordinator',
 }
 
 @Entity('invites')
