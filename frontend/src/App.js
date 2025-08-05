@@ -951,6 +951,80 @@ const FaithfulDashboard = () => {
   );
 };
 
+const PriestRegistrationTypeSelector = ({ onBack, onTypeSelect }) => {
+  const registrationTypes = [
+    {
+      id: 'invitation',
+      title: 'Con invitación',
+      description: 'He recibido una invitación de mi obispo',
+      icon: Mail,
+      gradient: 'from-green-500 to-emerald-600'
+    },
+    {
+      id: 'direct',
+      title: 'Solicitud directa',
+      description: 'Quiero solicitar unirme a una diócesis',
+      icon: FileText,
+      gradient: 'from-blue-500 to-indigo-600'
+    }
+  ];
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-purple-900 dark:to-blue-900 flex items-center justify-center px-4">
+      <Navbar />
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5 }}
+        className="max-w-4xl mx-auto text-center"
+      >
+        <h2 className="text-4xl md:text-5xl font-bold text-purple-900 dark:text-purple-100 mb-4 font-serif">
+          Registro de Sacerdote
+        </h2>
+        <p className="text-lg text-gray-600 dark:text-gray-300 mb-12">
+          ¿Cómo deseas registrarte en ConfesApp?
+        </p>
+
+        <div className="grid md:grid-cols-2 gap-8 mb-8 max-w-2xl mx-auto">
+          {registrationTypes.map((type, index) => (
+            <motion.div
+              key={type.id}
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => onTypeSelect(type.id)}
+              className="cursor-pointer p-8 bg-white dark:bg-gray-800 rounded-3xl shadow-2xl hover:shadow-purple-500/25 transition-all duration-300"
+            >
+              <div className={`w-16 h-16 rounded-full bg-gradient-to-r ${type.gradient} flex items-center justify-center mx-auto mb-6`}>
+                <type.icon className="w-8 h-8 text-white" />
+              </div>
+              <h3 className="text-xl font-bold text-purple-900 dark:text-purple-100 mb-3">
+                {type.title}
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400 text-sm">
+                {type.description}
+              </p>
+            </motion.div>
+          ))}
+        </div>
+
+        <motion.button
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
+          onClick={onBack}
+          className="inline-flex items-center px-6 py-3 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-xl transition-colors"
+        >
+          <ArrowLeft className="w-5 h-5 mr-2" />
+          Volver
+        </motion.button>
+      </motion.div>
+    </div>
+  );
+};
+
 // Main App Component
 function App() {
   const [currentView, setCurrentView] = useState('landing');
