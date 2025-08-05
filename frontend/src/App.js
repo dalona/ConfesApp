@@ -221,7 +221,7 @@ const LandingPage = ({ onRoleSelect }) => {
               <Users className="w-16 h-16 text-purple-600 mx-auto mb-6" />
               <h3 className="text-2xl font-bold text-purple-900 dark:text-purple-100 mb-4">Para todos</h3>
               <p className="text-gray-600 dark:text-gray-300">
-                Fieles, sacerdotes, coordinadores y obispos
+                Fieles y sacerdotes unidos en fe
               </p>
             </motion.div>
           </div>
