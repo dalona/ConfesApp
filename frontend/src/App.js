@@ -518,7 +518,13 @@ const LoginForm = ({ role, priestRegistrationType, onBack, onSuccess }) => {
                 {isLogin ? 'Iniciar Sesión' : 'Registrarse'} - {getRoleTitle()}
               </h2>
               <p className="text-gray-600 dark:text-gray-400 mt-2 text-sm">
-                {isLogin ? 'Ingresa tus credenciales' : 'Crea tu cuenta nueva'}
+                {isLogin ? 'Ingresa tus credenciales' : 
+                  (role === 'priest' && priestRegistrationType === 'invitation') ? 
+                    'Ingresa el token de invitación y crea tu cuenta' :
+                  (role === 'priest' && priestRegistrationType === 'direct') ?
+                    'Solicita unirte a una diócesis' :
+                    'Crea tu cuenta nueva'
+                }
               </p>
             </div>
 
