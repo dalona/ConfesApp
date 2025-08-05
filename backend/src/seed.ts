@@ -14,6 +14,7 @@ export async function runSeed(dataSource: DataSource) {
   const userRepository = dataSource.getRepository(User);
   const dioceseRepository = dataSource.getRepository(Diocese);
   const parishRepository = dataSource.getRepository(Parish);
+  const parishStaffRepository = dataSource.getRepository(ParishStaff);
   const inviteRepository = dataSource.getRepository(Invite);
   const priestRequestRepository = dataSource.getRepository(PriestParishRequest);
 
