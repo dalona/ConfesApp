@@ -269,10 +269,15 @@ export async function runSeed(dataSource: DataSource) {
     console.log(`👑 Obispo: ${savedBishop.email} (contraseña: Pass123!)`);
     console.log(`⛪ Diócesis: ${savedDiocese.name}`);
     console.log(`🏛️ Parroquias: ${savedParish1.name}, ${savedParish2.name}`);
-    console.log(`📧 Invitación activa: ${savedInvite.email} (token: ${inviteToken})`);
+    console.log(`👨‍💼 Sacerdote párroco: ${savedAssignedPriest.email} (contraseña: Pass123!) → ${savedParish1.name}`);
+    console.log(`📧 Invitación sacerdote: ${savedInvite.email} (token: ${inviteToken})`);
+    console.log(`📋 Invitación coordinador: ${coordinatorInvite.email} (token: ${coordinatorToken})`);
     console.log(`👨‍💼 Sacerdote pendiente: ${savedPendingPriest.email} (contraseña: Pass123!)`);
     console.log(`🙏 Fieles: fiel1@ejemplo.com, fiel2@ejemplo.com (contraseña: Pass123!)`);
-    console.log('\n🚀 Ya puedes probar los flujos de registro de sacerdotes!');
+    console.log('\n🚀 Ya puedes probar los flujos de registro completos!');
+    console.log('\n📝 URLs de invitación:');
+    console.log(`   Sacerdote: http://localhost:3000/registro-sacerdote?token=${inviteToken}`);
+    console.log(`   Coordinador: http://localhost:3000/registro-coordinador/${coordinatorToken}`);
 
   } catch (error) {
     console.error('❌ Error durante el seed:', error);
