@@ -301,8 +301,7 @@ const RoleSelector = ({ onRoleSelect, onBack }) => {
   );
 };
 
-const LoginForm = ({ role, priestRegistrationType, onBack, onSuccess }) => {
-  const [isLogin, setIsLogin] = useState(true);
+const LoginForm = ({ role, isLogin: isLoginMode, priestRegistrationType, onBack, onSuccess, onSwitchMode }) => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -315,8 +314,9 @@ const LoginForm = ({ role, priestRegistrationType, onBack, onSuccess }) => {
     specialties: '',
     languages: ''
   });
-  const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [isLogin, setIsLogin] = useState(isLoginMode || false);
   const [generalError, setGeneralError] = useState('');
   const { login } = useAuth();
 
