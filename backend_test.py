@@ -490,8 +490,8 @@ class ConfesAppTester:
             
         self.log("Testing bishop creating priest invitation...")
         
-        # Get diocese ID from bishop user or use a test UUID
-        diocese_id = "550e8400-e29b-41d4-a716-446655440000"  # Test UUID
+        # Get diocese ID from bishop user or use the actual diocese ID from seed
+        diocese_id = "a81d2bd3-c2e2-42ac-b4e7-66b44e4ad358"  # Actual diocese ID from seed
         
         invite_data = {
             "email": f"nuevo.sacerdote.{int(time.time())}@parroquia.com",
