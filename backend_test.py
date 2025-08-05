@@ -660,7 +660,7 @@ class ConfesAppTester:
         self.log("Testing bishop rejecting pending priest...")
         
         # Create another direct application for rejection test
-        diocese_id = "550e8400-e29b-41d4-a716-446655440000"
+        diocese_id = "a81d2bd3-c2e2-42ac-b4e7-66b44e4ad358"
         
         priest_data = {
             "email": f"padre.rechazo.{int(time.time())}@ejemplo.com",
