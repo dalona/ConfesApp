@@ -180,6 +180,42 @@ backend:
         agent: "testing"
         comment: "✅ Confession booking system fully operational: Faithful users can book available slots, confession cancellation working, priests can complete confessions, proper status transitions (booked->completed/cancelled), role-based access control enforced correctly"
 
+  - task: "Priest Invitation System (Backend)"
+    implemented: true
+    working: "NA"
+    file: "src/invites/"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Completed full invites module with create/validate/accept functionality, integrated with auth service for register-from-invite endpoint, created DTOs and proper role-based access control for bishops"
+
+  - task: "Priest Direct Application System (Backend)"
+    implemented: true
+    working: "NA"
+    file: "src/auth/auth.service.ts"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented register-priest endpoint that creates inactive priest users, integrated with priest-parish-requests for approval workflow, added bishop approval/rejection endpoints"
+
+  - task: "Seed Data for Testing"
+    implemented: true
+    working: true
+    file: "src/seed.ts"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Created comprehensive seed with 1 bishop (obispo@diocesis.com), 1 diocese, 2 parishes, 1 active invite, 1 pending priest request, 2 faithful users. All with password Pass123! for testing both priest registration flows"
+
 frontend:
   - task: "React Frontend Setup with Liturgical Design"
     implemented: true
