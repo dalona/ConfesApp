@@ -471,7 +471,13 @@ const LoginForm = ({ role, priestRegistrationType, onBack, onSuccess }) => {
 
   const getRoleTitle = () => {
     switch(role) {
-      case 'priest': return 'Sacerdote';
+      case 'priest': 
+        if (priestRegistrationType === 'invitation') {
+          return 'Sacerdote - Con Invitación';
+        } else if (priestRegistrationType === 'direct') {
+          return 'Sacerdote - Solicitud Directa';
+        }
+        return 'Sacerdote';
       default: return 'Fiel';
     }
   };
