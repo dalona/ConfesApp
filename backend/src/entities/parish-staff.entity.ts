@@ -4,6 +4,7 @@ import { Parish } from './parish.entity';
 
 export enum ParishStaffRole {
   PRIEST = 'priest',
+  PARISH_COORDINATOR = 'parish_coordinator',
   VOLUNTEER = 'volunteer',
   ADMIN = 'admin',
 }
