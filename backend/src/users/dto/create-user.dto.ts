@@ -18,6 +18,10 @@ export class CreateUserDto {
   @IsOptional()
   role?: UserRole;
 
+  @IsBoolean()
+  @IsOptional()
+  isActive?: boolean;
+
   @IsString()
   @IsOptional()
   phone?: string;
