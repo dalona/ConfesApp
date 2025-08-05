@@ -161,10 +161,9 @@ export async function runSeed(dataSource: DataSource) {
     // Crear solicitud pendiente para este sacerdote
     const priestRequest = priestRequestRepository.create({
       priestId: savedPendingPriest.id,
-      dioceseId: savedDiocese.id,
       parishId: savedParish2.id,
       status: RequestStatus.PENDING,
-      requestMessage: 'Solicito unirme a la Parroquia de Santa María para servir como sacerdote',
+      message: 'Solicito unirme a la Parroquia de Santa María para servir como sacerdote',
     });
     
     await priestRequestRepository.save(priestRequest);
