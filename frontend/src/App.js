@@ -375,6 +375,24 @@ const LoginForm = ({ role, priestRegistrationType, onBack, onSuccess }) => {
           delete newErrors.phone;
         }
         break;
+
+      case 'invitationToken':
+        if (!value) {
+          newErrors.invitationToken = 'El token de invitación es requerido';
+        } else if (value.length < 10) {
+          newErrors.invitationToken = 'El token de invitación no es válido';
+        } else {
+          delete newErrors.invitationToken;
+        }
+        break;
+
+      case 'dioceseId':
+        if (!value) {
+          newErrors.dioceseId = 'Debes seleccionar una diócesis';
+        } else {
+          delete newErrors.dioceseId;
+        }
+        break;
     }
 
     setErrors(newErrors);
