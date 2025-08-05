@@ -974,6 +974,11 @@ function App() {
     setCurrentView('dashboard');
   };
 
+  const handlePriestRegistrationType = (type) => {
+    setPriestRegistrationType(type);
+    setCurrentView('login');
+  };
+
   if (loading) {
     return <div className="min-h-screen flex items-center justify-center">
       <div className="text-xl text-purple-600">Cargando...</div>
