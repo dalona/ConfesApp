@@ -24,6 +24,16 @@ class ConfesAppTester:
         self.faithful_user = None
         self.test_slot_id = None
         self.test_confession_id = None
+        # New variables for priest registration testing
+        self.bishop_token = None
+        self.bishop_user = None
+        self.test_invite_token = None
+        self.test_invite_email = None
+        self.validated_invite_token = None
+        self.validated_invite_email = None
+        self.invited_priest_token = None
+        self.invited_priest_user = None
+        self.pending_priest_user = None
         
     def log(self, message, level="INFO"):
         """Log test messages with timestamp"""
