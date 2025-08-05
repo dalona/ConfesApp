@@ -108,8 +108,9 @@ export class AuthService {
     });
 
     // Return login info
+    const loginInfo = await this.login(user);
     return {
-      ...this.login(user),
+      ...loginInfo,
       message: `¡Bienvenido! Te has unido exitosamente como ${invite.role === 'priest' ? 'Sacerdote' : 'Coordinador'} a la diócesis ${invite.diocese.name}.`,
       invite: {
         diocese: invite.diocese.name,
