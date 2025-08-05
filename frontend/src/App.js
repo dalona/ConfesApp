@@ -265,7 +265,7 @@ const RoleSelector = ({ onRoleSelect, onBack }) => {
           Selecciona tu rol para comenzar
         </p>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid md:grid-cols-2 gap-8 mb-8 max-w-2xl mx-auto">
           {roles.map((role, index) => (
             <motion.div
               key={role.id}
