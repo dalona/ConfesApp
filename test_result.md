@@ -237,15 +237,18 @@ frontend:
 
   - task: "Role Selection and Authentication UI"
     implemented: true
-    working: true
+    working: false
     file: "src/App.js"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
     needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "Elegant role selector for Fiel/Sacerdote, complete registration/login forms with validation, JWT token management"
+      - working: false
+        agent: "testing"
+        comment: "❌ CRITICAL BUG FOUND: Faithful user registration fails with 400 error. Frontend sends priest-specific fields (invitationToken, dioceseId, bio, specialties, languages) in payload even for faithful users, causing backend validation to reject the request. UI flow works perfectly (role selection, form display, field filling) but form submission fails. Backend expects only {email, password, firstName, lastName, phone, role} but receives extra properties. Error message: 'property invitationToken should not exist, property dioceseId should not exist, property bio should not exist, property specialties should not exist, property languages should not exist'. This prevents any faithful user from registering successfully."
 
   - task: "Priest Dashboard - Slot Management"
     implemented: true
