@@ -21,6 +21,7 @@ export async function runSeed(dataSource: DataSource) {
   try {
     // Limpiar datos existentes (opcional en desarrollo)
     console.log('🗑️ Limpiando datos existentes...');
+    await parishStaffRepository.clear();
     await inviteRepository.clear();
     await priestRequestRepository.clear();
     await parishRepository.clear();
