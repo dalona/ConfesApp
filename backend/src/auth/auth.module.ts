@@ -7,6 +7,7 @@ import { AuthController } from './auth.controller';
 import { JwtStrategy } from './jwt.strategy';
 import { LocalStrategy } from './local.strategy';
 import { UsersModule } from '../users/users.module';
+import { InvitesModule } from '../invites/invites.module';
 
 @Module({
   imports: [
