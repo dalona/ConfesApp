@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, LessThan } from 'typeorm';
 import { Invite, InviteStatus, InviteRole } from '../entities/invite.entity';
 import { ParishStaff, ParishStaffRole } from '../entities/parish-staff.entity';
+import { Parish } from '../entities/parish.entity';
 import { UserRole } from '../entities/user.entity';
 import { CreateInviteDto } from './dto/create-invite.dto';
 import { CreateCoordinatorInviteDto } from './dto/create-coordinator-invite.dto';
