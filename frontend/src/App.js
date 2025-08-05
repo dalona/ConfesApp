@@ -308,7 +308,12 @@ const LoginForm = ({ role, priestRegistrationType, onBack, onSuccess }) => {
     password: '',
     firstName: '',
     lastName: '',
-    phone: ''
+    phone: '',
+    invitationToken: '',
+    dioceseId: '',
+    bio: '',
+    specialties: '',
+    languages: ''
   });
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
