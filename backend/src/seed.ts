@@ -19,11 +19,11 @@ export async function runSeed(dataSource: DataSource) {
   try {
     // Limpiar datos existentes (opcional en desarrollo)
     console.log('🗑️ Limpiando datos existentes...');
-    await inviteRepository.delete({});
-    await priestRequestRepository.delete({});
-    await parishRepository.delete({});
-    await dioceseRepository.delete({});
-    await userRepository.delete({});
+    await inviteRepository.clear();
+    await priestRequestRepository.clear();
+    await parishRepository.clear();
+    await dioceseRepository.clear();
+    await userRepository.clear();
 
     // 1. Crear Obispo
     console.log('👑 Creando obispo...');
