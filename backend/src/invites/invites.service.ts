@@ -331,7 +331,7 @@ export class InvitesService {
         firstName: acceptDto.firstName,
         lastName: acceptDto.lastName,
         phone: acceptDto.phone,
-        role: 'faithful', // Rol base es faithful
+        role: UserRole.FAITHFUL, // Rol base es faithful
         dioceseId: invite.dioceseId,
         isActive: true,
       });
