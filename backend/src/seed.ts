@@ -3,6 +3,7 @@ import * as bcrypt from 'bcryptjs';
 import { User, UserRole } from './entities/user.entity';
 import { Diocese } from './entities/diocese.entity';
 import { Parish } from './entities/parish.entity';
+import { ParishStaff, ParishStaffRole } from './entities/parish-staff.entity';
 import { Invite, InviteStatus, InviteRole } from './entities/invite.entity';
 import { PriestParishRequest, RequestStatus } from './entities/priest-parish-request.entity';
 import * as crypto from 'crypto';
