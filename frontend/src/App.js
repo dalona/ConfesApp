@@ -246,20 +246,6 @@ const RoleSelector = ({ onRoleSelect, onBack }) => {
       description: 'Gestionar horarios de confesión',
       icon: Cross,
       gradient: 'from-purple-600 to-indigo-600'
-    },
-    {
-      id: 'parish_staff',
-      title: 'Coordinador Parroquial',
-      description: 'Administrar parroquia',
-      icon: Users,
-      gradient: 'from-indigo-600 to-blue-600'
-    },
-    {
-      id: 'bishop',
-      title: 'Obispo',
-      description: 'Gestionar diócesis',
-      icon: Cross,
-      gradient: 'from-purple-800 to-purple-600'
     }
   ];
 
