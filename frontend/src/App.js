@@ -1086,7 +1086,14 @@ function App() {
         <LoginForm 
           key="login"
           role={selectedRole}
-          onBack={() => setCurrentView('role-select')}
+          priestRegistrationType={priestRegistrationType}
+          onBack={() => {
+            if (selectedRole === 'priest') {
+              setCurrentView('priest-registration-type');
+            } else {
+              setCurrentView('role-select');
+            }
+          }}
           onSuccess={handleLoginSuccess}
         />
       )}
