@@ -681,57 +681,6 @@ const Dashboard = () => {
 };
 
 // Dashboard components would go here...
-const BishopDashboard = () => {
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-purple-900 dark:to-blue-900">
-      <Navbar />
-      <div className="pt-24 px-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-lg text-center">
-            <Cross className="w-16 h-16 text-purple-600 mx-auto mb-4" />
-            <h1 className="text-4xl font-bold text-purple-900 dark:text-purple-100 mb-4">
-              Dashboard del Obispo
-            </h1>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">
-              Gestiona tu diócesis con sabiduría pastoral
-            </p>
-            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
-              <p className="text-blue-800 dark:text-blue-200 text-sm">
-                💡 <strong>Estructura jerárquica implementada:</strong> Backend con todas las entidades diocesanas, parroquiales y de asignación de sacerdotes está listo. Frontend en desarrollo para funciones avanzadas de gestión.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const ParishStaffDashboard = () => {
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-purple-900 dark:to-blue-900">
-      <Navbar />
-      <div className="pt-24 px-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-lg text-center">
-            <Users className="w-16 h-16 text-purple-600 mx-auto mb-4" />
-            <h1 className="text-4xl font-bold text-purple-900 dark:text-purple-100 mb-4">
-              Dashboard del Coordinador
-            </h1>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">
-              Coordina las actividades parroquiales
-            </p>
-            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
-              <p className="text-blue-800 dark:text-blue-200 text-sm">
-                💡 <strong>Próximamente:</strong> Funciones completas de gestión parroquial, coordinación de personal, gestión de eventos y más.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
 
 const PriestDashboard = () => {
   const [activeTab, setActiveTab] = useState('slots');
