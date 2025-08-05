@@ -520,7 +520,7 @@ class ConfesAppTester:
     def test_validate_invitation_token(self):
         """Test validating invitation token"""
         # Use the seed data token first
-        seed_token = "036d051a50b642c564378e5d046611acbe5957e23c7126535953a9fbadcba7b7"
+        seed_token = "ebe0d53471a55634e1e8b0652f19ac1f1a69eac876285928b1ba54d3873f83da"
         
         self.log("Testing invitation token validation...")
         
