@@ -969,7 +969,6 @@ function App() {
       setCurrentView('login');
     }
   };
-  };
 
   const handleLoginSuccess = () => {
     setCurrentView('dashboard');
