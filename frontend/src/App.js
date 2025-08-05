@@ -4,7 +4,7 @@ import axios from 'axios';
 import './App.css';
 
 // Icons
-import { Cross, Calendar, Users, Moon, Sun, User, LogOut } from 'lucide-react';
+import { Cross, Calendar, Users, Moon, Sun, User, LogOut, Mail, FileText, ArrowLeft } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
