@@ -1,8 +1,11 @@
 import { Injectable, NotFoundException, BadRequestException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, LessThan } from 'typeorm';
-import { Invite, InviteStatus } from '../entities/invite.entity';
+import { Invite, InviteStatus, InviteRole } from '../entities/invite.entity';
+import { ParishStaff, ParishStaffRole } from '../entities/parish-staff.entity';
 import { CreateInviteDto } from './dto/create-invite.dto';
+import { CreateCoordinatorInviteDto } from './dto/create-coordinator-invite.dto';
+import { AcceptCoordinatorInviteDto } from './dto/accept-coordinator-invite.dto';
 import { UsersService } from '../users/users.service';
 import * as crypto from 'crypto';
 
