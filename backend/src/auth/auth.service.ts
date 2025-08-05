@@ -160,4 +160,34 @@ export class AuthService {
       };
     }
   }
+
+  async registerCoordinator(token: string, acceptDto: AcceptCoordinatorInviteDto) {
+    const result = await this.invitesService.acceptCoordinatorInvite(token, acceptDto);
+    
+    if (result.isNewUser) {
+      // Usuario nuevo - generar token de autenticación
+      const loginInfo = await this.login(result.user);
+      return {
+        ...loginInfo,
+        message: `¡Bienvenido! Tu cuenta ha sido creada exitosamente y has sido asignado como coordinador de ${result.invite.parish?.name || 'la parroquia'}.`,
+        isNewUser: true,
+        coordinator: {
+          parish: result.invite.parish?.name,
+          assignedBy: result.invite.createdBy?.firstName + ' ' + result.invite.createdBy?.lastName,
+        },
+      };
+    } else {
+      // Usuario existente - generar token de autenticación
+      const loginInfo = await this.login(result.user);
+      return {
+        ...loginInfo,
+        message: `¡Felicidades! Has sido asignado como coordinador de ${result.invite.parish?.name || 'la parroquia'}. Ahora tienes acceso a funciones adicionales.`,
+        isNewUser: false,
+        coordinator: {
+          parish: result.invite.parish?.name,
+          assignedBy: result.invite.createdBy?.firstName + ' ' + result.invite.createdBy?.lastName,
+        },
+      };
+    }
+  }
 }
