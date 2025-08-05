@@ -273,10 +273,8 @@ metadata:
 
 test_plan:
   current_focus:
-    - "React Frontend Setup"
-    - "Role Selection and Authentication UI"
-    - "Priest Dashboard - Slot Management"
-    - "Faithful Dashboard - Booking Interface"
+    - "Priest Invitation System (Backend)"
+    - "Priest Direct Application System (Backend)"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
