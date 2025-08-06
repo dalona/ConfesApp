@@ -3,6 +3,7 @@ import { Diocese } from './diocese.entity';
 import { ParishStaff } from './parish-staff.entity';
 import { PriestParishHistory } from './priest-parish-history.entity';
 import { ConfessionSlot } from './confession-slot.entity';
+import { ConfessionBand } from './confession-band.entity';
 
 @Entity('parishes')
 export class Parish {
