@@ -1791,6 +1791,110 @@ const FaithfulDashboard = () => {
   );
 };
 
+const UnauthorizedAccess = ({ userRole, onGoToDashboard }) => {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-red-50 via-pink-50 to-purple-50 dark:from-gray-900 dark:via-red-900 dark:to-purple-900 flex items-center justify-center px-4">
+      <Navbar />
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5 }}
+        className="max-w-2xl mx-auto text-center"
+      >
+        <div className="w-20 h-20 rounded-full bg-gradient-to-r from-red-500 to-pink-500 flex items-center justify-center mx-auto mb-6">
+          <Cross className="w-10 h-10 text-white" />
+        </div>
+        
+        <h2 className="text-3xl md:text-4xl font-bold text-red-700 dark:text-red-300 mb-4">
+          Acceso No Autorizado
+        </h2>
+        <p className="text-lg text-gray-600 dark:text-gray-300 mb-8">
+          No tienes permisos para acceder a esta sección. Tu rol actual es: <span className="font-semibold text-purple-600">{getRoleDisplayName(userRole)}</span>
+        </p>
+        
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={onGoToDashboard}
+          className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:from-purple-700 hover:to-blue-700 transition-all shadow-lg hover:shadow-xl"
+        >
+          Ir a Mi Dashboard
+        </motion.button>
+      </motion.div>
+    </div>
+  );
+};
+
+// Enhanced Dashboard component with role-based routing
+const Dashboard = () => {
+  const { user, verifyUserAccess } = useAuth();
+  const [currentDashboard, setCurrentDashboard] = useState(null);
+  const [showUnauthorized, setShowUnauthorized] = useState(false);
+  
+  useEffect(() => {
+    if (user && user.role) {
+      // Automatically redirect to correct dashboard based on role
+      switch(user.role) {
+        case 'priest':
+          setCurrentDashboard('priest');
+          break;
+        case 'faithful':
+          setCurrentDashboard('faithful');
+          break;
+        case 'parish_coordinator':
+          setCurrentDashboard('coordinator');
+          break;
+        default:
+          setCurrentDashboard('priest'); // fallback
+      }
+    }
+  }, [user]);
+
+  const handleDashboardNavigation = (targetDashboard) => {
+    const roleMapping = {
+      'priest': 'priest',
+      'faithful': 'faithful', 
+      'coordinator': 'parish_coordinator'
+    };
+    
+    const requiredRole = roleMapping[targetDashboard];
+    if (verifyUserAccess(requiredRole)) {
+      setCurrentDashboard(targetDashboard);
+      setShowUnauthorized(false);
+    } else {
+      setShowUnauthorized(true);
+    }
+  };
+
+  const handleGoToDashboard = () => {
+    setShowUnauthorized(false);
+    // Redirect to correct dashboard based on user role
+    if (user.role === 'priest') {
+      setCurrentDashboard('priest');
+    } else if (user.role === 'faithful') {
+      setCurrentDashboard('faithful');
+    } else if (user.role === 'parish_coordinator') {
+      setCurrentDashboard('coordinator');
+    }
+  };
+
+  if (showUnauthorized) {
+    return <UnauthorizedAccess userRole={user?.role} onGoToDashboard={handleGoToDashboard} />;
+  }
+
+  // Render appropriate dashboard based on current selection and user role
+  if (currentDashboard === 'priest' && verifyUserAccess('priest')) {
+    return <PriestDashboard />;
+  } else if (currentDashboard === 'faithful' && verifyUserAccess('faithful')) {
+    return <FaithfulDashboard />;
+  } else if (currentDashboard === 'coordinator' && verifyUserAccess('parish_coordinator')) {
+    return <div>Coordinator Dashboard (Coming Soon)</div>;
+  } else {
+    // Fallback: show unauthorized if somehow we get here
+    return <UnauthorizedAccess userRole={user?.role} onGoToDashboard={handleGoToDashboard} />;
+  }
+};
+
 const FaithfulActionSelector = ({ onBack, onActionSelect }) => {
   const actions = [
     {
