@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, OneToOne } from 'typeorm';
 import { ConfessionSlot } from './confession-slot.entity';
+import { ConfessionBand } from './confession-band.entity';
 import { Confession } from './confession.entity';
 import { Diocese } from './diocese.entity';
 import { ParishStaff } from './parish-staff.entity';
