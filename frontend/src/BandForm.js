@@ -116,11 +116,28 @@ const BandForm = ({ isOpen, onClose, onSave, initialData, isEdit = false }) => {
         recurrenceEndDate: formData.recurrenceEndDate?.toISOString(),
       };
 
+      console.log('Submitting band data:', submitData);
       await onSave(submitData);
       onClose();
     } catch (error) {
       console.error('Error saving band:', error);
-      setErrors({ submit: error.response?.data?.message || 'Error al guardar la franja' });
+      
+      let errorMessage = 'Error al guardar la franja';
+      
+      if (error.response) {
+        const responseData = error.response.data;
+        if (typeof responseData === 'string') {
+          errorMessage = responseData;
+        } else if (responseData?.message) {
+          errorMessage = responseData.message;
+        } else if (Array.isArray(responseData?.message)) {
+          errorMessage = responseData.message.join(', ');
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      setErrors({ submit: errorMessage });
     } finally {
       setLoading(false);
     }
