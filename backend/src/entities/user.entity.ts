@@ -86,6 +86,9 @@ export class User {
   @OneToMany(() => ConfessionSlot, confessionSlot => confessionSlot.priest)
   confessionSlots: ConfessionSlot[];
 
+  @OneToMany(() => ConfessionBand, band => band.priest)
+  confessionBands: ConfessionBand[];
+
   @OneToMany(() => Confession, confession => confession.faithful)
   confessions: Confession[];
 
