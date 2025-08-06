@@ -1348,8 +1348,9 @@ const PriestDashboard = () => {
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.8, opacity: 0 }}
-            className="bg-white dark:bg-gray-800 rounded-3xl p-8 max-w-lg w-full max-h-[90vh] overflow-y-auto"
+            className="bg-white dark:bg-gray-800 rounded-3xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
           >
+            {/* Header */}
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center">
                 <div className="w-12 h-12 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 flex items-center justify-center mr-4">
@@ -1371,21 +1372,152 @@ const PriestDashboard = () => {
                 <Cross className="w-6 h-6 text-gray-500" />
               </button>
             </div>
-            
-            <div className="text-center py-8">
-              <p className="text-lg text-gray-600 dark:text-gray-400 mb-4">
-                ¡Modal funcionando! 🎉
-              </p>
-              <p className="text-sm text-gray-500 dark:text-gray-500 mb-6">
-                La ventana modal se abre correctamente. Próximamente integraremos el formulario completo.
-              </p>
-              <button
-                onClick={() => setShowBandForm(false)}
-                className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-purple-700 hover:to-indigo-700 transition-all"
-              >
-                Cerrar
-              </button>
-            </div>
+
+            {/* Form */}
+            <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+              {/* Date and Time */}
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                    <Calendar className="w-4 h-4 mr-2 text-purple-600" />
+                    Fecha y Hora de Inicio *
+                  </label>
+                  <input
+                    type="datetime-local"
+                    className="w-full px-4 py-3 border-2 border-purple-200 dark:border-purple-700 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all"
+                  />
+                </div>
+                
+                <div>
+                  <label className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                    <Calendar className="w-4 h-4 mr-2 text-purple-600" />
+                    Fecha y Hora de Fin *
+                  </label>
+                  <input
+                    type="datetime-local"
+                    className="w-full px-4 py-3 border-2 border-purple-200 dark:border-purple-700 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all"
+                  />
+                </div>
+              </div>
+
+              {/* Location and Capacity */}
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                    <Cross className="w-4 h-4 mr-2 text-purple-600" />
+                    Ubicación *
+                  </label>
+                  <select className="w-full px-4 py-3 border-2 border-purple-200 dark:border-purple-700 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all">
+                    <option value="Confesionario Principal">Confesionario Principal</option>
+                    <option value="Confesionario Lateral">Confesionario Lateral</option>
+                    <option value="Capilla del Santísimo">Capilla del Santísimo</option>
+                    <option value="Sacristía">Sacristía</option>
+                    <option value="Salón Parroquial">Salón Parroquial</option>
+                  </select>
+                </div>
+                
+                <div>
+                  <label className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                    <Users className="w-4 h-4 mr-2 text-purple-600" />
+                    Capacidad Máxima *
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="50"
+                    defaultValue="5"
+                    className="w-full px-4 py-3 border-2 border-purple-200 dark:border-purple-700 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all"
+                    placeholder="Ej: 5"
+                  />
+                </div>
+              </div>
+
+              {/* Notes */}
+              <div>
+                <label className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  <FileText className="w-4 h-4 mr-2 text-purple-600" />
+                  Notas Especiales
+                </label>
+                <textarea
+                  placeholder="Información adicional para los fieles (opcional)..."
+                  className="w-full px-4 py-3 border-2 border-purple-200 dark:border-purple-700 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all resize-none"
+                  rows="3"
+                />
+              </div>
+
+              {/* Recurrence Section */}
+              <div className="bg-purple-50 dark:bg-purple-900/20 rounded-xl p-6">
+                <div className="flex items-center mb-4">
+                  <input
+                    type="checkbox"
+                    id="recurrent"
+                    className="w-4 h-4 text-purple-600 rounded focus:ring-purple-500 mr-3"
+                  />
+                  <label htmlFor="recurrent" className="flex items-center text-sm font-semibold text-purple-700 dark:text-purple-300">
+                    <Calendar className="w-4 h-4 mr-2" />
+                    Franja Recurrente
+                  </label>
+                </div>
+
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-sm font-medium text-purple-700 dark:text-purple-300 mb-2 block">
+                      Tipo de Recurrencia
+                    </label>
+                    <select className="w-full px-4 py-3 border-2 border-purple-200 dark:border-purple-700 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all">
+                      <option value="daily">Diaria</option>
+                      <option value="weekly">Semanal</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="text-sm font-medium text-purple-700 dark:text-purple-300 mb-2 block">
+                      Días de la Semana (para recurrencia semanal)
+                    </label>
+                    <div className="flex flex-wrap gap-2">
+                      {['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'].map((day) => (
+                        <button
+                          key={day}
+                          type="button"
+                          className="px-3 py-2 rounded-lg text-sm font-medium transition-all bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-purple-200 dark:border-purple-700 hover:bg-purple-600 hover:text-white"
+                        >
+                          {day}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-sm font-medium text-purple-700 dark:text-purple-300 mb-2 block">
+                      Repetir Hasta
+                    </label>
+                    <input
+                      type="date"
+                      className="w-full px-4 py-3 border-2 border-purple-200 dark:border-purple-700 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Submit Buttons */}
+              <div className="flex space-x-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <button
+                  type="button"
+                  onClick={() => alert('¡Funcionalidad en desarrollo! El formulario funciona correctamente.')}
+                  className="flex-1 bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-4 rounded-xl font-semibold text-lg hover:from-purple-700 hover:to-indigo-700 transition-all shadow-lg hover:shadow-xl flex items-center justify-center"
+                >
+                  <Plus className="w-5 h-5 mr-2" />
+                  {isEditMode ? 'Actualizar Franja' : 'Crear Franja'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowBandForm(false)}
+                  className="px-8 py-4 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-xl font-semibold hover:bg-gray-300 dark:hover:bg-gray-500 transition-all"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </form>
           </motion.div>
         </motion.div>
       )}
