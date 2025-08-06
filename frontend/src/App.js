@@ -1564,6 +1564,35 @@ const FaithfulDashboard = () => {
     }
   };
 
+  const cancelConfession = async (confessionId) => {
+    if (!window.confirm('¿Estás seguro de que quieres cancelar esta cita? Esta acción no se puede deshacer.')) {
+      return;
+    }
+
+    try {
+      await axios.patch(`${API}/confessions/${confessionId}/cancel`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      fetchData(); // Refresh data
+      alert('Cita cancelada exitosamente');
+    } catch (error) {
+      console.error('Error canceling confession:', error);
+      alert(error.response?.data?.message || 'Error al cancelar la cita');
+    }
+  };
+
+  const canCancelConfession = (confession) => {
+    if (confession.status !== 'booked') return false;
+    
+    // Check if confession is at least 2 hours in the future
+    const confessionTime = new Date(confession.scheduledTime || confession.confessionSlot?.startTime);
+    const now = new Date();
+    const timeDiff = confessionTime.getTime() - now.getTime();
+    const twoHoursInMs = 2 * 60 * 60 * 1000;
+    
+    return timeDiff > twoHoursInMs;
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-purple-900 dark:to-blue-900 flex items-center justify-center">
