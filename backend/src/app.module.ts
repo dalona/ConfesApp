@@ -33,6 +33,7 @@ import { InvitesModule } from './invites/invites.module';
     InvitesModule,
     ConfessionSlotsModule,
     ConfessionsModule,
+    ConfessionBandsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
