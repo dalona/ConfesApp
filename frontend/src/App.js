@@ -941,13 +941,15 @@ const PriestDashboard = () => {
   const handleSaveBand = async (bandData) => {
     try {
       if (isEditMode && selectedBand?.id) {
-        await axios.patch(`${API}/confession-bands/my-bands/${selectedBand.id}`, bandData, {
+        const response = await axios.patch(`${API}/confession-bands/my-bands/${selectedBand.id}`, bandData, {
           headers: { Authorization: `Bearer ${token}` }
         });
+        console.log('Band updated:', response.data);
       } else {
-        await axios.post(`${API}/confession-bands`, bandData, {
+        const response = await axios.post(`${API}/confession-bands`, bandData, {
           headers: { Authorization: `Bearer ${token}` }
         });
+        console.log('Band created:', response.data);
       }
       
       fetchData(); // Refresh data
@@ -955,7 +957,28 @@ const PriestDashboard = () => {
       setSelectedBand(null);
     } catch (error) {
       console.error('Error saving band:', error);
-      throw error; // Let BandForm handle the error display
+      
+      // Handle different error types
+      let errorMessage = 'Error al guardar la franja';
+      
+      if (error.response) {
+        // Server responded with error status
+        console.error('Error response:', error.response.data);
+        errorMessage = error.response.data?.message || `Error ${error.response.status}: ${error.response.statusText}`;
+      } else if (error.request) {
+        // Request made but no response received
+        console.error('Error request:', error.request);
+        errorMessage = 'No se pudo conectar con el servidor';
+      } else {
+        // Error in setting up the request
+        console.error('Error message:', error.message);
+        errorMessage = error.message;
+      }
+      
+      // Create a proper error object to throw
+      const errorToThrow = new Error(errorMessage);
+      errorToThrow.response = error.response;
+      throw errorToThrow;
     }
   };
 
