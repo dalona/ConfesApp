@@ -1791,6 +1791,80 @@ const FaithfulDashboard = () => {
   );
 };
 
+const FaithfulActionSelector = ({ onBack, onActionSelect }) => {
+  const actions = [
+    {
+      id: 'login',
+      title: 'Iniciar sesión',
+      description: 'Ya tengo una cuenta como fiel',
+      icon: User,
+      gradient: 'from-blue-600 to-purple-600'
+    },
+    {
+      id: 'register',
+      title: 'Registrarse',
+      description: 'Quiero crear una nueva cuenta',
+      icon: Cross,
+      gradient: 'from-green-500 to-emerald-600'
+    }
+  ];
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-purple-900 dark:to-blue-900 flex items-center justify-center px-4">
+      <Navbar />
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5 }}
+        className="max-w-4xl mx-auto text-center"
+      >
+        <h2 className="text-4xl md:text-5xl font-bold text-purple-900 dark:text-purple-100 mb-4 font-serif">
+          Acceso para Fieles
+        </h2>
+        <p className="text-lg text-gray-600 dark:text-gray-300 mb-12">
+          ¿Qué deseas hacer?
+        </p>
+
+        <div className="grid md:grid-cols-2 gap-8 mb-8 max-w-2xl mx-auto">
+          {actions.map((action, index) => (
+            <motion.div
+              key={action.id}
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => onActionSelect(action.id)}
+              className="cursor-pointer p-8 bg-white dark:bg-gray-800 rounded-3xl shadow-2xl hover:shadow-purple-500/25 transition-all duration-300"
+            >
+              <div className={`w-16 h-16 rounded-full bg-gradient-to-r ${action.gradient} flex items-center justify-center mx-auto mb-6`}>
+                <action.icon className="w-8 h-8 text-white" />
+              </div>
+              <h3 className="text-xl font-bold text-purple-900 dark:text-purple-100 mb-3">
+                {action.title}
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400 text-sm">
+                {action.description}
+              </p>
+            </motion.div>
+          ))}
+        </div>
+
+        <motion.button
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
+          onClick={onBack}
+          className="text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-200 transition-colors flex items-center justify-center"
+        >
+          <ArrowLeft className="w-5 h-5 mr-2" />
+          Volver a selección de rol
+        </motion.button>
+      </motion.div>
+    </div>
+  );
+};
+
 const PriestActionSelector = ({ onBack, onActionSelect }) => {
   const actions = [
     {
