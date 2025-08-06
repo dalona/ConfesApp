@@ -44,6 +44,12 @@ const AuthProvider = ({ children }) => {
     localStorage.setItem('confes_token', authToken);
   };
 
+  // Function to verify user role and redirect appropriately
+  const verifyUserAccess = (requiredRole) => {
+    if (!user || !user.role) return false;
+    return user.role === requiredRole;
+  };
+
   const logout = () => {
     setUser(null);
     setToken(null);
