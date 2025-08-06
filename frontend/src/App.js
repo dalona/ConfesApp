@@ -2132,8 +2132,21 @@ function App() {
     } else if (role === 'priest') {
       setSelectedRole(role);
       setCurrentView('priest-action-select');
+    } else if (role === 'faithful') {
+      setSelectedRole(role);
+      setCurrentView('faithful-action-select'); // New faithful selector
     } else {
       setSelectedRole(role);
+      setIsLogin(false);
+      setCurrentView('login');
+    }
+  };
+
+  const handleFaithfulActionSelect = (action) => {
+    if (action === 'login') {
+      setIsLogin(true);
+      setCurrentView('login');
+    } else if (action === 'register') {
       setIsLogin(false);
       setCurrentView('login');
     }
@@ -2181,6 +2194,13 @@ function App() {
           onBack={() => setCurrentView('landing')}
         />
       )}
+      {currentView === 'faithful-action-select' && (
+        <FaithfulActionSelector 
+          key="faithful-action-select"
+          onActionSelect={handleFaithfulActionSelect}
+          onBack={() => setCurrentView('role-select')}
+        />
+      )}
       {currentView === 'priest-action-select' && (
         <PriestActionSelector 
           key="priest-action-select"
@@ -2208,12 +2228,20 @@ function App() {
               } else {
                 setCurrentView('priest-registration-type');
               }
+            } else if (selectedRole === 'faithful') {
+              setCurrentView('faithful-action-select');
             } else {
               setCurrentView('role-select');
             }
           }}
           onSuccess={handleLoginSuccess}
-          onSwitchMode={(mode) => setCurrentView('priest-action-select')}
+          onSwitchMode={(mode) => {
+            if (selectedRole === 'priest') {
+              setCurrentView('priest-action-select');
+            } else if (selectedRole === 'faithful') {
+              setCurrentView('faithful-action-select');
+            }
+          }}
         />
       )}
     </AnimatePresence>
