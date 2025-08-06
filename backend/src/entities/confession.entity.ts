@@ -31,6 +31,9 @@ export class Confession {
   scheduledTime: Date;
 
   @Column({ nullable: true })
+  confessionBandId: string;
+
+  @Column({ nullable: true })
   notes: string;
 
   @Column({ nullable: true })
