@@ -82,4 +82,7 @@ export class Parish {
 
   @OneToMany(() => ConfessionSlot, confessionSlot => confessionSlot.parish)
   confessionSlots: ConfessionSlot[];
+
+  @OneToMany(() => ConfessionBand, band => band.parish)
+  confessionBands: ConfessionBand[];
 }
