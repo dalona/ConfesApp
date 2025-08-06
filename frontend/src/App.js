@@ -878,10 +878,13 @@ const Dashboard = () => {
 // Dashboard components would go here...
 
 const PriestDashboard = () => {
-  const [citas, setCitas] = useState([]);
+  const [activeTab, setActiveTab] = useState('calendar'); // 'calendar', 'list', 'stats'
+  const [bands, setBands] = useState([]);
   const [confessions, setConfessions] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [showBandForm, setShowBandForm] = useState(false);
+  const [selectedBand, setSelectedBand] = useState(null);
+  const [isEditMode, setIsEditMode] = useState(false);
   const { token, user } = useAuth();
 
   useEffect(() => {
@@ -890,8 +893,8 @@ const PriestDashboard = () => {
 
   const fetchData = async () => {
     try {
-      const [citasResponse, confessionsResponse] = await Promise.all([
-        axios.get(`${API}/confession-slots`, {
+      const [bandsResponse, confessionsResponse] = await Promise.all([
+        axios.get(`${API}/confession-bands/my-bands`, {
           headers: { Authorization: `Bearer ${token}` }
         }),
         axios.get(`${API}/confessions`, {
@@ -899,7 +902,7 @@ const PriestDashboard = () => {
         })
       ]);
 
-      setCitas(citasResponse.data);
+      setBands(bandsResponse.data);
       setConfessions(confessionsResponse.data);
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -908,21 +911,106 @@ const PriestDashboard = () => {
     }
   };
 
+  const handleCreateBand = (date) => {
+    setSelectedBand({
+      startTime: date || new Date(),
+      endTime: new Date((date || new Date()).getTime() + 60 * 60 * 1000), // +1 hour
+      location: 'Confesionario Principal',
+      notes: '',
+      maxCapacity: 5,
+      isRecurrent: false,
+      recurrenceType: 'weekly',
+      recurrenceDays: [],
+      recurrenceEndDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days later
+    });
+    setIsEditMode(false);
+    setShowBandForm(true);
+  };
+
+  const handleEditBand = (band) => {
+    setSelectedBand(band);
+    setIsEditMode(true);
+    setShowBandForm(true);
+  };
+
+  const handleBandClick = (band) => {
+    // For now, just edit the band when clicked
+    handleEditBand(band);
+  };
+
+  const handleSaveBand = async (bandData) => {
+    try {
+      if (isEditMode && selectedBand?.id) {
+        await axios.patch(`${API}/confession-bands/my-bands/${selectedBand.id}`, bandData, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+      } else {
+        await axios.post(`${API}/confession-bands`, bandData, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+      }
+      
+      fetchData(); // Refresh data
+      setShowBandForm(false);
+      setSelectedBand(null);
+    } catch (error) {
+      console.error('Error saving band:', error);
+      throw error; // Let BandForm handle the error display
+    }
+  };
+
+  const handleDeleteBand = async (bandId) => {
+    if (!window.confirm('¿Estás seguro de que quieres eliminar esta franja? Esta acción no se puede deshacer.')) {
+      return;
+    }
+
+    try {
+      await axios.delete(`${API}/confession-bands/my-bands/${bandId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      fetchData(); // Refresh data
+    } catch (error) {
+      console.error('Error deleting band:', error);
+      alert(error.response?.data?.message || 'Error al eliminar la franja');
+    }
+  };
+
+  const handleChangeStatus = async (bandId, status) => {
+    try {
+      await axios.patch(`${API}/confession-bands/my-bands/${bandId}/status`, { status }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      fetchData(); // Refresh data
+    } catch (error) {
+      console.error('Error changing status:', error);
+      alert(error.response?.data?.message || 'Error al cambiar el estado');
+    }
+  };
+
+  const getBandStats = () => {
+    const stats = {
+      total: bands.length,
+      available: bands.filter(b => b.status === 'available').length,
+      full: bands.filter(b => b.status === 'full').length,
+      cancelled: bands.filter(b => b.status === 'cancelled').length,
+      totalBookings: bands.reduce((sum, b) => sum + (b.currentBookings || 0), 0),
+    };
+    return stats;
+  };
+
   const getStatusColor = (status) => {
     switch (status) {
       case 'available': return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400';
-      case 'booked': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400';
-      case 'completed': return 'bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-400';
-      case 'cancelled': return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400';
-      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400';
+      case 'full': return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400';
+      case 'cancelled': return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400';
+      default: return 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400';
     }
   };
 
   const getStatusText = (status) => {
     switch (status) {
       case 'available': return 'Disponible';
-      case 'booked': return 'Reservada';
-      case 'completed': return 'Completada';
+      case 'full': return 'Llena';
       case 'cancelled': return 'Cancelada';
       default: return status;
     }
@@ -938,197 +1026,20 @@ const PriestDashboard = () => {
     });
   };
 
-  const CreateCitaForm = () => {
-    const [citaData, setCitaData] = useState({
-      startTime: '',
-      endTime: '',
-      location: 'Confesionario Principal',
-      notes: ''
-    });
-    const [submitting, setSubmitting] = useState(false);
-
-    // Generar hora de fin automáticamente (30 min después)
-    const handleStartTimeChange = (startTime) => {
-      setCitaData(prev => {
-        const start = new Date(startTime);
-        const end = new Date(start.getTime() + 30 * 60000); // +30 minutos
-        return {
-          ...prev,
-          startTime,
-          endTime: end.toISOString().slice(0, 16)
-        };
-      });
-    };
-
-    const handleSubmit = async (e) => {
-      e.preventDefault();
-      setSubmitting(true);
-
-      try {
-        await axios.post(`${API}/confession-slots`, citaData, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        
-        setShowCreateForm(false);
-        fetchData();
-        setCitaData({
-          startTime: '',
-          endTime: '',
-          location: 'Confesionario Principal',
-          notes: ''
-        });
-      } catch (error) {
-        console.error('Error creating cita:', error);
-        alert(error.response?.data?.message || 'Error al crear la cita');
-      } finally {
-        setSubmitting(false);
-      }
-    };
-
-    return (
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
-      >
-        <motion.div 
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          className="bg-white dark:bg-gray-800 rounded-3xl p-8 max-w-lg w-full max-h-[90vh] overflow-y-auto"
-        >
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 flex items-center justify-center mr-4">
-                <Calendar className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h3 className="text-2xl font-bold text-purple-900 dark:text-purple-100">
-                  Nueva Cita de Confesión
-                </h3>
-                <p className="text-gray-600 dark:text-gray-400 text-sm">
-                  Configura los detalles de la cita
-                </p>
-              </div>
-            </div>
-          </div>
-          
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <label className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                  <Calendar className="w-4 h-4 mr-2 text-purple-600" />
-                  Fecha y Hora de Inicio *
-                </label>
-                <input
-                  type="datetime-local"
-                  required
-                  value={citaData.startTime}
-                  onChange={(e) => handleStartTimeChange(e.target.value)}
-                  className="w-full px-4 py-3 border-2 border-purple-200 dark:border-purple-700 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all"
-                />
-              </div>
-              
-              <div>
-                <label className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                  <Calendar className="w-4 h-4 mr-2 text-purple-600" />
-                  Fecha y Hora de Fin *
-                </label>
-                <input
-                  type="datetime-local"
-                  required
-                  value={citaData.endTime}
-                  onChange={(e) => setCitaData({...citaData, endTime: e.target.value})}
-                  className="w-full px-4 py-3 border-2 border-purple-200 dark:border-purple-700 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all"
-                />
-              </div>
-            </div>
-            
-            <div>
-              <label className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                <Cross className="w-4 h-4 mr-2 text-purple-600" />
-                Ubicación
-              </label>
-              <select
-                value={citaData.location}
-                onChange={(e) => setCitaData({...citaData, location: e.target.value})}
-                className="w-full px-4 py-3 border-2 border-purple-200 dark:border-purple-700 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all"
-              >
-                <option value="Confesionario Principal">Confesionario Principal</option>
-                <option value="Confesionario Lateral">Confesionario Lateral</option>
-                <option value="Capilla del Santísimo">Capilla del Santísimo</option>
-                <option value="Sacristía">Sacristía</option>
-                <option value="Salón Parroquial">Salón Parroquial</option>
-              </select>
-            </div>
-            
-            <div>
-              <label className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                <User className="w-4 h-4 mr-2 text-purple-600" />
-                Notas Especiales
-              </label>
-              <textarea
-                placeholder="Información adicional para los fieles (opcional)..."
-                value={citaData.notes}
-                onChange={(e) => setCitaData({...citaData, notes: e.target.value})}
-                className="w-full px-4 py-3 border-2 border-purple-200 dark:border-purple-700 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all resize-none"
-                rows="3"
-              />
-            </div>
-            
-            <div className="bg-purple-50 dark:bg-purple-900/20 rounded-xl p-4">
-              <div className="flex items-center text-purple-800 dark:text-purple-300">
-                <Cross className="w-4 h-4 mr-2" />
-                <span className="text-sm font-medium">
-                  Esta cita estará disponible para que los fieles puedan reservarla
-                </span>
-              </div>
-            </div>
-            
-            <div className="flex space-x-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-              <button
-                type="submit"
-                disabled={submitting}
-                className="flex-1 bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-4 rounded-xl font-semibold text-lg hover:from-purple-700 hover:to-indigo-700 transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-              >
-                {submitting ? (
-                  <>
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                    Creando Cita...
-                  </>
-                ) : (
-                  <>
-                    <Calendar className="w-5 h-5 mr-2" />
-                    Crear Cita
-                  </>
-                )}
-              </button>
-              <button
-                type="button"
-                onClick={() => setShowCreateForm(false)}
-                disabled={submitting}
-                className="px-8 py-4 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-xl font-semibold hover:bg-gray-300 dark:hover:bg-gray-500 transition-all"
-              >
-                Cancelar
-              </button>
-            </div>
-          </form>
-        </motion.div>
-      </motion.div>
-    );
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-purple-900 dark:to-blue-900 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-purple-600 mx-auto mb-4"></div>
           <div className="text-xl text-purple-600 dark:text-purple-400 font-medium">
-            Cargando citas...
+            Cargando franjas de confesión...
           </div>
         </div>
       </div>
     );
   }
+
+  const stats = getBandStats();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-purple-900 dark:to-blue-900">
@@ -1145,20 +1056,20 @@ const PriestDashboard = () => {
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-4xl font-bold text-purple-900 dark:text-purple-100 mb-2">
-                  Mis Citas de Confesión
+                  Franjas de Confesión
                 </h1>
                 <p className="text-gray-600 dark:text-gray-400">
-                  Bienvenido, {user?.firstName}. Gestiona tus horarios pastorales
+                  Bienvenido, {user?.firstName}. Gestiona tus horarios de confesión
                 </p>
               </div>
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => setShowCreateForm(true)}
+                onClick={() => handleCreateBand(null)}
                 className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:from-purple-700 hover:to-indigo-700 transition-all shadow-lg hover:shadow-xl flex items-center"
               >
-                <Calendar className="w-5 h-5 mr-2" />
-                + Crear Nueva Cita
+                <Plus className="w-5 h-5 mr-2" />
+                Nueva Franja
               </motion.button>
             </div>
           </motion.div>
@@ -1178,7 +1089,21 @@ const PriestDashboard = () => {
                 <div className="ml-4">
                   <p className="text-sm text-gray-600 dark:text-gray-400">Disponibles</p>
                   <p className="text-2xl font-bold text-green-600 dark:text-green-400">
-                    {citas.filter(c => c.status === 'available').length}
+                    {stats.available}
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-purple-100 dark:border-purple-900">
+              <div className="flex items-center">
+                <div className="p-3 bg-red-100 dark:bg-red-900/20 rounded-xl">
+                  <Users className="w-6 h-6 text-red-600 dark:text-red-400" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Llenas</p>
+                  <p className="text-2xl font-bold text-red-600 dark:text-red-400">
+                    {stats.full}
                   </p>
                 </div>
               </div>
@@ -1190,9 +1115,9 @@ const PriestDashboard = () => {
                   <User className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Reservadas</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Reservas</p>
                   <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                    {citas.filter(c => c.status === 'booked').length}
+                    {stats.totalBookings}
                   </p>
                 </div>
               </div>
@@ -1201,127 +1126,179 @@ const PriestDashboard = () => {
             <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-purple-100 dark:border-purple-900">
               <div className="flex items-center">
                 <div className="p-3 bg-purple-100 dark:bg-purple-900/20 rounded-xl">
-                  <Cross className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Completadas</p>
-                  <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
-                    {citas.filter(c => c.status === 'completed').length}
-                  </p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-purple-100 dark:border-purple-900">
-              <div className="flex items-center">
-                <div className="p-3 bg-yellow-100 dark:bg-yellow-900/20 rounded-xl">
-                  <Calendar className="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
+                  <BarChart3 className="w-6 h-6 text-purple-600 dark:text-purple-400" />
                 </div>
                 <div className="ml-4">
                   <p className="text-sm text-gray-600 dark:text-gray-400">Total</p>
-                  <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
-                    {citas.length}
+                  <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+                    {stats.total}
                   </p>
                 </div>
               </div>
             </div>
           </motion.div>
 
-          {/* Main Card */}
+          {/* Tab Navigation */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl border border-purple-100 dark:border-purple-900 overflow-hidden"
+            className="bg-white dark:bg-gray-800 rounded-2xl p-2 shadow-lg border border-purple-100 dark:border-purple-900 mb-6"
           >
-            <div className="bg-gradient-to-r from-purple-600 to-indigo-600 px-8 py-6">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <Cross className="w-8 h-8 text-white mr-3" />
-                  <div>
-                    <h2 className="text-2xl font-bold text-white">
-                      Próximas Citas
-                    </h2>
-                    <p className="text-purple-100">
-                      Gestiona tu agenda de confesiones
-                    </p>
+            <div className="flex space-x-2">
+              <button
+                onClick={() => setActiveTab('calendar')}
+                className={`flex-1 flex items-center justify-center px-6 py-3 rounded-xl font-semibold transition-all ${
+                  activeTab === 'calendar'
+                    ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg'
+                    : 'text-gray-600 dark:text-gray-400 hover:bg-purple-50 dark:hover:bg-purple-900/20'
+                }`}
+              >
+                <Grid className="w-5 h-5 mr-2" />
+                Vista Calendario
+              </button>
+              <button
+                onClick={() => setActiveTab('list')}
+                className={`flex-1 flex items-center justify-center px-6 py-3 rounded-xl font-semibold transition-all ${
+                  activeTab === 'list'
+                    ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg'
+                    : 'text-gray-600 dark:text-gray-400 hover:bg-purple-50 dark:hover:bg-purple-900/20'
+                }`}
+              >
+                <List className="w-5 h-5 mr-2" />
+                Vista Lista
+              </button>
+            </div>
+          </motion.div>
+
+          {/* Content Area */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6 }}
+          >
+            {activeTab === 'calendar' && (
+              <WeeklyCalendar 
+                bands={bands}
+                onBandClick={handleBandClick}
+                onCreateBand={handleCreateBand}
+              />
+            )}
+
+            {activeTab === 'list' && (
+              <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl border border-purple-100 dark:border-purple-900 overflow-hidden">
+                <div className="bg-gradient-to-r from-purple-600 to-indigo-600 px-8 py-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <List className="w-8 h-8 text-white mr-3" />
+                      <div>
+                        <h2 className="text-2xl font-bold text-white">
+                          Lista de Franjas
+                        </h2>
+                        <p className="text-purple-100">
+                          Gestiona todas tus franjas de confesión
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div className="text-right">
-                  <div className="text-3xl font-bold text-white">
-                    {citas.filter(c => new Date(c.startTime) > new Date()).length}
-                  </div>
-                  <div className="text-purple-100 text-sm">
-                    Próximas
-                  </div>
+                
+                <div className="p-8">
+                  {bands.length === 0 ? (
+                    <div className="text-center py-12">
+                      <Calendar className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                      <h3 className="text-xl font-semibold text-gray-600 dark:text-gray-400 mb-2">
+                        No tienes franjas programadas
+                      </h3>
+                      <p className="text-gray-500 dark:text-gray-500 mb-6">
+                        Crea tu primera franja de confesión para comenzar
+                      </p>
+                      <button
+                        onClick={() => handleCreateBand(null)}
+                        className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-purple-700 hover:to-indigo-700 transition-all"
+                      >
+                        + Nueva Franja
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {bands
+                        .sort((a, b) => new Date(a.startTime) - new Date(b.startTime))
+                        .map((band, index) => (
+                          <motion.div
+                            key={band.id}
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: index * 0.1 }}
+                            className="flex items-center justify-between p-6 border border-gray-200 dark:border-gray-700 rounded-xl hover:shadow-lg transition-all hover:border-purple-300 dark:hover:border-purple-600"
+                          >
+                            <div className="flex items-center space-x-4">
+                              <div className="p-3 bg-purple-100 dark:bg-purple-900/20 rounded-xl">
+                                <Calendar className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                              </div>
+                              <div>
+                                <div className="font-semibold text-gray-900 dark:text-gray-100">
+                                  {formatDateTime(band.startTime)} - {new Date(band.endTime).toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit'})}
+                                </div>
+                                <div className="text-gray-600 dark:text-gray-400 text-sm flex items-center mt-1">
+                                  <Cross className="w-3 h-3 mr-1" />
+                                  {band.location}
+                                  <span className="mx-2">•</span>
+                                  <Users className="w-3 h-3 mr-1" />
+                                  {band.currentBookings || 0}/{band.maxCapacity}
+                                  {band.notes && (
+                                    <>
+                                      <span className="mx-2">•</span>
+                                      {band.notes.substring(0, 50)}...
+                                    </>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                            <div className="flex items-center space-x-3">
+                              <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(band.status)}`}>
+                                {getStatusText(band.status)}
+                              </span>
+                              <div className="flex space-x-1">
+                                <button
+                                  onClick={() => handleEditBand(band)}
+                                  className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+                                  title="Editar franja"
+                                >
+                                  <Edit className="w-4 h-4" />
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteBand(band.id)}
+                                  className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                                  title="Eliminar franja"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </div>
+                          </motion.div>
+                        ))}
+                    </div>
+                  )}
                 </div>
               </div>
-            </div>
-            
-            <div className="p-8">
-              {citas.length === 0 ? (
-                <div className="text-center py-12">
-                  <Calendar className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-xl font-semibold text-gray-600 dark:text-gray-400 mb-2">
-                    No tienes citas programadas
-                  </h3>
-                  <p className="text-gray-500 dark:text-gray-500 mb-6">
-                    Crea tu primera cita de confesión para comenzar
-                  </p>
-                  <button
-                    onClick={() => setShowCreateForm(true)}
-                    className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-purple-700 hover:to-indigo-700 transition-all"
-                  >
-                    + Crear Nueva Cita
-                  </button>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {citas
-                    .sort((a, b) => new Date(a.startTime) - new Date(b.startTime))
-                    .map((cita, index) => (
-                      <motion.div
-                        key={cita.id}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: index * 0.1 }}
-                        className="flex items-center justify-between p-6 border border-gray-200 dark:border-gray-700 rounded-xl hover:shadow-lg transition-all hover:border-purple-300 dark:hover:border-purple-600"
-                      >
-                        <div className="flex items-center space-x-4">
-                          <div className="p-3 bg-purple-100 dark:bg-purple-900/20 rounded-xl">
-                            <Cross className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                          </div>
-                          <div>
-                            <div className="font-semibold text-gray-900 dark:text-gray-100">
-                              {formatDateTime(cita.startTime)} - {new Date(cita.endTime).toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit'})}
-                            </div>
-                            <div className="text-gray-600 dark:text-gray-400 text-sm flex items-center mt-1">
-                              <Cross className="w-3 h-3 mr-1" />
-                              {cita.location}
-                              {cita.notes && (
-                                <>
-                                  <span className="mx-2">•</span>
-                                  {cita.notes}
-                                </>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex items-center space-x-3">
-                          <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(cita.status)}`}>
-                            {getStatusText(cita.status)}
-                          </span>
-                        </div>
-                      </motion.div>
-                    ))}
-                </div>
-              )}
-            </div>
+            )}
           </motion.div>
         </div>
       </div>
 
-      {showCreateForm && <CreateCitaForm />}
+      {/* Band Form Modal */}
+      <BandForm 
+        isOpen={showBandForm}
+        onClose={() => {
+          setShowBandForm(false);
+          setSelectedBand(null);
+          setIsEditMode(false);
+        }}
+        onSave={handleSaveBand}
+        initialData={selectedBand}
+        isEdit={isEditMode}
+      />
     </div>
   );
 };
