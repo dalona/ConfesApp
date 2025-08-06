@@ -874,12 +874,11 @@ const Dashboard = () => {
 // Dashboard components would go here...
 
 const PriestDashboard = () => {
-  const [activeTab, setActiveTab] = useState('slots');
-  const [confessionSlots, setConfessionSlots] = useState([]);
+  const [citas, setCitas] = useState([]);
   const [confessions, setConfessions] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showCreateSlot, setShowCreateSlot] = useState(false);
-  const { token } = useAuth();
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const { token, user } = useAuth();
 
   useEffect(() => {
     fetchData();
@@ -887,7 +886,7 @@ const PriestDashboard = () => {
 
   const fetchData = async () => {
     try {
-      const [slotsResponse, confessionsResponse] = await Promise.all([
+      const [citasResponse, confessionsResponse] = await Promise.all([
         axios.get(`${API}/confession-slots`, {
           headers: { Authorization: `Bearer ${token}` }
         }),
@@ -896,7 +895,7 @@ const PriestDashboard = () => {
         })
       ]);
 
-      setConfessionSlots(slotsResponse.data);
+      setCitas(citasResponse.data);
       setConfessions(confessionsResponse.data);
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -905,116 +904,226 @@ const PriestDashboard = () => {
     }
   };
 
-  const CreateSlotForm = () => {
-    const [slotData, setSlotData] = useState({
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'available': return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400';
+      case 'booked': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400';
+      case 'completed': return 'bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-400';
+      case 'cancelled': return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400';
+      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400';
+    }
+  };
+
+  const getStatusText = (status) => {
+    switch (status) {
+      case 'available': return 'Disponible';
+      case 'booked': return 'Reservada';
+      case 'completed': return 'Completada';
+      case 'cancelled': return 'Cancelada';
+      default: return status;
+    }
+  };
+
+  const formatDateTime = (dateTime) => {
+    return new Date(dateTime).toLocaleString('es-ES', {
+      weekday: 'short',
+      day: 'numeric',
+      month: 'short',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  const CreateCitaForm = () => {
+    const [citaData, setCitaData] = useState({
       startTime: '',
       endTime: '',
-      location: '',
+      location: 'Confesionario Principal',
       notes: ''
     });
+    const [submitting, setSubmitting] = useState(false);
+
+    // Generar hora de fin automáticamente (30 min después)
+    const handleStartTimeChange = (startTime) => {
+      setCitaData(prev => {
+        const start = new Date(startTime);
+        const end = new Date(start.getTime() + 30 * 60000); // +30 minutos
+        return {
+          ...prev,
+          startTime,
+          endTime: end.toISOString().slice(0, 16)
+        };
+      });
+    };
 
     const handleSubmit = async (e) => {
       e.preventDefault();
+      setSubmitting(true);
+
       try {
-        await axios.post(`${API}/confession-slots`, slotData, {
+        await axios.post(`${API}/confession-slots`, citaData, {
           headers: { Authorization: `Bearer ${token}` }
         });
-        setShowCreateSlot(false);
+        
+        setShowCreateForm(false);
         fetchData();
+        setCitaData({
+          startTime: '',
+          endTime: '',
+          location: 'Confesionario Principal',
+          notes: ''
+        });
       } catch (error) {
-        console.error('Error creating slot:', error);
+        console.error('Error creating cita:', error);
+        alert(error.response?.data?.message || 'Error al crear la cita');
+      } finally {
+        setSubmitting(false);
       }
     };
 
     return (
       <motion.div 
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
         className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
       >
-        <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 max-w-md w-full">
-          <h3 className="text-2xl font-bold text-purple-900 dark:text-purple-100 mb-6">
-            Crear Nuevo Slot de Confesión
-          </h3>
+        <motion.div 
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          className="bg-white dark:bg-gray-800 rounded-3xl p-8 max-w-lg w-full max-h-[90vh] overflow-y-auto"
+        >
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center">
+              <div className="w-12 h-12 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 flex items-center justify-center mr-4">
+                <Calendar className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h3 className="text-2xl font-bold text-purple-900 dark:text-purple-100">
+                  Nueva Cita de Confesión
+                </h3>
+                <p className="text-gray-600 dark:text-gray-400 text-sm">
+                  Configura los detalles de la cita
+                </p>
+              </div>
+            </div>
+          </div>
           
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Inicio
-              </label>
-              <input
-                type="datetime-local"
-                required
-                value={slotData.startTime}
-                onChange={(e) => setSlotData({...slotData, startTime: e.target.value})}
-                className="w-full px-4 py-3 border border-purple-200 dark:border-purple-700 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-              />
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid md:grid-cols-2 gap-4">
+              <div>
+                <label className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  <Calendar className="w-4 h-4 mr-2 text-purple-600" />
+                  Fecha y Hora de Inicio *
+                </label>
+                <input
+                  type="datetime-local"
+                  required
+                  value={citaData.startTime}
+                  onChange={(e) => handleStartTimeChange(e.target.value)}
+                  className="w-full px-4 py-3 border-2 border-purple-200 dark:border-purple-700 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all"
+                />
+              </div>
+              
+              <div>
+                <label className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  <Calendar className="w-4 h-4 mr-2 text-purple-600" />
+                  Fecha y Hora de Fin *
+                </label>
+                <input
+                  type="datetime-local"
+                  required
+                  value={citaData.endTime}
+                  onChange={(e) => setCitaData({...citaData, endTime: e.target.value})}
+                  className="w-full px-4 py-3 border-2 border-purple-200 dark:border-purple-700 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all"
+                />
+              </div>
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Fin
-              </label>
-              <input
-                type="datetime-local"
-                required
-                value={slotData.endTime}
-                onChange={(e) => setSlotData({...slotData, endTime: e.target.value})}
-                className="w-full px-4 py-3 border border-purple-200 dark:border-purple-700 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                <Cross className="w-4 h-4 mr-2 text-purple-600" />
                 Ubicación
               </label>
-              <input
-                type="text"
-                placeholder="Ej: Confesionario Principal"
-                value={slotData.location}
-                onChange={(e) => setSlotData({...slotData, location: e.target.value})}
-                className="w-full px-4 py-3 border border-purple-200 dark:border-purple-700 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-              />
+              <select
+                value={citaData.location}
+                onChange={(e) => setCitaData({...citaData, location: e.target.value})}
+                className="w-full px-4 py-3 border-2 border-purple-200 dark:border-purple-700 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all"
+              >
+                <option value="Confesionario Principal">Confesionario Principal</option>
+                <option value="Confesionario Lateral">Confesionario Lateral</option>
+                <option value="Capilla del Santísimo">Capilla del Santísimo</option>
+                <option value="Sacristía">Sacristía</option>
+                <option value="Salón Parroquial">Salón Parroquial</option>
+              </select>
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Notas
+              <label className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                <User className="w-4 h-4 mr-2 text-purple-600" />
+                Notas Especiales
               </label>
               <textarea
-                placeholder="Información adicional..."
-                value={slotData.notes}
-                onChange={(e) => setSlotData({...slotData, notes: e.target.value})}
-                className="w-full px-4 py-3 border border-purple-200 dark:border-purple-700 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                placeholder="Información adicional para los fieles (opcional)..."
+                value={citaData.notes}
+                onChange={(e) => setCitaData({...citaData, notes: e.target.value})}
+                className="w-full px-4 py-3 border-2 border-purple-200 dark:border-purple-700 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all resize-none"
                 rows="3"
               />
             </div>
             
-            <div className="flex space-x-4 pt-4">
+            <div className="bg-purple-50 dark:bg-purple-900/20 rounded-xl p-4">
+              <div className="flex items-center text-purple-800 dark:text-purple-300">
+                <Cross className="w-4 h-4 mr-2" />
+                <span className="text-sm font-medium">
+                  Esta cita estará disponible para que los fieles puedan reservarla
+                </span>
+              </div>
+            </div>
+            
+            <div className="flex space-x-4 pt-4 border-t border-gray-200 dark:border-gray-700">
               <button
                 type="submit"
-                className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 rounded-xl font-semibold hover:from-purple-700 hover:to-blue-700 transition-all"
+                disabled={submitting}
+                className="flex-1 bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-4 rounded-xl font-semibold text-lg hover:from-purple-700 hover:to-indigo-700 transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
               >
-                Crear Slot
+                {submitting ? (
+                  <>
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                    Creando Cita...
+                  </>
+                ) : (
+                  <>
+                    <Calendar className="w-5 h-5 mr-2" />
+                    Crear Cita
+                  </>
+                )}
               </button>
               <button
                 type="button"
-                onClick={() => setShowCreateSlot(false)}
-                className="flex-1 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-300 py-3 rounded-xl font-semibold hover:bg-gray-400 dark:hover:bg-gray-500 transition-all"
+                onClick={() => setShowCreateForm(false)}
+                disabled={submitting}
+                className="px-8 py-4 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-xl font-semibold hover:bg-gray-300 dark:hover:bg-gray-500 transition-all"
               >
                 Cancelar
               </button>
             </div>
           </form>
-        </div>
+        </motion.div>
       </motion.div>
     );
   };
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">
-      <div className="text-xl text-purple-600">Cargando...</div>
-    </div>;
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-purple-900 dark:to-blue-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-purple-600 mx-auto mb-4"></div>
+          <div className="text-xl text-purple-600 dark:text-purple-400 font-medium">
+            Cargando citas...
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -1023,35 +1132,192 @@ const PriestDashboard = () => {
       
       <div className="pt-24 px-4">
         <div className="max-w-7xl mx-auto">
-          <div className="mb-8">
-            <h1 className="text-4xl font-bold text-purple-900 dark:text-purple-100 mb-2">
-              Dashboard del Sacerdote
-            </h1>
-            <p className="text-gray-600 dark:text-gray-400">
-              Gestiona tus horarios de confesión
-            </p>
-          </div>
+          {/* Header */}
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-8"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-4xl font-bold text-purple-900 dark:text-purple-100 mb-2">
+                  Mis Citas de Confesión
+                </h1>
+                <p className="text-gray-600 dark:text-gray-400">
+                  Bienvenido, {user?.firstName}. Gestiona tus horarios pastorales
+                </p>
+              </div>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setShowCreateForm(true)}
+                className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:from-purple-700 hover:to-indigo-700 transition-all shadow-lg hover:shadow-xl flex items-center"
+              >
+                <Calendar className="w-5 h-5 mr-2" />
+                + Crear Nueva Cita
+              </motion.button>
+            </div>
+          </motion.div>
 
-          {/* Simple content for now */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-lg text-center">
-            <Cross className="w-16 h-16 text-purple-600 mx-auto mb-4" />
-            <h3 className="text-2xl font-bold text-purple-900 dark:text-purple-100 mb-4">
-              Dashboard del Sacerdote
-            </h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">
-              Gestiona tus horarios de confesión con facilidad
-            </p>
-            <button
-              onClick={() => setShowCreateSlot(true)}
-              className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-purple-700 hover:to-blue-700 transition-all"
-            >
-              + Crear Nuevo Slot
-            </button>
-          </div>
+          {/* Stats Cards */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="grid md:grid-cols-4 gap-6 mb-8"
+          >
+            <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-purple-100 dark:border-purple-900">
+              <div className="flex items-center">
+                <div className="p-3 bg-green-100 dark:bg-green-900/20 rounded-xl">
+                  <Calendar className="w-6 h-6 text-green-600 dark:text-green-400" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Disponibles</p>
+                  <p className="text-2xl font-bold text-green-600 dark:text-green-400">
+                    {citas.filter(c => c.status === 'available').length}
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-purple-100 dark:border-purple-900">
+              <div className="flex items-center">
+                <div className="p-3 bg-blue-100 dark:bg-blue-900/20 rounded-xl">
+                  <User className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Reservadas</p>
+                  <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                    {citas.filter(c => c.status === 'booked').length}
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-purple-100 dark:border-purple-900">
+              <div className="flex items-center">
+                <div className="p-3 bg-purple-100 dark:bg-purple-900/20 rounded-xl">
+                  <Cross className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Completadas</p>
+                  <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+                    {citas.filter(c => c.status === 'completed').length}
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-purple-100 dark:border-purple-900">
+              <div className="flex items-center">
+                <div className="p-3 bg-yellow-100 dark:bg-yellow-900/20 rounded-xl">
+                  <Calendar className="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Total</p>
+                  <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
+                    {citas.length}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Main Card */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl border border-purple-100 dark:border-purple-900 overflow-hidden"
+          >
+            <div className="bg-gradient-to-r from-purple-600 to-indigo-600 px-8 py-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <Cross className="w-8 h-8 text-white mr-3" />
+                  <div>
+                    <h2 className="text-2xl font-bold text-white">
+                      Próximas Citas
+                    </h2>
+                    <p className="text-purple-100">
+                      Gestiona tu agenda de confesiones
+                    </p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-3xl font-bold text-white">
+                    {citas.filter(c => new Date(c.startTime) > new Date()).length}
+                  </div>
+                  <div className="text-purple-100 text-sm">
+                    Próximas
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="p-8">
+              {citas.length === 0 ? (
+                <div className="text-center py-12">
+                  <Calendar className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                  <h3 className="text-xl font-semibold text-gray-600 dark:text-gray-400 mb-2">
+                    No tienes citas programadas
+                  </h3>
+                  <p className="text-gray-500 dark:text-gray-500 mb-6">
+                    Crea tu primera cita de confesión para comenzar
+                  </p>
+                  <button
+                    onClick={() => setShowCreateForm(true)}
+                    className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-purple-700 hover:to-indigo-700 transition-all"
+                  >
+                    + Crear Nueva Cita
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {citas
+                    .sort((a, b) => new Date(a.startTime) - new Date(b.startTime))
+                    .map((cita, index) => (
+                      <motion.div
+                        key={cita.id}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                        className="flex items-center justify-between p-6 border border-gray-200 dark:border-gray-700 rounded-xl hover:shadow-lg transition-all hover:border-purple-300 dark:hover:border-purple-600"
+                      >
+                        <div className="flex items-center space-x-4">
+                          <div className="p-3 bg-purple-100 dark:bg-purple-900/20 rounded-xl">
+                            <Cross className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                          </div>
+                          <div>
+                            <div className="font-semibold text-gray-900 dark:text-gray-100">
+                              {formatDateTime(cita.startTime)} - {new Date(cita.endTime).toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit'})}
+                            </div>
+                            <div className="text-gray-600 dark:text-gray-400 text-sm flex items-center mt-1">
+                              <Cross className="w-3 h-3 mr-1" />
+                              {cita.location}
+                              {cita.notes && (
+                                <>
+                                  <span className="mx-2">•</span>
+                                  {cita.notes}
+                                </>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-3">
+                          <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(cita.status)}`}>
+                            {getStatusText(cita.status)}
+                          </span>
+                        </div>
+                      </motion.div>
+                    ))}
+                </div>
+              )}
+            </div>
+          </motion.div>
         </div>
       </div>
 
-      {showCreateSlot && <CreateSlotForm />}
+      {showCreateForm && <CreateCitaForm />}
     </div>
   );
 };
