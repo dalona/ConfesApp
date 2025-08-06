@@ -4,7 +4,11 @@ import axios from 'axios';
 import './App.css';
 
 // Icons
-import { Cross, Calendar, Users, Moon, Sun, User, LogOut, Mail, FileText, ArrowLeft } from 'lucide-react';
+import { Cross, Calendar, Users, Moon, Sun, User, LogOut, Mail, FileText, ArrowLeft, Grid, List, Plus, Edit, Trash2, BarChart3 } from 'lucide-react';
+
+// Import components
+import WeeklyCalendar from './WeeklyCalendar';
+import BandForm from './BandForm';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
