@@ -1781,6 +1781,17 @@ const FaithfulDashboard = () => {
   );
 };
 
+// Helper function to get role display names
+const getRoleDisplayName = (role) => {
+  switch(role) {
+    case 'priest': return 'Sacerdote';
+    case 'faithful': return 'Fiel';
+    case 'parish_coordinator': return 'Coordinador Parroquial';
+    case 'bishop': return 'Obispo';
+    default: return role || 'Desconocido';
+  }
+};
+
 const UnauthorizedAccess = ({ userRole, onGoToDashboard }) => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-50 via-pink-50 to-purple-50 dark:from-gray-900 dark:via-red-900 dark:to-purple-900 flex items-center justify-center px-4">
