@@ -871,16 +871,6 @@ const LoginForm = ({ role, isLogin: isLoginMode, priestRegistrationType, onBack,
   );
 };
 
-const Dashboard = () => {
-  const { user } = useAuth();
-  
-  if (user.role === 'priest') {
-    return <PriestDashboard />;
-  } else {
-    return <FaithfulDashboard />;
-  }
-};
-
 // Dashboard components would go here...
 
 const PriestDashboard = () => {
