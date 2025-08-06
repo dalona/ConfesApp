@@ -1498,8 +1498,32 @@ const PriestDashboard = () => {
               {/* Submit Buttons */}
               <div className="flex space-x-4 pt-4 border-t border-gray-200 dark:border-gray-700">
                 <button
-                  type="button"
-                  onClick={() => alert('¡Funcionalidad en desarrollo! El formulario funciona correctamente.')}
+                  type="submit"
+                  onClick={async (e) => {
+                    e.preventDefault();
+                    
+                    // Collect form data
+                    const form = e.target.closest('form');
+                    const formData = new FormData(form);
+                    
+                    const bandData = {
+                      startTime: formData.get('startTime') || new Date(Date.now() + 24*60*60*1000).toISOString().slice(0, 16).replace('T', ' ') + ':00',
+                      endTime: formData.get('endTime') || new Date(Date.now() + 25*60*60*1000).toISOString().slice(0, 16).replace('T', ' ') + ':00',
+                      location: formData.get('location') || 'Confesionario Principal',
+                      maxCapacity: parseInt(formData.get('maxCapacity') || '5'),
+                      notes: formData.get('notes') || '',
+                      isRecurrent: formData.get('recurrent') === 'on',
+                      recurrenceType: formData.get('recurrenceType') || 'weekly',
+                      recurrenceDays: formData.get('recurrent') === 'on' ? [1, 3, 5] : [], // Mock data for now
+                      recurrenceEndDate: formData.get('recurrenceEndDate') || null
+                    };
+
+                    try {
+                      await handleSaveBand(bandData);
+                    } catch (error) {
+                      console.error('Error creating band:', error);
+                    }
+                  }}
                   className="flex-1 bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-4 rounded-xl font-semibold text-lg hover:from-purple-700 hover:to-indigo-700 transition-all shadow-lg hover:shadow-xl flex items-center justify-center"
                 >
                   <Plus className="w-5 h-5 mr-2" />
