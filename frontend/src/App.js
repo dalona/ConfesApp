@@ -1336,17 +1336,59 @@ const PriestDashboard = () => {
       </div>
 
       {/* Band Form Modal */}
-      <BandForm 
-        isOpen={showBandForm}
-        onClose={() => {
-          setShowBandForm(false);
-          setSelectedBand(null);
-          setIsEditMode(false);
-        }}
-        onSave={handleSaveBand}
-        initialData={selectedBand}
-        isEdit={isEditMode}
-      />
+      {showBandForm && (
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
+          onClick={(e) => e.target === e.currentTarget && setShowBandForm(false)}
+        >
+          <motion.div 
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.8, opacity: 0 }}
+            className="bg-white dark:bg-gray-800 rounded-3xl p-8 max-w-lg w-full max-h-[90vh] overflow-y-auto"
+          >
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 flex items-center justify-center mr-4">
+                  <Calendar className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold text-purple-900 dark:text-purple-100">
+                    {isEditMode ? 'Editar Franja' : 'Nueva Franja de Confesión'}
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm">
+                    Configura los detalles de tu franja
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowBandForm(false)}
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-colors"
+              >
+                <Cross className="w-6 h-6 text-gray-500" />
+              </button>
+            </div>
+            
+            <div className="text-center py-8">
+              <p className="text-lg text-gray-600 dark:text-gray-400 mb-4">
+                ¡Modal funcionando! 🎉
+              </p>
+              <p className="text-sm text-gray-500 dark:text-gray-500 mb-6">
+                La ventana modal se abre correctamente. Próximamente integraremos el formulario completo.
+              </p>
+              <button
+                onClick={() => setShowBandForm(false)}
+                className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-purple-700 hover:to-indigo-700 transition-all"
+              >
+                Cerrar
+              </button>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
     </div>
   );
 };
