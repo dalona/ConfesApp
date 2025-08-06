@@ -896,16 +896,41 @@ const PriestDashboard = () => {
       const [bandsResponse, confessionsResponse] = await Promise.all([
         axios.get(`${API}/confession-bands/my-bands`, {
           headers: { Authorization: `Bearer ${token}` }
+        }).catch(error => {
+          console.error('Error fetching bands:', error);
+          if (error.response?.status === 401) {
+            // Token expired or invalid
+            console.log('Authentication error, token may be invalid');
+          }
+          throw error;
         }),
         axios.get(`${API}/confessions`, {
           headers: { Authorization: `Bearer ${token}` }
+        }).catch(error => {
+          console.error('Error fetching confessions:', error);
+          // Don't fail completely if confessions fail, just return empty array
+          return { data: [] };
         })
       ]);
 
-      setBands(bandsResponse.data);
-      setConfessions(confessionsResponse.data);
+      console.log('Bands fetched:', bandsResponse.data);
+      console.log('Confessions fetched:', confessionsResponse.data);
+
+      setBands(Array.isArray(bandsResponse.data) ? bandsResponse.data : []);
+      setConfessions(Array.isArray(confessionsResponse.data) ? confessionsResponse.data : []);
     } catch (error) {
       console.error('Error fetching data:', error);
+      
+      // Set empty data to prevent render errors
+      setBands([]);
+      setConfessions([]);
+      
+      // Show user-friendly error
+      if (error.response?.status === 401) {
+        alert('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
+      } else {
+        alert('Error al cargar los datos. Por favor, recarga la página.');
+      }
     } finally {
       setLoading(false);
     }
