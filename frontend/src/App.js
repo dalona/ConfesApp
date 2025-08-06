@@ -1366,9 +1366,16 @@ const FaithfulDashboard = () => {
   };
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">
-      <div className="text-xl text-purple-600">Cargando...</div>
-    </div>;
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-purple-900 dark:to-blue-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-purple-600 mx-auto mb-4"></div>
+          <div className="text-xl text-purple-600 dark:text-purple-400 font-medium">
+            Cargando citas...
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -1377,29 +1384,196 @@ const FaithfulDashboard = () => {
       
       <div className="pt-24 px-4">
         <div className="max-w-7xl mx-auto">
+          {/* Header */}
           <div className="mb-8">
             <h1 className="text-4xl font-bold text-purple-900 dark:text-purple-100 mb-2">
-              Mi Dashboard
+              Mis Citas de Confesión
             </h1>
             <p className="text-gray-600 dark:text-gray-400">
-              Reserva y gestiona tus confesiones
+              Reserva y gestiona tus citas espirituales
             </p>
           </div>
 
-          {/* Simple content for now */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-lg text-center">
-            <User className="w-16 h-16 text-purple-600 mx-auto mb-4" />
-            <h3 className="text-2xl font-bold text-purple-900 dark:text-purple-100 mb-4">
-              Dashboard del Fiel
-            </h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">
-              Encuentra y reserva tu confesión de manera sencilla
-            </p>
-            <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4">
-              <p className="text-green-800 dark:text-green-200 text-sm">
-                ✅ <strong>Funcional:</strong> Sistema completo de reserva de confesiones ya está operativo.
-                Puedes crear una cuenta como sacerdote para generar horarios disponibles.
-              </p>
+          {/* Stats */}
+          <div className="grid md:grid-cols-2 gap-6 mb-8">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-purple-100 dark:border-purple-900">
+              <div className="flex items-center">
+                <div className="p-3 bg-green-100 dark:bg-green-900/20 rounded-xl">
+                  <Calendar className="w-6 h-6 text-green-600 dark:text-green-400" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Citas Disponibles</p>
+                  <p className="text-2xl font-bold text-green-600 dark:text-green-400">
+                    {citasDisponibles.length}
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-purple-100 dark:border-purple-900">
+              <div className="flex items-center">
+                <div className="p-3 bg-purple-100 dark:bg-purple-900/20 rounded-xl">
+                  <User className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Mis Reservas</p>
+                  <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+                    {misConfesiones.length}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Available Appointments */}
+          <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl border border-purple-100 dark:border-purple-900 overflow-hidden mb-8">
+            <div className="bg-gradient-to-r from-green-600 to-emerald-600 px-8 py-6">
+              <div className="flex items-center">
+                <Calendar className="w-8 h-8 text-white mr-3" />
+                <div>
+                  <h2 className="text-2xl font-bold text-white">
+                    Citas Disponibles
+                  </h2>
+                  <p className="text-green-100">
+                    Selecciona una cita para reservar
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="p-8">
+              {citasDisponibles.length === 0 ? (
+                <div className="text-center py-12">
+                  <Calendar className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                  <h3 className="text-xl font-semibold text-gray-600 dark:text-gray-400 mb-2">
+                    No hay citas disponibles
+                  </h3>
+                  <p className="text-gray-500 dark:text-gray-500">
+                    Los sacerdotes aún no han publicado citas disponibles
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {citasDisponibles.map((cita, index) => (
+                    <motion.div
+                      key={cita.id}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                      className="flex items-center justify-between p-6 border border-gray-200 dark:border-gray-700 rounded-xl hover:shadow-lg transition-all hover:border-green-300 dark:hover:border-green-600"
+                    >
+                      <div className="flex items-center space-x-4">
+                        <div className="p-3 bg-green-100 dark:bg-green-900/20 rounded-xl">
+                          <Cross className="w-5 h-5 text-green-600 dark:text-green-400" />
+                        </div>
+                        <div>
+                          <div className="font-semibold text-gray-900 dark:text-gray-100">
+                            {new Date(cita.startTime).toLocaleDateString('es-ES', {
+                              weekday: 'long',
+                              day: 'numeric',
+                              month: 'long'
+                            })}
+                          </div>
+                          <div className="text-gray-600 dark:text-gray-400 text-sm flex items-center mt-1">
+                            <Calendar className="w-3 h-3 mr-1" />
+                            {new Date(cita.startTime).toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit'})} - 
+                            {new Date(cita.endTime).toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit'})}
+                            <span className="mx-2">•</span>
+                            <Cross className="w-3 h-3 mr-1" />
+                            {cita.location}
+                          </div>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => bookConfession(cita.id)}
+                        className="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-green-700 hover:to-emerald-700 transition-all shadow-lg hover:shadow-xl"
+                      >
+                        Reservar Cita
+                      </button>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* My Confessions */}
+          <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl border border-purple-100 dark:border-purple-900 overflow-hidden">
+            <div className="bg-gradient-to-r from-purple-600 to-indigo-600 px-8 py-6">
+              <div className="flex items-center">
+                <User className="w-8 h-8 text-white mr-3" />
+                <div>
+                  <h2 className="text-2xl font-bold text-white">
+                    Mis Confesiones
+                  </h2>
+                  <p className="text-purple-100">
+                    Historial de citas reservadas
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="p-8">
+              {misConfesiones.length === 0 ? (
+                <div className="text-center py-12">
+                  <User className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                  <h3 className="text-xl font-semibold text-gray-600 dark:text-gray-400 mb-2">
+                    No tienes citas reservadas
+                  </h3>
+                  <p className="text-gray-500 dark:text-gray-500">
+                    Reserva tu primera cita de confesión arriba
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {misConfesiones.map((confesion, index) => {
+                    const cita = confesion.confessionSlot;
+                    return (
+                      <motion.div
+                        key={confesion.id}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                        className="flex items-center justify-between p-6 border border-gray-200 dark:border-gray-700 rounded-xl"
+                      >
+                        <div className="flex items-center space-x-4">
+                          <div className="p-3 bg-purple-100 dark:bg-purple-900/20 rounded-xl">
+                            <Cross className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                          </div>
+                          <div>
+                            <div className="font-semibold text-gray-900 dark:text-gray-100">
+                              {new Date(cita.startTime).toLocaleDateString('es-ES', {
+                                weekday: 'long',
+                                day: 'numeric',
+                                month: 'long'
+                              })}
+                            </div>
+                            <div className="text-gray-600 dark:text-gray-400 text-sm flex items-center mt-1">
+                              <Calendar className="w-3 h-3 mr-1" />
+                              {new Date(cita.startTime).toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit'})} - 
+                              {new Date(cita.endTime).toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit'})}
+                              <span className="mx-2">•</span>
+                              <Cross className="w-3 h-3 mr-1" />
+                              {cita.location}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-3">
+                          <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                            confesion.status === 'booked' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400' :
+                            confesion.status === 'completed' ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400' :
+                            'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400'
+                          }`}>
+                            {confesion.status === 'booked' ? 'Reservada' :
+                             confesion.status === 'completed' ? 'Completada' :
+                             confesion.status}
+                          </span>
+                        </div>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </div>
         </div>
