@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { User } from './user.entity';
 import { ConfessionSlot } from './confession-slot.entity';
+import { ConfessionBand } from './confession-band.entity';
 
 export enum ConfessionStatus {
   BOOKED = 'booked',
