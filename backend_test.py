@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 import uuid
 
 # Configuration
-BASE_URL = "https://33b12723-aeaa-4cc2-9720-af825e7904e6.preview.emergentagent.com/api"
+BASE_URL = "https://db0ecca9-01ac-4977-a863-0e43116bf180.preview.emergentagent.com/api"
 HEADERS = {"Content-Type": "application/json"}
 
 class ConfesAppTester:

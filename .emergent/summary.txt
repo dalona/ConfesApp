@@ -1,72 +1,127 @@
 <analysis>
-The AI engineer successfully initiated ConfesApp, a web application for Catholics to book confessions. The initial challenge involved switching the technology stack from FastAPI/MongoDB to NestJS/TypeORM/PostgreSQL (Supabase). Despite connectivity issues with Supabase, a fallback to SQLite was implemented to demonstrate functionality. The core MVP, including basic roles (Fiel, Sacerdote), confession slot creation, and booking, was successfully delivered and tested. Subsequently, the full ecclesiastical hierarchy (Obispo, Diócesis, Parroquias, Coordinador Parroquial, Administrador Diocesano) was incorporated into both backend and frontend. Authentication was enhanced with detailed error handling. The Made with Emergent watermark was removed from the frontend. The current focus is on implementing a two-way priest registration system: via bishop invitation and direct priest application, with the backend  entity and module being the immediate next step.
+The AI engineer successfully transitioned ConfesApp from MVP to a more robust application, navigating several technical challenges. Initially, the core ConfesApp was built with NestJS/TypeORM/SQLite (after Supabase connectivity issues) for a basic Fiel/Sacerdote role system. The engineer then implemented the full ecclesiastical hierarchy and enhanced authentication. A major focus was the Priest Registration feature, encompassing bishop invitations and direct applications. A significant hurdle was resolving a supervisor configuration error causing the NestJS backend to run with uvicorn, which was debugged and fixed with the . Subsequently, the frontend role selection was simplified, and the priest login flow optimized. Most recently, the application's terminology was updated from slot to cita, and the Franjas de Confesión feature, including a new  entity and related backend logic, was initiated.
 </analysis>
 
 <product_requirements>
-ConfesApp is a web application designed for Catholics to easily find, schedule, and prepare for confession. The application targets multiple user roles: Faithful, Priest, Parish Staff, Bishop, and Admin, each with specific dashboards and functionalities. The visual design emphasizes a modern, clean, and minimal aesthetic with a liturgical color palette (deep violet, dark blue, gold, ivory), Poppins typography, and smooth Framer Motion animations, supporting both mobile and desktop views with a dark mode toggle.
+ConfesApp is a web application enabling Catholics to find, schedule, and prepare for confession, supporting multiple user roles: Faithful, Priest, Parish Staff, Bishop, and Admin. The design emphasizes a modern, clean, minimal aesthetic with a liturgical color palette (violet, blue, gold, ivory), Poppins typography, Framer Motion animations, and dark mode, supporting both mobile and desktop.
 
-Initially, the core MVP focused on:
-1.  **Basic Role System**: Faithful and Priest.
-2.  **Priest Functionality**: Create confession slots.
-3.  **Faithful Functionality**: View and book available confession slots.
+Initial MVP focused on: Basic Fiel/Priest roles, Priest creating confession slots, and Faithful viewing/booking slots.
 
-Following the MVP, the user requested the full hierarchical structure, which was implemented:
--   **Backend**: NestJS, TypeORM, PostgreSQL (Supabase, temporarily SQLite), JWT authentication with role-based guards, structured into modular components. Entities for User, Role, Language, Bishop, Diocese, Parish, Priest, ParishStaff, PriestParishRequest, PriestParishHistory, ConfessionSlot, and Confession were defined.
--   **Frontend**: React, Tailwind CSS, Framer Motion. Key views include Landing Page, Role Selector, Login/Register forms, and role-specific dashboards (Faithful, Priest, Bishop, Parish Staff). The authentication flow provides clear validation and error messages.
+Post-MVP additions:
+1.  **Full Ecclesiastical Hierarchy**: Backend entities and frontend components for Bishop, Diocese, Parish, Parish Staff, and Admin roles.
+2.  **Priest Registration Flows**:
+    *   **Invitation by Bishop**: Bishops invite priests via email; priests register using a token, automatically assigned to diocese/parish.
+    *   **Direct Priest Application**: Priests apply directly, entering details and selecting diocese/parish; requests are  by a Bishop.
+3.  **Frontend Simplification**: Eliminated public registration options for Obispo and Coordinador Parroquial, streamlining role selection to Fiel and Sacerdote only.
+4.  **Optimized Priest Login**: Introduced an intermediate screen for priests to choose between Iniciar sesión (direct login) or Registrarse (invitation/direct application).
+5.  **Terminology Update**: Replaced slot with cita across the application, especially in priest and faithful dashboards.
+6.  **Franjas de Confesión Feature**: Priests can define recurring or unique franjas (bands) of availability with start/end times, location, notes, and maximum capacity. The system needs to support CRUD operations for these bands and manage their status (available, full, canceled).
 </product_requirements>
 
 <key_technical_concepts>
--   **Backend**: NestJS (modular framework), TypeORM (ORM), PostgreSQL (database, via Supabase, with temporary SQLite fallback), JWT (authentication), Role-based Guards, DTOs (validation), Bcryptjs (password hashing).
--   **Frontend**: React (UI library), Tailwind CSS (styling), Framer Motion (animations),  (token storage), Axios (HTTP requests).
--   **Overall**: Full-stack architecture, RESTful API design, hierarchical role management.
+-   **Backend**: NestJS, TypeORM, SQLite (temporary fallback from PostgreSQL/Supabase), JWT authentication, Role-based Guards, DTOs, Bcryptjs.
+-   **Frontend**: React, Tailwind CSS, Framer Motion, Axios, , , .
+-   **Architecture**: Full-stack, RESTful API, hierarchical role management, modular design.
 </key_technical_concepts>
 
 <code_architecture>
-The application has a clear full-stack architecture with a React frontend and a NestJS backend.
+The application features a React frontend and a NestJS backend.
 
 **Directory Structure:**
 
 
 **Key Files and Their Importance:**
 
-*   **/app/backend/src/app.module.ts**: This is the root module of the NestJS application. It imports and configures all other modules (Auth, Users, ConfessionSlots, Confessions, Dioceses, Parishes, PriestRequests, Invites) and sets up the TypeORM connection (currently to SQLite for demo, previously attempted Supabase PostgreSQL).
-*   **/app/backend/src/main.ts**: The entry point of the NestJS application. It initializes the NestFactory, sets up global pipes for validation, enables CORS, and listens on port 8001.
-*   **/app/backend/src/entities/**: Contains all TypeORM entity definitions (e.g., , , , , , , etc.). These files define the database schema and relationships.
-    *   **Changes**: Initially defined core entities. Later expanded to include , , , ,  to implement the full ecclesiastical hierarchy. Most recently,  was added for priest invitation functionality.
-*   **/app/backend/src/auth/**: Contains authentication-related logic, including DTOs (, ), services (), controllers (), and JWT/role guards (, ).
-    *   **Changes**: Enhanced error handling and validation messages. Updated  to support different registration flows.
-*   **/app/backend/src/invites/**: New module for managing priest invitations. Contains , , , and .
-    *   **Changes**: All files in this directory are newly created to support the priest invitation feature.
-*   **/app/frontend/src/App.js**: The main React component that handles routing, state management (authentication, user roles), and renders different views/dashboards based on user role and navigation state. It integrates Tailwind CSS and Framer Motion for animations.
-    *   **Changes**: Initially built for MVP (Landing, Role Selector, Login, Priest/Faithful Dashboards). Expanded to include  and  components, conditional rendering for all four main roles, and improved form error display for authentication.
-*   **/app/frontend/src/App.css**: Contains global and component-specific Tailwind CSS styles for the application, defining the liturgical color palette and dark mode.
-*   **/app/frontend/public/index.html**: The main HTML file for the React application.
-    *   **Changes**: Removed Made with Emergent watermark, updated title, description, and meta tags to be specific to ConfesApp.
+*   **/app/backend/src/app.module.ts**: Root NestJS module, imports all others. Configures TypeORM to use SQLite ().
+    *   **Changes**:  and  were added to its imports.
+*   **/app/backend/src/main.ts**: NestJS entry point. Sets up global pipes, CORS, listens on port 8001.
+*   **/app/backend/src/entities/**: Defines database schema.
+    *   ****: Defines User entity, including roles,  status, and foreign keys to , .
+    *   ****: Defines Diocese entity, linked to Bishop.
+    *   ****: Defines Parish entity, linked to Diocese.
+    *   ****: Stores invitation details.
+        *   **Changes**:  enum updated to include .
+    *   ****: Manages staff assignments to parishes.
+        *   **Changes**:  enum updated to include .
+    *   ****: Handles pending priest requests.
+    *   ****: (Legacy) Defines single confession slots.
+        *   **Changes**: Updated to relate to  via .
+    *   ****: Represents a booked confession.
+    *   ** (NEW)**: Defines confession time ranges (franjas) with recurrence, capacity, etc. Critical for the new Franjas de Confesión feature.
+*   **/app/backend/src/auth/**: Contains authentication logic.
+    *   ****: Handles user registration, login, JWT generation.
+        *   **Changes**: Added  and  methods for priest registration flows. Added  for new coordinator registration.
+    *   ****: Exposes auth endpoints.
+        *   **Changes**: Added , , and .
+    *   ****: DTO for user creation.
+        *   **Changes**: Added  to allow initial pending status for new registrations.
+    *   ** (NEW)**: DTO for direct priest applications.
+    *   ** (NEW)**: DTO for registration via invitation.
+*   **/app/backend/src/invites/**: Manages invitations for priests and coordinators.
+    *   ****: Handles invite creation, validation, marking as used.
+        *   **Changes**: Added methods for  invites and acceptance logic.
+    *   ****: Endpoints for invites.
+        *   **Changes**: Added  and  for coordinator invitation.
+    *   ** (NEW)**: DTO for creating coordinator invites.
+    *   ** (NEW)**: DTO for accepting coordinator invites.
+*   **/app/backend/src/confession-bands/**: (NEW) Module for Franjas de Confesión.
+    *   ** (NEW)**: Module definition.
+    *   ** (NEW)**: Logic for creating, editing, deleting, listing, and changing status of confession bands.
+    *   ** (NEW)**: Endpoints for confession bands.
+    *   ** (NEW)**, ** (NEW)**, ** (NEW)**: DTOs for band operations.
+*   **/app/backend/src/seed.ts**: Script to populate the database with test data (Obispo, Parroquias, Fieles, Sacerdotes, Invitaciones, Solicitudes, Coordinadores).
+    *   **Changes**: Extended significantly to include all new entities and relationships for comprehensive testing.
+*   **/app/frontend/src/App.js**: Main React component, handles routing, state, and renders views.
+    *   **Changes**:
+        *   Updated  to show only Fiel and Sacerdote (removed Bishop/Parish Staff).
+        *   Introduced  for Iniciar sesión vs Registrarse options for priests.
+        *   Added  for Con invitación vs Solicitud directa for priest registration.
+        *   Modified  to be dynamic based on  and .
+        *   Removed  and  components as they are no longer publicly accessible.
+        *   Updated  and  components to reflect simplified roles.
+        *   Replaced landing page image from cathedral to a confessional.
+        *   Corrected faithful registration by filtering payload to remove priest-specific fields.
+        *   Refactored  and  to use cita instead of slot and updated their design.
+*   **/app/frontend/src/WeeklyCalendar.js (NEW)**: Frontend component for weekly calendar view of confession bands.
+*   **/app/frontend/src/BandForm.js (NEW)**: Frontend component for creating/editing confession bands.
+*   **/app/frontend/src/CoordinatorRegister.js (NEW)**: Dedicated component for coordinator invitation acceptance.
+*   **/app/test_result.md**: Contains testing protocol, user problem statement, and continuous updates on test results.
 </code_architecture>
 
 <pending_tasks>
 -   Integrate Google Places for real parish locations.
 -   Implement a multi-language system (ES/EN/FR).
 -   Develop a notification system (e.g., email confirmations).
--   Create advanced dashboard functionalities for all roles.
 -   Optimize for mobile (PWA / Native App).
 -   Migrate from SQLite to the actual Supabase PostgreSQL connection.
+-   Integrate  into the main  routing.
+-   Create a dedicated Coordinator Dashboard.
+-   Refactor frontend to use React Router for proper URL management.
+-   Implement user profile/settings management.
+-   Develop comprehensive error pages.
+-   Build an internal Bishop dashboard (as it's removed from public frontend).
 </pending_tasks>
 
 <current_work>
-The AI engineer is currently implementing the Priest Registration feature, which has two distinct flows:
+The AI engineer is currently in the process of implementing the Franjas de Confesión (Confession Bands) functionality, which is a significant new feature for priests. This involves creating a system for priests to define recurring or unique periods of availability for confession.
 
-1.  **Invitation sent by the Bishop**:
-    *   **Backend**: A new  table () has been created to store invitation details (email, role='priest', dioceseId, parishId, token, expiresAt, createdBy, status). A new  module (, , ) is being built to handle the creation of these invitations (, accessible only by Bishop). The authentication service will be updated to support a new registration endpoint () which validates the token, creates the priest user, assigns diocese/parish, and marks the invite as accepted.
-    *   **Frontend**: The registration screen will need to display an option for I have an invitation link. If chosen, it will provide a field for the token (or pre-fill from URL) and a reduced form for basic priest data. An email sending mechanism for the invitation link is implied but not yet implemented.
+**Backend progress:**
+*   A new  entity () has been created to store details like start/end times, location, capacity, recurrence, and associated priest/parish.
+*   The existing  entity () has been modified to link to  using .
+*   New DTOs for  operations (, , ) have been created.
+*   A new  module, including  (to encapsulate business logic for CRUD operations, status changes, and overlap validation) and  (to expose RESTful endpoints), has been set up.
+*   The  has been registered in .
+*   The backend has been successfully compiled and restarted, indicating that the new  related entities, DTOs, services, and controllers are integrated without compilation errors.
 
-2.  **Direct Priest Application**:
-    *   **Backend**: A new endpoint  will allow priests to register with a  status, including their personal data and selected diocese/parish. The existing  endpoint (only for Bishop) will be used to approve or reject these pending priest requests. Approval will activate the user and assign them to the diocese/parish.
-    *   **Frontend**: The registration screen will show an option I want to request to join a diocese. This will lead to a complete form for personal details and selectors for diocese/parish. The Bishop's dashboard will need UI elements to view and manage these pending requests.
+**Frontend progress:**
+*   Initial frontend components for the Franjas de Confesión feature have been created:
+    *   : Intended for displaying the priest's confession bands in a weekly calendar view.
+    *   : Designed for the creation and editing of new confession bands, including date/time pickers and recurrence options.
+*   The user requested to continue with the dashboard of the priest integrated with these new functionalities.
 
-The AI engineer has just started implementing the backend for the invitation flow by creating the  entity and module.
+The immediate step was to create the backend components for  and then proceed to the frontend. The backend compilation succeeded, and the engineer moved to create frontend components for the new feature.
 </current_work>
 
 <optional_next_step>
-Continue implementing the backend  module and  for the priest invitation and direct request functionalities.
+Integrate the  and  components into the  to enable priests to create and manage Franjas de Confesión.
 </optional_next_step>
