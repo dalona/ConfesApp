@@ -54,4 +54,8 @@ export class Confession {
   @ManyToOne(() => ConfessionSlot, confessionSlot => confessionSlot.confessions)
   @JoinColumn({ name: 'confessionSlotId' })
   confessionSlot: ConfessionSlot;
+
+  @ManyToOne(() => ConfessionBand, band => band.confessions)
+  @JoinColumn({ name: 'confessionBandId' })
+  confessionBand: ConfessionBand;
 }
