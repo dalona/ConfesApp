@@ -733,6 +733,292 @@ class ConfesAppTester:
             self.log(f"❌ Email uniqueness validation failed: Expected 401, got {status}", "ERROR")
             return False
 
+    # ===== CONFESSION BANDS TESTING =====
+
+    def test_seed_priest_login(self):
+        """Test login with seed priest data"""
+        self.log("Testing seed priest login...")
+        
+        login_data = {
+            "email": "padre.parroco@sanmiguel.es",
+            "password": "Pass123!"
+        }
+        
+        response = self.make_request("POST", "/auth/login", login_data)
+        
+        if response and response.status_code == 201:
+            data = response.json()
+            if data.get("access_token") and data.get("user"):
+                self.seed_priest_token = data["access_token"]
+                self.log(f"✅ Seed priest login successful: {data['user']['email']}")
+                return True
+            else:
+                self.log(f"❌ Seed priest login failed: Missing token or user data", "ERROR")
+                return False
+        else:
+            error_msg = response.json() if response else "No response"
+            self.log(f"❌ Seed priest login failed: {error_msg}", "ERROR")
+            return False
+
+    def test_create_confession_band(self):
+        """Test creating a confession band"""
+        if not self.seed_priest_token:
+            self.log("❌ Cannot test band creation: No seed priest token", "ERROR")
+            return False
+            
+        self.log("Testing confession band creation...")
+        
+        # Create band for tomorrow
+        tomorrow = datetime.now() + timedelta(days=1)
+        start_time = tomorrow.replace(hour=10, minute=0, second=0, microsecond=0)
+        end_time = start_time + timedelta(hours=1)
+        
+        band_data = {
+            "startTime": start_time.isoformat() + "Z",
+            "endTime": end_time.isoformat() + "Z",
+            "location": "Confesionario Principal",
+            "maxCapacity": 5,
+            "notes": "Franja de prueba para testing",
+            "isRecurrent": False
+        }
+        
+        response = self.make_request("POST", "/confession-bands", band_data, self.seed_priest_token)
+        
+        if response and response.status_code == 201:
+            data = response.json()
+            if data.get("id"):
+                self.test_band_id = data["id"]
+                self.log(f"✅ Confession band created successfully: {self.test_band_id}")
+                return True
+            else:
+                self.log(f"❌ Band creation failed: No ID returned", "ERROR")
+                return False
+        else:
+            error_msg = response.json() if response else "No response"
+            self.log(f"❌ Band creation failed: {error_msg}", "ERROR")
+            return False
+
+    def test_get_priest_bands(self):
+        """Test getting priest's own bands"""
+        if not self.seed_priest_token:
+            self.log("❌ Cannot test getting bands: No seed priest token", "ERROR")
+            return False
+            
+        self.log("Testing getting priest's bands...")
+        
+        response = self.make_request("GET", "/confession-bands/my-bands", token=self.seed_priest_token)
+        
+        if response and response.status_code == 200:
+            data = response.json()
+            if isinstance(data, list):
+                self.log(f"✅ Priest bands retrieved: {len(data)} bands found")
+                return True
+            else:
+                self.log(f"❌ Getting bands failed: Expected array, got {type(data)}", "ERROR")
+                return False
+        else:
+            error_msg = response.json() if response else "No response"
+            self.log(f"❌ Getting bands failed: {error_msg}", "ERROR")
+            return False
+
+    def test_update_confession_band(self):
+        """Test updating a confession band"""
+        if not self.seed_priest_token or not self.test_band_id:
+            self.log("❌ Cannot test band update: Missing token or band ID", "ERROR")
+            return False
+            
+        self.log("Testing confession band update...")
+        
+        update_data = {
+            "notes": "Franja actualizada en testing",
+            "maxCapacity": 8
+        }
+        
+        response = self.make_request("PATCH", f"/confession-bands/my-bands/{self.test_band_id}", update_data, self.seed_priest_token)
+        
+        if response and response.status_code == 200:
+            data = response.json()
+            if data.get("notes") == "Franja actualizada en testing" and data.get("maxCapacity") == 8:
+                self.log("✅ Confession band updated successfully")
+                return True
+            else:
+                self.log(f"❌ Band update failed: Data not updated correctly", "ERROR")
+                return False
+        else:
+            error_msg = response.json() if response else "No response"
+            self.log(f"❌ Band update failed: {error_msg}", "ERROR")
+            return False
+
+    def test_change_band_status(self):
+        """Test changing band status"""
+        if not self.seed_priest_token or not self.test_band_id:
+            self.log("❌ Cannot test status change: Missing token or band ID", "ERROR")
+            return False
+            
+        self.log("Testing band status change...")
+        
+        status_data = {
+            "status": "cancelled"
+        }
+        
+        response = self.make_request("PATCH", f"/confession-bands/my-bands/{self.test_band_id}/status", status_data, self.seed_priest_token)
+        
+        if response and response.status_code == 200:
+            data = response.json()
+            if data.get("status") == "cancelled":
+                self.log("✅ Band status changed successfully")
+                return True
+            else:
+                self.log(f"❌ Status change failed: Status not updated", "ERROR")
+                return False
+        else:
+            error_msg = response.json() if response else "No response"
+            self.log(f"❌ Status change failed: {error_msg}", "ERROR")
+            return False
+
+    def test_create_recurrent_band(self):
+        """Test creating a recurrent confession band"""
+        if not self.seed_priest_token:
+            self.log("❌ Cannot test recurrent band creation: No seed priest token", "ERROR")
+            return False
+            
+        self.log("Testing recurrent confession band creation...")
+        
+        # Create recurrent band starting tomorrow
+        tomorrow = datetime.now() + timedelta(days=1)
+        start_time = tomorrow.replace(hour=15, minute=0, second=0, microsecond=0)
+        end_time = start_time + timedelta(hours=1)
+        end_recurrence = tomorrow + timedelta(days=30)  # 30 days of recurrence
+        
+        band_data = {
+            "startTime": start_time.isoformat() + "Z",
+            "endTime": end_time.isoformat() + "Z",
+            "location": "Capilla del Santísimo",
+            "maxCapacity": 3,
+            "isRecurrent": True,
+            "recurrenceType": "weekly",
+            "recurrenceDays": [1, 3, 5],  # Monday, Wednesday, Friday
+            "recurrenceEndDate": end_recurrence.isoformat() + "Z"
+        }
+        
+        response = self.make_request("POST", "/confession-bands", band_data, self.seed_priest_token)
+        
+        if response and response.status_code == 201:
+            data = response.json()
+            if data.get("id") and data.get("isRecurrent") == True:
+                self.test_recurrent_band_id = data["id"]
+                self.log(f"✅ Recurrent confession band created successfully: {self.test_recurrent_band_id}")
+                return True
+            else:
+                self.log(f"❌ Recurrent band creation failed: Missing ID or not marked as recurrent", "ERROR")
+                return False
+        else:
+            error_msg = response.json() if response else "No response"
+            self.log(f"❌ Recurrent band creation failed: {error_msg}", "ERROR")
+            return False
+
+    def test_delete_confession_band(self):
+        """Test deleting a confession band"""
+        if not self.seed_priest_token:
+            self.log("❌ Cannot test band deletion: No seed priest token", "ERROR")
+            return False
+            
+        # Create a new band specifically for deletion test
+        self.log("Testing confession band deletion...")
+        
+        tomorrow = datetime.now() + timedelta(days=2)
+        start_time = tomorrow.replace(hour=18, minute=0, second=0, microsecond=0)
+        end_time = start_time + timedelta(hours=1)
+        
+        band_data = {
+            "startTime": start_time.isoformat() + "Z",
+            "endTime": end_time.isoformat() + "Z",
+            "location": "Confesionario para eliminar",
+            "maxCapacity": 2,
+            "notes": "Banda para test de eliminación"
+        }
+        
+        # Create the band
+        create_response = self.make_request("POST", "/confession-bands", band_data, self.seed_priest_token)
+        
+        if not create_response or create_response.status_code != 201:
+            self.log("❌ Cannot create band for deletion test", "ERROR")
+            return False
+            
+        band_id = create_response.json()["id"]
+        
+        # Now delete it
+        response = self.make_request("DELETE", f"/confession-bands/my-bands/{band_id}", token=self.seed_priest_token)
+        
+        if response and response.status_code == 200:
+            data = response.json()
+            if data.get("message"):
+                self.log("✅ Confession band deleted successfully")
+                return True
+            else:
+                self.log(f"❌ Band deletion failed: No confirmation message", "ERROR")
+                return False
+        else:
+            error_msg = response.json() if response else "No response"
+            self.log(f"❌ Band deletion failed: {error_msg}", "ERROR")
+            return False
+
+    def test_jwt_protection(self):
+        """Test that confession-bands endpoints require JWT"""
+        self.log("Testing JWT protection on confession-bands endpoints...")
+        
+        # Try to create band without token
+        band_data = {
+            "startTime": "2025-01-21T10:00:00.000Z",
+            "endTime": "2025-01-21T11:00:00.000Z",
+            "location": "Test Location",
+            "maxCapacity": 1
+        }
+        
+        response = self.make_request("POST", "/confession-bands", band_data)
+        
+        if response and response.status_code == 401:
+            self.log("✅ JWT protection working: Unauthorized access blocked")
+            return True
+        else:
+            status = response.status_code if response else "No response"
+            self.log(f"❌ JWT protection failed: Expected 401, got {status}", "ERROR")
+            return False
+
+    def test_error_cases(self):
+        """Test various error cases"""
+        if not self.seed_priest_token:
+            self.log("❌ Cannot test error cases: No seed priest token", "ERROR")
+            return False
+            
+        self.log("Testing error cases...")
+        
+        # Test 1: Create band with past date
+        yesterday = datetime.now() - timedelta(days=1)
+        past_band_data = {
+            "startTime": yesterday.isoformat() + "Z",
+            "endTime": (yesterday + timedelta(hours=1)).isoformat() + "Z",
+            "location": "Past Location",
+            "maxCapacity": 1
+        }
+        
+        response = self.make_request("POST", "/confession-bands", past_band_data, self.seed_priest_token)
+        
+        if not response or response.status_code != 400:
+            self.log("❌ Past date validation failed", "ERROR")
+            return False
+            
+        # Test 2: Try to access non-existent band
+        fake_id = "00000000-0000-0000-0000-000000000000"
+        response = self.make_request("GET", f"/confession-bands/my-bands/{fake_id}", token=self.seed_priest_token)
+        
+        if not response or response.status_code != 404:
+            self.log("❌ Non-existent band handling failed", "ERROR")
+            return False
+            
+        self.log("✅ Error cases handled correctly")
+        return True
+
     def run_all_tests(self):
         """Run all tests in sequence"""
         self.log("🚀 Starting ConfesApp Backend Testing Suite")
