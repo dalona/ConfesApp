@@ -980,10 +980,26 @@ class ConfesAppTester:
         if response and response.status_code == 401:
             self.log("✅ JWT protection working: Unauthorized access blocked")
             return True
-        else:
-            status = response.status_code if response else "No response"
+        elif response:
+            status = response.status_code
             self.log(f"❌ JWT protection failed: Expected 401, got {status}", "ERROR")
             return False
+        else:
+            # If no response, try a simpler test
+            self.log("No response received, trying alternative test...")
+            try:
+                import requests
+                url = f"{self.base_url}/confession-bands"
+                response = requests.post(url, json=band_data, headers={"Content-Type": "application/json"}, timeout=5)
+                if response.status_code == 401:
+                    self.log("✅ JWT protection working: Unauthorized access blocked (alternative test)")
+                    return True
+                else:
+                    self.log(f"❌ JWT protection failed: Expected 401, got {response.status_code}", "ERROR")
+                    return False
+            except Exception as e:
+                self.log(f"❌ JWT protection test failed with exception: {e}", "ERROR")
+                return False
 
     def test_error_cases(self):
         """Test various error cases"""
