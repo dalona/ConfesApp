@@ -1323,8 +1323,8 @@ const PriestDashboard = () => {
 };
 
 const FaithfulDashboard = () => {
-  const [availableSlots, setAvailableSlots] = useState([]);
-  const [myConfessions, setMyConfessions] = useState([]);
+  const [citasDisponibles, setCitasDisponibles] = useState([]);
+  const [misConfesiones, setMisConfesiones] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('book');
   const { token } = useAuth();
@@ -1335,15 +1335,15 @@ const FaithfulDashboard = () => {
 
   const fetchData = async () => {
     try {
-      const [slotsResponse, confessionsResponse] = await Promise.all([
+      const [citasResponse, confessionsResponse] = await Promise.all([
         axios.get(`${API}/confession-slots/available`),
         axios.get(`${API}/confessions`, {
           headers: { Authorization: `Bearer ${token}` }
         })
       ]);
 
-      setAvailableSlots(slotsResponse.data);
-      setMyConfessions(confessionsResponse.data);
+      setCitasDisponibles(citasResponse.data);
+      setMisConfesiones(confessionsResponse.data);
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
@@ -1351,17 +1351,17 @@ const FaithfulDashboard = () => {
     }
   };
 
-  const bookConfession = async (slotId) => {
+  const bookConfession = async (citaId) => {
     try {
       await axios.post(`${API}/confessions`, {
-        confessionSlotId: slotId
+        confessionSlotId: citaId
       }, {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchData();
     } catch (error) {
       console.error('Error booking confession:', error);
-      alert(error.response?.data?.message || 'Error al reservar la confesión');
+      alert(error.response?.data?.message || 'Error al reservar la cita');
     }
   };
 
