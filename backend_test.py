@@ -34,6 +34,10 @@ class ConfesAppTester:
         self.invited_priest_token = None
         self.invited_priest_user = None
         self.pending_priest_user = None
+        # New variables for confession-bands testing
+        self.seed_priest_token = None
+        self.test_band_id = None
+        self.test_recurrent_band_id = None
         
     def log(self, message, level="INFO"):
         """Log test messages with timestamp"""
