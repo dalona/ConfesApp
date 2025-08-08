@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
-ConfesApp Backend API Testing Suite
+ConfesApp Backend API Testing Suite - MEJORAS CRÍTICAS
 Tests the NestJS backend for Catholic confession booking system
+Focus: Role validation, faithful flow, appointment management, cancellation functionality
 """
 
 import requests
@@ -18,26 +19,17 @@ class ConfesAppTester:
     def __init__(self):
         self.base_url = BASE_URL
         self.headers = HEADERS.copy()
+        # Test users from review request
         self.priest_token = None
         self.faithful_token = None
         self.priest_user = None
         self.faithful_user = None
+        # Test data for franjas/citas
+        self.test_band_id = None
         self.test_slot_id = None
         self.test_confession_id = None
-        # New variables for priest registration testing
-        self.bishop_token = None
-        self.bishop_user = None
-        self.test_invite_token = None
-        self.test_invite_email = None
-        self.validated_invite_token = None
-        self.validated_invite_email = None
-        self.invited_priest_token = None
-        self.invited_priest_user = None
-        self.pending_priest_user = None
-        # New variables for confession-bands testing
-        self.seed_priest_token = None
-        self.test_band_id = None
-        self.test_recurrent_band_id = None
+        # Results tracking
+        self.test_results = []
         
     def log(self, message, level="INFO"):
         """Log test messages with timestamp"""
