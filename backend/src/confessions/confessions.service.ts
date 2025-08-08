@@ -64,7 +64,7 @@ export class ConfessionsService {
     }
     // Handle confession band (new system)
     else if (createConfessionDto.confessionBandId) {
-      const band = await this.confessionBandsService.findOne(createConfessionDto.confessionBandId);
+      const band = await this.confessionBandsService.findOne(createConfessionDto.confessionBandId, null);
       
       if (band.status !== BandStatus.AVAILABLE) {
         throw new BadRequestException('Esta franja de confesión no está disponible');
