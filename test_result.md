@@ -337,9 +337,9 @@ metadata:
     message: "❌ CRITICAL JAVASCRIPT ERROR IN FRANJAS DE CONFESIÓN: Frontend testing reveals critical bug blocking core functionality. WORKING COMPONENTS: ✅ Complete navigation flow, ✅ Priest login (padre.parroco@sanmiguel.es), ✅ Dashboard with correct 'Franjas de Confesión' terminology, ✅ Correct statistics display (Disponibles: 13, Llenas: 0, Reservas: 0, Total: 14), ✅ WeeklyCalendar loads showing 'Calendario de Franjas', ✅ Week navigation (previous/next/today buttons), ✅ Tab system (Vista Calendario/Vista Lista), ✅ 'Nueva Franja' button clickable. CRITICAL FAILURE: ❌ BandForm modal fails to open due to JavaScript errors: 'Unexpected end of JSON input', 'SyntaxError: Unexpected end of JSON input at JSON.parse', multiple React/Framer Motion errors in bundle.js causing app crash. This completely blocks creating/editing franjas functionality. URGENT FIX REQUIRED for JavaScript errors to restore full functionality."
   - task: "Franjas de Confesión Integration"
     implemented: true
-    working: true
+    working: false
     file: "src/App.js"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
     needs_retesting: false
     status_history:
@@ -355,3 +355,6 @@ metadata:
       - working: true
         agent: "main"
         comment: "✅ ERROR JAVASCRIPT RESUELTO - BANDFORM COMPLETAMENTE FUNCIONAL: Solucionados los errores de JavaScript que impedían el funcionamiento del modal. Problema identificado en BandForm.js con react-datepicker. Solución: Reemplazado BandForm externo por versión integrada directamente en App.js usando inputs HTML5 nativos. RESULTADO: ✅ Modal BandForm se abre perfectamente, ✅ Todos los campos funcionan (fecha/hora inicio/fin, ubicación, capacidad, notas), ✅ Sistema de recurrencia completo (checkbox, tipo, días semana, fecha fin), ✅ Diseño litúrgico perfecto (morado/índigo), ✅ Validaciones en frontend, ✅ Botones crear/cancelar operativos. Sistema completamente funcional y listo para uso en producción. Frontend testing exitoso."
+      - working: false
+        agent: "testing"
+        comment: "❌ CRITICAL BACKEND BUG FOUND: Comprehensive testing reveals critical database schema issue. WORKING FEATURES: ✅ Priest login (padre.parroco@sanmiguel.es), ✅ Faithful login (fiel1@ejemplo.com), ✅ Create confession bands, ✅ List priest bands (16 bands found), ✅ Edit bands, ✅ Delete bands. CRITICAL FAILURE: ❌ Confession booking from bands fails with 500 Internal Server Error due to database constraint: 'SQLITE_CONSTRAINT: NOT NULL constraint failed: confessions.confessionSlotId'. The confession-bands system tries to insert NULL for confessionSlotId but database schema requires NOT NULL. This completely blocks the core booking functionality. Backend needs database schema fix to make confessionSlotId nullable or provide default value for confession-bands bookings. Success rate: 70% (7/10 tests passed)."
