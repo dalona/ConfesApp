@@ -1726,10 +1726,11 @@ const FaithfulDashboard = () => {
   };
 
   const bookConfession = async (citaId) => {
+    let requestData = {};
+    
     try {
       // Find the appointment in our available list
       const cita = citasDisponibles.find(c => c.id === citaId);
-      let requestData = {};
       
       if (cita) {
         // Determine if this is a slot or band based on available properties
