@@ -1212,6 +1212,17 @@ const PriestDashboard = () => {
                 <List className="w-5 h-5 mr-2" />
                 Vista Lista
               </button>
+              <button
+                onClick={() => setActiveTab('coordinators')}
+                className={`flex-1 flex items-center justify-center px-6 py-3 rounded-xl font-semibold transition-all ${
+                  activeTab === 'coordinators'
+                    ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg'
+                    : 'text-gray-600 dark:text-gray-400 hover:bg-purple-50 dark:hover:bg-purple-900/20'
+                }`}
+              >
+                <Users className="w-5 h-5 mr-2" />
+                Coordinadores
+              </button>
             </div>
           </motion.div>
 
