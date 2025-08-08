@@ -105,7 +105,7 @@ export class ConfessionsService {
       // Check if band should become full
       const newBookingsCount = currentBookings + 1;
       if (newBookingsCount >= band.maxCapacity) {
-        await this.confessionBandsService.updateStatus(band.id, BandStatus.FULL);
+        await this.bandsRepository.update(band.id, { status: BandStatus.FULL });
       }
     }
 
