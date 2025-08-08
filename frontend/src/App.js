@@ -1776,6 +1776,15 @@ const PriestDashboard = () => {
           </motion.div>
         </motion.div>
       )}
+
+      {/* Coordinator Invite Form Modal */}
+      {showCoordinatorForm && (
+        <CoordinatorInviteForm 
+          isOpen={showCoordinatorForm}
+          onClose={() => setShowCoordinatorForm(false)}
+          onInvite={handleInviteCoordinator}
+        />
+      )}
     </div>
   );
 };
