@@ -873,6 +873,102 @@ const LoginForm = ({ role, isLogin: isLoginMode, priestRegistrationType, onBack,
 
 // Dashboard components would go here...
 
+// Coordinators Management Component
+const CoordinatorsManagement = ({ coordinators, onInvite, onRemove }) => {
+  return (
+    <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl border border-purple-100 dark:border-purple-900 overflow-hidden">
+      <div className="bg-gradient-to-r from-purple-600 to-indigo-600 px-8 py-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center">
+            <Users className="w-8 h-8 text-white mr-3" />
+            <div>
+              <h2 className="text-2xl font-bold text-white">
+                Coordinadores Parroquiales
+              </h2>
+              <p className="text-purple-100">
+                Gestiona tu equipo de coordinadores
+              </p>
+            </div>
+          </div>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={onInvite}
+            className="bg-white/20 text-white px-6 py-3 rounded-xl font-semibold hover:bg-white/30 transition-all flex items-center"
+          >
+            <Plus className="w-5 h-5 mr-2" />
+            Invitar Coordinador
+          </motion.button>
+        </div>
+      </div>
+      
+      <div className="p-8">
+        {coordinators.length === 0 ? (
+          <div className="text-center py-12">
+            <Users className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-gray-600 dark:text-gray-400 mb-2">
+              No tienes coordinadores asignados
+            </h3>
+            <p className="text-gray-500 dark:text-gray-500 mb-6">
+              Invita coordinadores para ayudarte con la gestión parroquial
+            </p>
+            <button
+              onClick={onInvite}
+              className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-purple-700 hover:to-indigo-700 transition-all"
+            >
+              + Invitar Primer Coordinador
+            </button>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {coordinators.map((coordinator, index) => (
+              <motion.div
+                key={coordinator.id}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.1 }}
+                className="flex items-center justify-between p-6 border border-gray-200 dark:border-gray-700 rounded-xl hover:shadow-lg transition-all hover:border-purple-300 dark:hover:border-purple-600"
+              >
+                <div className="flex items-center space-x-4">
+                  <div className="p-3 bg-blue-100 dark:bg-blue-900/20 rounded-xl">
+                    <User className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                  </div>
+                  <div>
+                    <div className="font-semibold text-gray-900 dark:text-gray-100">
+                      {coordinator.user?.firstName} {coordinator.user?.lastName}
+                    </div>
+                    <div className="text-gray-600 dark:text-gray-400 text-sm flex items-center mt-1">
+                      <Mail className="w-3 h-3 mr-1" />
+                      {coordinator.user?.email}
+                      <span className="mx-2">•</span>
+                      <Calendar className="w-3 h-3 mr-1" />
+                      Desde {new Date(coordinator.assignedAt || coordinator.createdAt).toLocaleDateString('es-ES')}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <span className="px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400">
+                    Activo
+                  </span>
+                  <div className="flex space-x-1">
+                    <button
+                      onClick={() => onRemove(coordinator.id)}
+                      className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                      title="Remover coordinador"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
 const PriestDashboard = () => {
   const [activeTab, setActiveTab] = useState('calendar'); // 'calendar', 'list', 'coordinators'
   const [bands, setBands] = useState([]);
