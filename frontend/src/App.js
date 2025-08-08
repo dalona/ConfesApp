@@ -1379,6 +1379,13 @@ const PriestDashboard = () => {
                 </div>
               </div>
             )}
+            {activeTab === 'coordinators' && (
+              <CoordinatorsManagement 
+                coordinators={coordinators}
+                onInvite={() => setShowCoordinatorForm(true)}
+                onRemove={handleRemoveCoordinator}
+              />
+            )}
           </motion.div>
         </div>
       </div>
