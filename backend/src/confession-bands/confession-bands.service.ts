@@ -80,6 +80,19 @@ export class ConfessionBandsService {
     return band;
   }
 
+  async findOneById(id: string): Promise<ConfessionBand> {
+    const band = await this.bandsRepository.findOne({
+      where: { id },
+      relations: ['confessions', 'confessions.faithful', 'priest', 'parish'],
+    });
+
+    if (!band) {
+      throw new NotFoundException('Franja de confesión no encontrada');
+    }
+
+    return band;
+  }
+
   async update(id: string, updateBandDto: UpdateBandDto, priestId: string): Promise<ConfessionBand> {
     const band = await this.findOne(id, priestId);
 
