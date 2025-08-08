@@ -1028,6 +1028,38 @@ const PriestDashboard = () => {
     }
   };
 
+  const handleInviteCoordinator = async (coordinatorData) => {
+    try {
+      await axios.post(`${API}/invites/coordinator`, coordinatorData, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      fetchData(); // Refresh data
+      setShowCoordinatorForm(false);
+      alert('Invitación enviada exitosamente');
+    } catch (error) {
+      console.error('Error inviting coordinator:', error);
+      alert(error.response?.data?.message || 'Error al enviar la invitación');
+    }
+  };
+
+  const handleRemoveCoordinator = async (coordinatorId) => {
+    if (!window.confirm('¿Estás seguro de que quieres remover este coordinador? Esta acción no se puede deshacer.')) {
+      return;
+    }
+
+    try {
+      await axios.delete(`${API}/parish-staff/${coordinatorId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      fetchData(); // Refresh data
+      alert('Coordinador removido exitosamente');
+    } catch (error) {
+      console.error('Error removing coordinator:', error);
+      alert(error.response?.data?.message || 'Error al remover el coordinador');
+    }
+  };
+
   const handleChangeStatus = async (bandId, status) => {
     try {
       await axios.patch(`${API}/confession-bands/my-bands/${bandId}/status`, { status }, {
