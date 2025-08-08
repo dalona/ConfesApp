@@ -1756,20 +1756,25 @@ const FaithfulDashboard = () => {
     } catch (error) {
       console.error('Error booking confession:', error);
       
-      // If it failed as a slot, try as a band (fallback)
-      if (error.response?.status === 400 && !requestData.confessionBandId) {
-        try {
-          console.log('Retrying as confession band...');
-          await axios.post(`${API}/confessions`, 
-            { confessionBandId: citaId }, 
-            { headers: { Authorization: `Bearer ${token}` }}
-          );
-          
-          fetchData(); // Refresh data
-          alert('¡Cita reservada exitosamente!');
-        } catch (secondError) {
-          console.error('Error booking as band:', secondError);
-          alert(secondError.response?.data?.message || 'Error al reservar la cita');
+      // If it failed as a slot, try as a band (fallback)  
+      if (error.response?.status === 400) {
+        const originalData = { confessionSlotId: citaId };
+        if (JSON.stringify(requestData) === JSON.stringify(originalData)) {
+          try {
+            console.log('Retrying as confession band...');
+            await axios.post(`${API}/confessions`, 
+              { confessionBandId: citaId }, 
+              { headers: { Authorization: `Bearer ${token}` }}
+            );
+            
+            fetchData(); // Refresh data
+            alert('¡Cita reservada exitosamente!');
+          } catch (secondError) {
+            console.error('Error booking as band:', secondError);
+            alert(secondError.response?.data?.message || 'Error al reservar la cita');
+          }
+        } else {
+          alert(error.response?.data?.message || 'Error al reservar la cita');
         }
       } else {
         alert(error.response?.data?.message || 'Error al reservar la cita');
