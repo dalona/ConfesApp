@@ -1800,44 +1800,49 @@ const FaithfulDashboard = () => {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {citasDisponibles.map((cita, index) => (
-                    <motion.div
-                      key={cita.id}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                      className="flex items-center justify-between p-6 border border-gray-200 dark:border-gray-700 rounded-xl hover:shadow-lg transition-all hover:border-green-300 dark:hover:border-green-600"
-                    >
-                      <div className="flex items-center space-x-4">
-                        <div className="p-3 bg-green-100 dark:bg-green-900/20 rounded-xl">
-                          <Cross className="w-5 h-5 text-green-600 dark:text-green-400" />
-                        </div>
-                        <div>
-                          <div className="font-semibold text-gray-900 dark:text-gray-100">
-                            {new Date(cita.startTime).toLocaleDateString('es-ES', {
-                              weekday: 'long',
-                              day: 'numeric',
-                              month: 'long'
-                            })}
-                          </div>
-                          <div className="text-gray-600 dark:text-gray-400 text-sm flex items-center mt-1">
-                            <Calendar className="w-3 h-3 mr-1" />
-                            {new Date(cita.startTime).toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit'})} - 
-                            {new Date(cita.endTime).toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit'})}
-                            <span className="mx-2">•</span>
-                            <Cross className="w-3 h-3 mr-1" />
-                            {cita.location}
-                          </div>
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => bookConfession(cita.id)}
-                        className="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-green-700 hover:to-emerald-700 transition-all shadow-lg hover:shadow-xl"
+                  {citasDisponibles.filter(cita => cita && (cita.startTime || cita.scheduledTime)).map((cita, index) => {
+                    const citaInfo = getCitaInfo(cita);
+                    return (
+                      <motion.div
+                        key={cita.id}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                        className="flex items-center justify-between p-6 border border-gray-200 dark:border-gray-700 rounded-xl hover:shadow-lg transition-all hover:border-green-300 dark:hover:border-green-600"
                       >
-                        Reservar Cita
-                      </button>
-                    </motion.div>
-                  ))}
+                        <div className="flex items-center space-x-4">
+                          <div className="p-3 bg-green-100 dark:bg-green-900/20 rounded-xl">
+                            <Cross className="w-5 h-5 text-green-600 dark:text-green-400" />
+                          </div>
+                          <div>
+                            <div className="font-semibold text-gray-900 dark:text-gray-100">
+                              {new Date(citaInfo.startTime).toLocaleDateString('es-ES', {
+                                weekday: 'long',
+                                day: 'numeric',
+                                month: 'long'
+                              })}
+                            </div>
+                            <div className="text-gray-600 dark:text-gray-400 text-sm flex items-center mt-1">
+                              <Calendar className="w-3 h-3 mr-1" />
+                              {new Date(citaInfo.startTime).toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit'})} - 
+                              {new Date(citaInfo.endTime).toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit'})}
+                              <span className="mx-2">•</span>
+                              <Cross className="w-3 h-3 mr-1" />
+                              {citaInfo.location}
+                            </div>
+                          </div>
+                        </div>
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => bookConfession(cita.id)}
+                          className="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-green-700 hover:to-emerald-700 transition-all shadow-lg hover:shadow-xl"
+                        >
+                          Reservar
+                        </motion.button>
+                      </motion.div>
+                    );
+                  })}
                 </div>
               )}
             </div>
