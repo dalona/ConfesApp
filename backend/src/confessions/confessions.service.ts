@@ -2,10 +2,10 @@ import { Injectable, NotFoundException, BadRequestException, ForbiddenException 
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Confession, ConfessionStatus } from '../entities/confession.entity';
+import { ConfessionBand, BandStatus } from '../entities/confession-band.entity';
 import { ConfessionSlotsService } from '../confession-slots/confession-slots.service';
 import { ConfessionBandsService } from '../confession-bands/confession-bands.service';
 import { SlotStatus } from '../entities/confession-slot.entity';
-import { BandStatus } from '../entities/confession-band.entity';
 import { CreateConfessionDto } from './dto/create-confession.dto';
 import { UpdateConfessionDto } from './dto/update-confession.dto';
 
