@@ -1670,15 +1670,50 @@ const FaithfulDashboard = () => {
 
   const bookConfession = async (citaId) => {
     try {
-      await axios.post(`${API}/confessions`, {
-        confessionSlotId: citaId
-      }, {
+      // Determine if this is a slot or band based on available properties
+      const cita = citasDisponibles.find(c => c.id === citaId);
+      let requestData = {};
+      
+      if (cita) {
+        // Check if this is a confession slot (legacy) or confession band (new system)
+        if (cita.priestId) {
+          // This is likely a confession slot (has priestId directly)
+          requestData = { confessionSlotId: citaId };
+        } else {
+          // This might be a confession band or we need to handle it differently
+          requestData = { confessionBandId: citaId };
+        }
+      } else {
+        // Fallback: try as confession slot first
+        requestData = { confessionSlotId: citaId };
+      }
+
+      await axios.post(`${API}/confessions`, requestData, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      fetchData();
+      
+      fetchData(); // Refresh data
+      alert('¡Cita reservada exitosamente!');
     } catch (error) {
       console.error('Error booking confession:', error);
-      alert(error.response?.data?.message || 'Error al reservar la cita');
+      
+      // If it failed as a slot, try as a band
+      if (error.response?.status === 400 && !requestData.confessionBandId) {
+        try {
+          await axios.post(`${API}/confessions`, 
+            { confessionBandId: citaId }, 
+            { headers: { Authorization: `Bearer ${token}` }}
+          );
+          
+          fetchData(); // Refresh data
+          alert('¡Cita reservada exitosamente!');
+        } catch (secondError) {
+          console.error('Error booking as band:', secondError);
+          alert(secondError.response?.data?.message || 'Error al reservar la cita');
+        }
+      } else {
+        alert(error.response?.data?.message || 'Error al reservar la cita');
+      }
     }
   };
 
