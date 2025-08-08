@@ -104,7 +104,7 @@ class ConfesAppTester:
         self.log("🔐 Test 2: LOGIN COMO FIEL")
         
         login_data = {
-            "email": "fiel1@ejemplo.com",
+            "email": "fiel.ejemplo@correo.com",
             "password": "Pass123!"
         }
         
