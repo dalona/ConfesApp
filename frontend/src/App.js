@@ -1549,6 +1549,39 @@ const PriestDashboard = () => {
                       return;
                     }
                     
+                    // VALIDACIONES DE FECHA
+                    const startDateTime = new Date(startTime);
+                    const endDateTime = new Date(endTime);
+                    const now = new Date();
+                    
+                    if (startDateTime <= now) {
+                      alert('La fecha y hora de inicio debe ser en el futuro');
+                      return;
+                    }
+                    
+                    if (endDateTime <= startDateTime) {
+                      alert('La fecha y hora de fin debe ser posterior al inicio');
+                      return;
+                    }
+                    
+                    // Validar que la diferencia no sea mayor a 8 horas
+                    const diffHours = (endDateTime - startDateTime) / (1000 * 60 * 60);
+                    if (diffHours > 8) {
+                      alert('Una franja no puede durar más de 8 horas');
+                      return;
+                    }
+                    
+                    if (diffHours < 0.5) {
+                      alert('Una franja debe durar al menos 30 minutos');
+                      return;
+                    }
+                    
+                    const maxCapacity = parseInt(formData.get('maxCapacity') || '5');
+                    if (maxCapacity < 1 || maxCapacity > 50) {
+                      alert('La capacidad debe estar entre 1 y 50 personas');
+                      return;
+                    }
+                    
                     const bandData = {
                       startTime: new Date(startTime).toISOString(),
                       endTime: new Date(endTime).toISOString(),
