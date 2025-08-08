@@ -1698,7 +1698,7 @@ const FaithfulDashboard = () => {
       console.error('Error booking confession:', error);
       
       // If it failed as a slot, try as a band
-      if (error.response?.status === 400 && !requestData.confessionBandId) {
+      if (error.response?.status === 400) {
         try {
           await axios.post(`${API}/confessions`, 
             { confessionBandId: citaId }, 
