@@ -428,8 +428,8 @@ class ConfesAppTester:
             ("6. CREAR CITA DESDE FRANJA", self.test_6_create_confession_from_band),
             ("7. LISTAR CONFESIONES DEL FIEL", self.test_7_list_faithful_confessions),
             ("8. CANCELAR CONFESIÓN", self.test_8_cancel_confession),
-            ("9. ELIMINAR FRANJA", self.test_9_delete_band),
             ("10. VALIDAR ROLES Y SEGURIDAD", self.test_10_role_security_validation),
+            ("9. ELIMINAR FRANJA", self.test_9_delete_band),  # Move this to the end
         ]
         
         passed = 0
