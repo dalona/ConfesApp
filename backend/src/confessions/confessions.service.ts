@@ -125,14 +125,16 @@ export class ConfessionsService {
     const query = this.confessionsRepository.createQueryBuilder('confession')
       .leftJoinAndSelect('confession.faithful', 'faithful')
       .leftJoinAndSelect('confession.confessionSlot', 'slot')
-      .leftJoinAndSelect('slot.priest', 'priest')
+      .leftJoinAndSelect('confession.confessionBand', 'band')
+      .leftJoinAndSelect('slot.priest', 'slotPriest')
+      .leftJoinAndSelect('band.priest', 'bandPriest')
       .orderBy('confession.scheduledTime', 'ASC');
 
     // Filter based on user role
     if (userRole === 'faithful') {
       query.where('confession.faithfulId = :userId', { userId });
     } else if (userRole === 'priest') {
-      query.where('slot.priestId = :userId', { userId });
+      query.where('slot.priestId = :userId OR band.priestId = :userId', { userId });
     }
 
     return query.getMany();
