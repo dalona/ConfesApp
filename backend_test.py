@@ -691,6 +691,10 @@ class ConfesAppTester:
             ("6. CREAR CITA DESDE FRANJA", self.test_6_create_confession_from_band),
             ("7. LISTAR CONFESIONES DEL FIEL", self.test_7_list_faithful_confessions),
             ("8. CANCELAR CONFESIÓN", self.test_8_cancel_confession),
+            ("11. MÚLTIPLES CONFESIONES - CAPACIDAD", self.test_11_multiple_confessions_capacity_test),
+            ("12. VERIFICAR ESTADO 'FULL'", self.test_12_band_status_full_check),
+            ("13. RESTRICCIONES DE CANCELACIÓN", self.test_13_cancellation_time_restriction),
+            ("14. SISTEMA LEGACY (SLOTS)", self.test_14_legacy_confession_slots_system),
             ("10. VALIDAR ROLES Y SEGURIDAD", self.test_10_role_security_validation),
             ("9. ELIMINAR FRANJA", self.test_9_delete_band),  # Move this to the end
         ]
