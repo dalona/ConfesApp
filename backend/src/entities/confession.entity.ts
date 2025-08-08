@@ -19,7 +19,7 @@ export class Confession {
   @Column()
   faithfulId: string;
 
-  @Column()
+  @Column({ nullable: true })
   confessionSlotId: string;
 
   @Column({
