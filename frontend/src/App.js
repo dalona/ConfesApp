@@ -1727,23 +1727,25 @@ const FaithfulDashboard = () => {
 
   const bookConfession = async (citaId) => {
     try {
-      // Determine if this is a slot or band based on available properties
+      // Find the appointment in our available list
       const cita = citasDisponibles.find(c => c.id === citaId);
       let requestData = {};
       
       if (cita) {
-        // Check if this is a confession slot (legacy) or confession band (new system)
-        if (cita.priestId) {
-          // This is likely a confession slot (has priestId directly)
-          requestData = { confessionSlotId: citaId };
-        } else {
-          // This might be a confession band or we need to handle it differently
+        // Determine if this is a slot or band based on available properties
+        if (cita.maxCapacity !== undefined) {
+          // This is likely a confession band (has maxCapacity)
           requestData = { confessionBandId: citaId };
+        } else {
+          // This is likely a confession slot (legacy)
+          requestData = { confessionSlotId: citaId };
         }
       } else {
         // Fallback: try as confession slot first
         requestData = { confessionSlotId: citaId };
       }
+
+      console.log('Booking confession:', requestData);
 
       await axios.post(`${API}/confessions`, requestData, {
         headers: { Authorization: `Bearer ${token}` }
@@ -1754,9 +1756,10 @@ const FaithfulDashboard = () => {
     } catch (error) {
       console.error('Error booking confession:', error);
       
-      // If it failed as a slot, try as a band
-      if (error.response?.status === 400) {
+      // If it failed as a slot, try as a band (fallback)
+      if (error.response?.status === 400 && !requestData.confessionBandId) {
         try {
+          console.log('Retrying as confession band...');
           await axios.post(`${API}/confessions`, 
             { confessionBandId: citaId }, 
             { headers: { Authorization: `Bearer ${token}` }}
