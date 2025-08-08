@@ -891,13 +891,12 @@ const PriestDashboard = () => {
 
   const fetchData = async () => {
     try {
-      const [bandsResponse, confessionsResponse] = await Promise.all([
+      const [bandsResponse, confessionsResponse, coordinatorsResponse] = await Promise.all([
         axios.get(`${API}/confession-bands/my-bands`, {
           headers: { Authorization: `Bearer ${token}` }
         }).catch(error => {
           console.error('Error fetching bands:', error);
           if (error.response?.status === 401) {
-            // Token expired or invalid
             console.log('Authentication error, token may be invalid');
           }
           throw error;
@@ -906,22 +905,30 @@ const PriestDashboard = () => {
           headers: { Authorization: `Bearer ${token}` }
         }).catch(error => {
           console.error('Error fetching confessions:', error);
-          // Don't fail completely if confessions fail, just return empty array
+          return { data: [] };
+        }),
+        axios.get(`${API}/parish-staff`, {
+          headers: { Authorization: `Bearer ${token}` }
+        }).catch(error => {
+          console.error('Error fetching coordinators:', error);
           return { data: [] };
         })
       ]);
 
       console.log('Bands fetched:', bandsResponse.data);
       console.log('Confessions fetched:', confessionsResponse.data);
+      console.log('Coordinators fetched:', coordinatorsResponse.data);
 
       setBands(Array.isArray(bandsResponse.data) ? bandsResponse.data : []);
       setConfessions(Array.isArray(confessionsResponse.data) ? confessionsResponse.data : []);
+      setCoordinators(Array.isArray(coordinatorsResponse.data) ? coordinatorsResponse.data.filter(c => c.role === 'parish_coordinator') : []);
     } catch (error) {
       console.error('Error fetching data:', error);
       
       // Set empty data to prevent render errors
       setBands([]);
       setConfessions([]);
+      setCoordinators([]);
       
       // Show user-friendly error
       if (error.response?.status === 401) {
