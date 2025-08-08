@@ -1877,8 +1877,8 @@ const FaithfulDashboard = () => {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {misConfesiones.map((confesion, index) => {
-                    const cita = confesion.confessionSlot;
+                  {misConfesiones.filter(confesion => confesion && (confesion.confessionSlot || confesion.confessionBand || confesion.scheduledTime)).map((confesion, index) => {
+                    const confessionInfo = getConfessionInfo(confesion);
                     return (
                       <motion.div
                         key={confesion.id}
@@ -1893,7 +1893,7 @@ const FaithfulDashboard = () => {
                           </div>
                           <div>
                             <div className="font-semibold text-gray-900 dark:text-gray-100">
-                              {new Date(cita.startTime).toLocaleDateString('es-ES', {
+                              {new Date(confessionInfo.startTime).toLocaleDateString('es-ES', {
                                 weekday: 'long',
                                 day: 'numeric',
                                 month: 'long'
@@ -1901,11 +1901,14 @@ const FaithfulDashboard = () => {
                             </div>
                             <div className="text-gray-600 dark:text-gray-400 text-sm flex items-center mt-1">
                               <Calendar className="w-3 h-3 mr-1" />
-                              {new Date(cita.startTime).toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit'})} - 
-                              {new Date(cita.endTime).toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit'})}
+                              {new Date(confessionInfo.startTime).toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit'})} - 
+                              {new Date(confessionInfo.endTime).toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit'})}
                               <span className="mx-2">•</span>
                               <Cross className="w-3 h-3 mr-1" />
-                              {cita.location}
+                              {confessionInfo.location}
+                              <span className="mx-2">•</span>
+                              <User className="w-3 h-3 mr-1" />
+                              {confessionInfo.priest}
                             </div>
                           </div>
                         </div>
