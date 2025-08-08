@@ -14,6 +14,8 @@ export class ConfessionsService {
   constructor(
     @InjectRepository(Confession)
     private confessionsRepository: Repository<Confession>,
+    @InjectRepository(ConfessionBand)
+    private bandsRepository: Repository<ConfessionBand>,
     private confessionSlotsService: ConfessionSlotsService,
     private confessionBandsService: ConfessionBandsService,
   ) {}
