@@ -1612,13 +1612,60 @@ const FaithfulDashboard = () => {
         })
       ]);
 
-      setCitasDisponibles(citasResponse.data);
-      setMisConfesiones(confessionsResponse.data);
+      setCitasDisponibles(citasResponse.data || []);
+      setMisConfesiones(confessionsResponse.data || []);
     } catch (error) {
       console.error('Error fetching data:', error);
+      // Set empty arrays to prevent null/undefined errors
+      setCitasDisponibles([]);
+      setMisConfesiones([]);
     } finally {
       setLoading(false);
     }
+  };
+
+  // Helper function to get datetime info from either system
+  const getConfessionInfo = (confession) => {
+    if (confession.confessionSlot) {
+      return {
+        startTime: confession.confessionSlot.startTime,
+        endTime: confession.confessionSlot.endTime,
+        location: confession.confessionSlot.location,
+        priest: confession.confessionSlot.priest?.firstName || 'Sacerdote'
+      };
+    } else if (confession.confessionBand) {
+      return {
+        startTime: confession.confessionBand.startTime,
+        endTime: confession.confessionBand.endTime,
+        location: confession.confessionBand.location,
+        priest: confession.confessionBand.priest?.firstName || 'Sacerdote'
+      };
+    } else {
+      // Fallback for confession without slot or band info
+      return {
+        startTime: confession.scheduledTime || new Date(),
+        endTime: new Date((confession.scheduledTime || new Date()).getTime() + 60*60*1000),
+        location: 'No especificado',
+        priest: 'Sacerdote'
+      };
+    }
+  };
+
+  // Helper function to safely format citation info
+  const getCitaInfo = (cita) => {
+    if (!cita) {
+      return {
+        startTime: new Date(),
+        endTime: new Date(),
+        location: 'No especificado'
+      };
+    }
+    
+    return {
+      startTime: cita.startTime || new Date(),
+      endTime: cita.endTime || new Date(),
+      location: cita.location || 'No especificado'
+    };
   };
 
   const bookConfession = async (citaId) => {
