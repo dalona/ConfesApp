@@ -1379,7 +1379,10 @@ const PriestDashboard = () => {
                     Fecha y Hora de Inicio *
                   </label>
                   <input
+                    name="startTime"
                     type="datetime-local"
+                    required
+                    defaultValue={selectedBand?.startTime ? new Date(selectedBand.startTime).toISOString().slice(0, 16) : ''}
                     className="w-full px-4 py-3 border-2 border-purple-200 dark:border-purple-700 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all"
                   />
                 </div>
@@ -1390,7 +1393,10 @@ const PriestDashboard = () => {
                     Fecha y Hora de Fin *
                   </label>
                   <input
+                    name="endTime"
                     type="datetime-local"
+                    required
+                    defaultValue={selectedBand?.endTime ? new Date(selectedBand.endTime).toISOString().slice(0, 16) : ''}
                     className="w-full px-4 py-3 border-2 border-purple-200 dark:border-purple-700 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all"
                   />
                 </div>
@@ -1403,7 +1409,11 @@ const PriestDashboard = () => {
                     <Cross className="w-4 h-4 mr-2 text-purple-600" />
                     Ubicación *
                   </label>
-                  <select className="w-full px-4 py-3 border-2 border-purple-200 dark:border-purple-700 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all">
+                  <select 
+                    name="location"
+                    defaultValue={selectedBand?.location || 'Confesionario Principal'}
+                    className="w-full px-4 py-3 border-2 border-purple-200 dark:border-purple-700 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all"
+                  >
                     <option value="Confesionario Principal">Confesionario Principal</option>
                     <option value="Confesionario Lateral">Confesionario Lateral</option>
                     <option value="Capilla del Santísimo">Capilla del Santísimo</option>
@@ -1418,10 +1428,12 @@ const PriestDashboard = () => {
                     Capacidad Máxima *
                   </label>
                   <input
+                    name="maxCapacity"
                     type="number"
                     min="1"
                     max="50"
-                    defaultValue="5"
+                    required
+                    defaultValue={selectedBand?.maxCapacity || 5}
                     className="w-full px-4 py-3 border-2 border-purple-200 dark:border-purple-700 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all"
                     placeholder="Ej: 5"
                   />
@@ -1435,7 +1447,9 @@ const PriestDashboard = () => {
                   Notas Especiales
                 </label>
                 <textarea
+                  name="notes"
                   placeholder="Información adicional para los fieles (opcional)..."
+                  defaultValue={selectedBand?.notes || ''}
                   className="w-full px-4 py-3 border-2 border-purple-200 dark:border-purple-700 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all resize-none"
                   rows="3"
                 />
@@ -1445,8 +1459,10 @@ const PriestDashboard = () => {
               <div className="bg-purple-50 dark:bg-purple-900/20 rounded-xl p-6">
                 <div className="flex items-center mb-4">
                   <input
+                    name="recurrent"
                     type="checkbox"
                     id="recurrent"
+                    defaultChecked={selectedBand?.isRecurrent || false}
                     className="w-4 h-4 text-purple-600 rounded focus:ring-purple-500 mr-3"
                   />
                   <label htmlFor="recurrent" className="flex items-center text-sm font-semibold text-purple-700 dark:text-purple-300">
@@ -1460,7 +1476,11 @@ const PriestDashboard = () => {
                     <label className="text-sm font-medium text-purple-700 dark:text-purple-300 mb-2 block">
                       Tipo de Recurrencia
                     </label>
-                    <select className="w-full px-4 py-3 border-2 border-purple-200 dark:border-purple-700 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all">
+                    <select 
+                      name="recurrenceType"
+                      defaultValue={selectedBand?.recurrenceType || 'weekly'}
+                      className="w-full px-4 py-3 border-2 border-purple-200 dark:border-purple-700 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all"
+                    >
                       <option value="daily">Diaria</option>
                       <option value="weekly">Semanal</option>
                     </select>
@@ -1471,10 +1491,17 @@ const PriestDashboard = () => {
                       Días de la Semana (para recurrencia semanal)
                     </label>
                     <div className="flex flex-wrap gap-2">
-                      {['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'].map((day) => (
+                      {['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'].map((day, index) => (
                         <button
                           key={day}
                           type="button"
+                          data-day={index + 1}
+                          onClick={(e) => {
+                            e.target.classList.toggle('bg-purple-600');
+                            e.target.classList.toggle('text-white');
+                            e.target.classList.toggle('bg-white');
+                            e.target.classList.toggle('text-gray-700');
+                          }}
                           className="px-3 py-2 rounded-lg text-sm font-medium transition-all bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-purple-200 dark:border-purple-700 hover:bg-purple-600 hover:text-white"
                         >
                           {day}
@@ -1488,7 +1515,9 @@ const PriestDashboard = () => {
                       Repetir Hasta
                     </label>
                     <input
+                      name="recurrenceEndDate"
                       type="date"
+                      defaultValue={selectedBand?.recurrenceEndDate ? new Date(selectedBand.recurrenceEndDate).toISOString().split('T')[0] : ''}
                       className="w-full px-4 py-3 border-2 border-purple-200 dark:border-purple-700 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all"
                     />
                   </div>
