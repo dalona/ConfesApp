@@ -19,42 +19,104 @@ export class ConfessionsService {
   ) {}
 
   async create(createConfessionDto: CreateConfessionDto, faithfulId: string): Promise<Confession> {
-    // Check if slot exists and is available
-    const slot = await this.confessionSlotsService.findOne(createConfessionDto.confessionSlotId);
-    
-    if (slot.status !== SlotStatus.AVAILABLE) {
-      throw new BadRequestException('Este slot de confesión no está disponible');
+    // Validate that either confessionSlotId or confessionBandId is provided
+    if (!createConfessionDto.confessionSlotId && !createConfessionDto.confessionBandId) {
+      throw new BadRequestException('Debes proporcionar confessionSlotId o confessionBandId');
     }
 
-    // Check if slot is in the future
-    if (slot.startTime <= new Date()) {
-      throw new BadRequestException('No puedes reservar un slot que ya pasó');
+    if (createConfessionDto.confessionSlotId && createConfessionDto.confessionBandId) {
+      throw new BadRequestException('No puedes proporcionar ambos confessionSlotId y confessionBandId');
     }
 
-    // Check if user already has a booking for this slot
-    const existingBooking = await this.confessionsRepository.findOne({
-      where: {
-        faithfulId,
-        confessionSlotId: createConfessionDto.confessionSlotId,
-        status: ConfessionStatus.BOOKED,
-      },
-    });
+    let scheduledTime: Date;
+    let priestId: string;
 
-    if (existingBooking) {
-      throw new BadRequestException('Ya tienes una reserva para este slot');
+    // Handle confession slot (legacy system)
+    if (createConfessionDto.confessionSlotId) {
+      const slot = await this.confessionSlotsService.findOne(createConfessionDto.confessionSlotId);
+      
+      if (slot.status !== SlotStatus.AVAILABLE) {
+        throw new BadRequestException('Este slot de confesión no está disponible');
+      }
+
+      if (slot.startTime <= new Date()) {
+        throw new BadRequestException('No puedes reservar un slot que ya pasó');
+      }
+
+      // Check if user already has a booking for this slot
+      const existingBooking = await this.confessionsRepository.findOne({
+        where: {
+          faithfulId,
+          confessionSlotId: createConfessionDto.confessionSlotId,
+          status: ConfessionStatus.BOOKED,
+        },
+      });
+
+      if (existingBooking) {
+        throw new BadRequestException('Ya tienes una reserva para este slot');
+      }
+
+      scheduledTime = slot.startTime;
+      priestId = slot.priestId;
+
+      // Update slot status to booked
+      await this.confessionSlotsService.updateStatus(slot.id, SlotStatus.BOOKED);
+    }
+    // Handle confession band (new system)
+    else if (createConfessionDto.confessionBandId) {
+      const band = await this.confessionBandsService.findOne(createConfessionDto.confessionBandId);
+      
+      if (band.status !== BandStatus.AVAILABLE) {
+        throw new BadRequestException('Esta franja de confesión no está disponible');
+      }
+
+      if (band.startTime <= new Date()) {
+        throw new BadRequestException('No puedes reservar una franja que ya pasó');
+      }
+
+      // Check current bookings count
+      const currentBookings = await this.confessionsRepository.count({
+        where: {
+          confessionBandId: createConfessionDto.confessionBandId,
+          status: ConfessionStatus.BOOKED,
+        },
+      });
+
+      if (currentBookings >= band.maxCapacity) {
+        throw new BadRequestException('Esta franja ya está llena');
+      }
+
+      // Check if user already has a booking for this band
+      const existingBooking = await this.confessionsRepository.findOne({
+        where: {
+          faithfulId,
+          confessionBandId: createConfessionDto.confessionBandId,
+          status: ConfessionStatus.BOOKED,
+        },
+      });
+
+      if (existingBooking) {
+        throw new BadRequestException('Ya tienes una reserva para esta franja');
+      }
+
+      scheduledTime = band.startTime;
+      priestId = band.priestId;
+
+      // Check if band should become full
+      const newBookingsCount = currentBookings + 1;
+      if (newBookingsCount >= band.maxCapacity) {
+        await this.confessionBandsService.updateStatus(band.id, BandStatus.FULL);
+      }
     }
 
     // Create the confession booking
     const confession = this.confessionsRepository.create({
       ...createConfessionDto,
       faithfulId,
-      scheduledTime: slot.startTime,
+      scheduledTime,
     });
 
     const savedConfession = await this.confessionsRepository.save(confession);
-
-    // Update slot status to booked
-    await this.confessionSlotsService.updateStatus(slot.id, SlotStatus.BOOKED);
 
     return this.findOne(savedConfession.id);
   }
