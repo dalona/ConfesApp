@@ -305,7 +305,7 @@ class ConfesAppTester:
             
         self.log("❌ Test 8: CANCELAR CONFESIÓN")
         
-        response = self.make_request("PATCH", f"/confession-bands/bookings/{self.test_confession_id}/cancel", {}, self.faithful_token)
+        response = self.make_request("PATCH", f"/confessions/{self.test_confession_id}/cancel", {}, self.faithful_token)
         
         if response and response.status_code == 200:
             data = response.json()
