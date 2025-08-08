@@ -200,9 +200,9 @@ export class ConfessionsService {
       await this.confessionSlotsService.updateStatus(confession.confessionSlotId, SlotStatus.AVAILABLE);
     } else if (confession.confessionBandId) {
       // New system: Check if band was full and make it available again
-      const band = await this.confessionBandsService.findOne(confession.confessionBandId);
+      const band = await this.confessionBandsService.findOne(confession.confessionBandId, null);
       if (band.status === BandStatus.FULL) {
-        await this.confessionBandsService.updateStatus(confession.confessionBandId, BandStatus.AVAILABLE);
+        await this.bandsRepository.update(confession.confessionBandId, { status: BandStatus.AVAILABLE });
       }
     }
 
