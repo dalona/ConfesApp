@@ -15,6 +15,7 @@ export class ConfessionsService {
     @InjectRepository(Confession)
     private confessionsRepository: Repository<Confession>,
     private confessionSlotsService: ConfessionSlotsService,
+    private confessionBandsService: ConfessionBandsService,
   ) {}
 
   async create(createConfessionDto: CreateConfessionDto, faithfulId: string): Promise<Confession> {
