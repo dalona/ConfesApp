@@ -1531,26 +1531,44 @@ const PriestDashboard = () => {
                   onClick={async (e) => {
                     e.preventDefault();
                     
-                    // Collect form data
+                    // Collect form data properly
                     const form = e.target.closest('form');
                     const formData = new FormData(form);
                     
+                    // Get selected days for recurrence
+                    const selectedDays = Array.from(form.querySelectorAll('button[data-day]'))
+                      .filter(btn => btn.classList.contains('bg-purple-600'))
+                      .map(btn => parseInt(btn.dataset.day));
+                    
+                    // Prepare band data
+                    const startTime = formData.get('startTime');
+                    const endTime = formData.get('endTime');
+                    
+                    if (!startTime || !endTime) {
+                      alert('Por favor, completa las fechas y horas requeridas');
+                      return;
+                    }
+                    
                     const bandData = {
-                      startTime: formData.get('startTime') || new Date(Date.now() + 24*60*60*1000).toISOString().slice(0, 16).replace('T', ' ') + ':00',
-                      endTime: formData.get('endTime') || new Date(Date.now() + 25*60*60*1000).toISOString().slice(0, 16).replace('T', ' ') + ':00',
+                      startTime: new Date(startTime).toISOString(),
+                      endTime: new Date(endTime).toISOString(),
                       location: formData.get('location') || 'Confesionario Principal',
                       maxCapacity: parseInt(formData.get('maxCapacity') || '5'),
                       notes: formData.get('notes') || '',
                       isRecurrent: formData.get('recurrent') === 'on',
                       recurrenceType: formData.get('recurrenceType') || 'weekly',
-                      recurrenceDays: formData.get('recurrent') === 'on' ? [1, 3, 5] : [], // Mock data for now
-                      recurrenceEndDate: formData.get('recurrenceEndDate') || null
+                      recurrenceDays: formData.get('recurrent') === 'on' ? selectedDays : [],
+                      recurrenceEndDate: formData.get('recurrenceEndDate') ? new Date(formData.get('recurrenceEndDate')).toISOString() : null
                     };
+
+                    console.log('Submitting band data:', bandData);
 
                     try {
                       await handleSaveBand(bandData);
+                      alert(isEditMode ? 'Franja actualizada exitosamente' : 'Franja creada exitosamente');
                     } catch (error) {
-                      console.error('Error creating band:', error);
+                      console.error('Error saving band:', error);
+                      alert(error.message || 'Error al guardar la franja');
                     }
                   }}
                   className="flex-1 bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-4 rounded-xl font-semibold text-lg hover:from-purple-700 hover:to-indigo-700 transition-all shadow-lg hover:shadow-xl flex items-center justify-center"
