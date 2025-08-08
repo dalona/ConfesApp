@@ -873,6 +873,176 @@ const LoginForm = ({ role, isLogin: isLoginMode, priestRegistrationType, onBack,
 
 // Dashboard components would go here...
 
+// Coordinator Invite Form Component
+const CoordinatorInviteForm = ({ isOpen, onClose, onInvite }) => {
+  const [formData, setFormData] = useState({
+    email: '',
+    firstName: '',
+    lastName: '',
+    message: ''
+  });
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      await onInvite(formData);
+      onClose();
+      setFormData({ email: '', firstName: '', lastName: '', message: '' });
+    } catch (error) {
+      console.error('Error inviting coordinator:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+    >
+      <motion.div 
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.8, opacity: 0 }}
+        className="bg-white dark:bg-gray-800 rounded-3xl p-8 max-w-lg w-full max-h-[90vh] overflow-y-auto"
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center">
+            <div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center mr-4">
+              <Users className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h3 className="text-2xl font-bold text-purple-900 dark:text-purple-100">
+                Invitar Coordinador
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400 text-sm">
+                Invita a un nuevo coordinador parroquial
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-colors"
+          >
+            <Cross className="w-6 h-6 text-gray-500" />
+          </button>
+        </div>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+              <Mail className="w-4 h-4 mr-2 text-blue-600" />
+              Email *
+            </label>
+            <input
+              type="email"
+              required
+              value={formData.email}
+              onChange={(e) => setFormData({...formData, email: e.target.value})}
+              className="w-full px-4 py-3 border-2 border-purple-200 dark:border-purple-700 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all"
+              placeholder="coordinador@parroquia.com"
+            />
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-4">
+            <div>
+              <label className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                <User className="w-4 h-4 mr-2 text-blue-600" />
+                Nombre *
+              </label>
+              <input
+                type="text"
+                required
+                value={formData.firstName}
+                onChange={(e) => setFormData({...formData, firstName: e.target.value})}
+                className="w-full px-4 py-3 border-2 border-purple-200 dark:border-purple-700 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all"
+                placeholder="Juan"
+              />
+            </div>
+            
+            <div>
+              <label className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                <User className="w-4 h-4 mr-2 text-blue-600" />
+                Apellido *
+              </label>
+              <input
+                type="text"
+                required
+                value={formData.lastName}
+                onChange={(e) => setFormData({...formData, lastName: e.target.value})}
+                className="w-full px-4 py-3 border-2 border-purple-200 dark:border-purple-700 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all"
+                placeholder="Pérez"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+              <FileText className="w-4 h-4 mr-2 text-blue-600" />
+              Mensaje Personal (opcional)
+            </label>
+            <textarea
+              value={formData.message}
+              onChange={(e) => setFormData({...formData, message: e.target.value})}
+              className="w-full px-4 py-3 border-2 border-purple-200 dark:border-purple-700 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all resize-none"
+              rows="3"
+              placeholder="Hola Juan, me gustaría invitarte a ser coordinador de nuestra parroquia..."
+            />
+          </div>
+
+          <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4">
+            <div className="flex items-center text-blue-800 dark:text-blue-300">
+              <Mail className="w-4 h-4 mr-2" />
+              <span className="text-sm font-medium">
+                Se enviará una invitación por email con un enlace para completar el registro
+              </span>
+            </div>
+          </div>
+
+          {/* Submit Buttons */}
+          <div className="flex space-x-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+            <button
+              type="submit"
+              disabled={loading}
+              className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-xl font-semibold text-lg hover:from-blue-700 hover:to-purple-700 transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+            >
+              {loading ? (
+                <>
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                  Enviando Invitación...
+                </>
+              ) : (
+                <>
+                  <Mail className="w-5 h-5 mr-2" />
+                  Enviar Invitación
+                </>
+              )}
+            </button>
+            <button
+              type="button"
+              onClick={onClose}
+              disabled={loading}
+              className="px-8 py-4 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-xl font-semibold hover:bg-gray-300 dark:hover:bg-gray-500 transition-all"
+            >
+              Cancelar
+            </button>
+          </div>
+        </form>
+      </motion.div>
+    </motion.div>
+  );
+};
+
 // Coordinators Management Component
 const CoordinatorsManagement = ({ coordinators, onInvite, onRemove }) => {
   return (
