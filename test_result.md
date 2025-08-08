@@ -359,6 +359,21 @@ metadata:
         agent: "testing"
         comment: "✅ CRITICAL FIX VERIFIED - 77.8% SUCCESS RATE: Database schema fix completamente exitoso. TESTS PASSED: ✅ Priest/Faithful login, ✅ Create confession bands, ✅ Book confessions from bands (SIN ERRORES), ✅ List confessions, ✅ Cancel confessions with validations, ✅ Legacy system compatibility. El error crítico 'NOT NULL constraint failed: confessions.confessionSlotId' está COMPLETAMENTE ELIMINADO. Sistema híbrido funciona perfectamente (legacy + nuevo). LISTO PARA PRODUCCIÓN."
 
+  - task: "Critical User Issue Diagnosis - DELETE/CANCEL Functionality"
+    implemented: true
+    working: true
+    file: "backend/src/confession-bands/, backend/src/confessions/"
+    stuck_count: 0
+    priority: "critical"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "DIAGNÓSTICO CRÍTICO SOLICITADO: Usuario reporta que 'Botón eliminar franjas (sacerdote) no funciona' y 'Botón cancelar confesiones (fiel) no funciona'. Testing específico de endpoints DELETE /api/confession-bands/my-bands/:id y PATCH /api/confessions/:id/cancel."
+      - working: true
+        agent: "testing"
+        comment: "✅ DIAGNÓSTICO COMPLETADO - BACKEND 100% FUNCIONAL: Comprehensive testing confirms both reported functionalities work perfectly in backend. VERIFIED WORKING: ✅ DELETE /api/confession-bands/my-bands/:id successfully deletes bands (tested with band 69e4ef2b-67d0-42fb-90ca-221b26d9bcf6), ✅ PATCH /api/confessions/:id/cancel successfully cancels confessions with status update to 'cancelled' (tested with confession 0cb990e8-a004-4607-906a-5f3845a9739a), ✅ Both priest (padre.parroco@sanmiguel.es) and faithful (fiel1@ejemplo.com) authentication working, ✅ Data retrieval endpoints working (17 bands, 4 confessions found). SUCCESS RATE: 100% (6/6 critical tests passed). CONCLUSION: The reported user issues are FRONTEND INTEGRATION PROBLEMS, not backend API failures. All backend endpoints respond correctly with proper HTTP status codes and data updates."
+
   - task: "Role Validation and Route Protection"
     implemented: true
     working: true
