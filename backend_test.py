@@ -144,10 +144,14 @@ class ConfesAppTester:
             
         self.log("📅 Test 3: CREAR FRANJA DE CONFESIÓN")
         
-        # Create band for January 8, 2025 as specified
+        # Create band for tomorrow (future date)
+        tomorrow = datetime.now() + timedelta(days=1)
+        start_time = tomorrow.replace(hour=10, minute=0, second=0, microsecond=0)
+        end_time = start_time + timedelta(hours=1)
+        
         band_data = {
-            "startTime": "2025-01-08T10:00:00.000Z",
-            "endTime": "2025-01-08T11:00:00.000Z",
+            "startTime": start_time.isoformat() + "Z",
+            "endTime": end_time.isoformat() + "Z",
             "location": "Confesionario Principal",
             "maxCapacity": 5,
             "notes": "Franja de testing mejorada",
