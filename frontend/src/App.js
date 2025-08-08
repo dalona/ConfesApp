@@ -1638,15 +1638,39 @@ const FaithfulDashboard = () => {
 
   const fetchData = async () => {
     try {
-      const [citasResponse, confessionsResponse] = await Promise.all([
-        axios.get(`${API}/confession-slots/available`),
+      // Fetch both legacy confession slots and new confession bands
+      const [slotsResponse, bandsResponse, confessionsResponse] = await Promise.all([
+        axios.get(`${API}/confession-slots/available`).catch(error => {
+          console.error('Error fetching slots:', error);
+          return { data: [] };
+        }),
+        axios.get(`${API}/confession-bands`).catch(error => {
+          console.error('Error fetching bands:', error);
+          return { data: [] };
+        }),
         axios.get(`${API}/confessions`, {
           headers: { Authorization: `Bearer ${token}` }
+        }).catch(error => {
+          console.error('Error fetching confessions:', error);
+          return { data: [] };
         })
       ]);
 
-      setCitasDisponibles(citasResponse.data || []);
-      setMisConfesiones(confessionsResponse.data || []);
+      // Combine slots and bands for available appointments
+      const slots = Array.isArray(slotsResponse.data) ? slotsResponse.data : [];
+      const bands = Array.isArray(bandsResponse.data) ? bandsResponse.data : [];
+      
+      // Filter available bands (not full or cancelled)
+      const availableBands = bands.filter(band => 
+        band.status === 'available' && 
+        new Date(band.startTime) > new Date()
+      );
+      
+      // Combine all available appointments
+      const allAvailable = [...slots, ...availableBands];
+      
+      setCitasDisponibles(allAvailable);
+      setMisConfesiones(Array.isArray(confessionsResponse.data) ? confessionsResponse.data : []);
     } catch (error) {
       console.error('Error fetching data:', error);
       // Set empty arrays to prevent null/undefined errors
