@@ -143,7 +143,7 @@ export class ConfessionsService {
   async findOne(id: string): Promise<Confession> {
     const confession = await this.confessionsRepository.findOne({
       where: { id },
-      relations: ['faithful', 'confessionSlot', 'confessionSlot.priest'],
+      relations: ['faithful', 'confessionSlot', 'confessionSlot.priest', 'confessionBand', 'confessionBand.priest'],
     });
 
     if (!confession) {
