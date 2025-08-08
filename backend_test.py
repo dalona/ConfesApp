@@ -240,13 +240,12 @@ class ConfesAppTester:
             
         self.log("📝 Test 6: CREAR CITA DESDE FRANJA")
         
-        # Use the confession-bands booking endpoint
+        # Use the correct endpoint for booking from bands
         booking_data = {
-            "bandId": self.test_band_id,
-            "notes": "Primera confesión desde franja mejorada"
+            "confessionBandId": self.test_band_id
         }
         
-        response = self.make_request("POST", "/confession-bands/book", booking_data, self.faithful_token)
+        response = self.make_request("POST", "/confessions", booking_data, self.faithful_token)
         
         if response and response.status_code == 201:
             data = response.json()
