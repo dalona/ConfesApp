@@ -874,11 +874,13 @@ const LoginForm = ({ role, isLogin: isLoginMode, priestRegistrationType, onBack,
 // Dashboard components would go here...
 
 const PriestDashboard = () => {
-  const [activeTab, setActiveTab] = useState('calendar'); // 'calendar', 'list', 'stats'
+  const [activeTab, setActiveTab] = useState('calendar'); // 'calendar', 'list', 'coordinators'
   const [bands, setBands] = useState([]);
   const [confessions, setConfessions] = useState([]);
+  const [coordinators, setCoordinators] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showBandForm, setShowBandForm] = useState(false);
+  const [showCoordinatorForm, setShowCoordinatorForm] = useState(false);
   const [selectedBand, setSelectedBand] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
   const { token, user } = useAuth();
