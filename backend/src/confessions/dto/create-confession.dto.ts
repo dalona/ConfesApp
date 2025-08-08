@@ -1,8 +1,15 @@
-import { IsString, IsOptional, IsUUID } from 'class-validator';
+import { IsString, IsOptional, IsUUID, ValidateIf } from 'class-validator';
 
 export class CreateConfessionDto {
   @IsUUID()
-  confessionSlotId: string;
+  @IsOptional()
+  @ValidateIf(o => !o.confessionBandId)
+  confessionSlotId?: string;
+
+  @IsUUID()
+  @IsOptional()
+  @ValidateIf(o => !o.confessionSlotId)
+  confessionBandId?: string;
 
   @IsString()
   @IsOptional()
