@@ -245,13 +245,13 @@ class ConfesAppTester:
             
         self.log("📝 Test 6: CREAR CITA DESDE FRANJA")
         
-        # Note: Based on the controller, we need to use confessionSlotId, not bandId
-        # Let's first check if we need to get slots from the band
+        # Use the confession-bands booking endpoint
         booking_data = {
-            "confessionSlotId": self.test_band_id  # Using band ID as slot ID for now
+            "bandId": self.test_band_id,
+            "notes": "Primera confesión desde franja mejorada"
         }
         
-        response = self.make_request("POST", "/confessions", booking_data, self.faithful_token)
+        response = self.make_request("POST", "/confession-bands/book", booking_data, self.faithful_token)
         
         if response and response.status_code == 201:
             data = response.json()
