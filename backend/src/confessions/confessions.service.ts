@@ -181,11 +181,28 @@ export class ConfessionsService {
       throw new BadRequestException('No puedes cancelar una confesión completada');
     }
 
+    // Can't cancel if less than 2 hours before the scheduled time
+    const timeUntilConfession = confession.scheduledTime.getTime() - new Date().getTime();
+    const twoHoursInMs = 2 * 60 * 60 * 1000;
+    
+    if (timeUntilConfession <= twoHoursInMs) {
+      throw new BadRequestException('No puedes cancelar una confesión con menos de 2 horas de anticipación');
+    }
+
     // Update confession status
     await this.confessionsRepository.update(id, { status: ConfessionStatus.CANCELLED });
 
-    // Update slot status back to available
-    await this.confessionSlotsService.updateStatus(confession.confessionSlotId, SlotStatus.AVAILABLE);
+    // Handle slot availability based on which system is used
+    if (confession.confessionSlotId) {
+      // Legacy system: Update slot status back to available
+      await this.confessionSlotsService.updateStatus(confession.confessionSlotId, SlotStatus.AVAILABLE);
+    } else if (confession.confessionBandId) {
+      // New system: Check if band was full and make it available again
+      const band = await this.confessionBandsService.findOne(confession.confessionBandId);
+      if (band.status === BandStatus.FULL) {
+        await this.confessionBandsService.updateStatus(confession.confessionBandId, BandStatus.AVAILABLE);
+      }
+    }
 
     return this.findOne(id);
   }
