@@ -1465,7 +1465,7 @@ class ConfesAppTester:
 
 if __name__ == "__main__":
     tester = ConfesAppTester()
-    passed, failed = tester.run_all_tests()
+    passed, failed = tester.run_mejoras_testing_sequence()
     
     # Exit with error code if any tests failed
     exit(0 if failed == 0 else 1)
