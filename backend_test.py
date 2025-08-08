@@ -264,6 +264,11 @@ class ConfesAppTester:
                 self.log("❌ Confession booking failed: No ID returned", "ERROR")
                 self.test_results.append(("Create Confession from Band", False, "No ID returned"))
                 return False
+        elif response and response.status_code == 500:
+            # This is a known backend bug - database schema issue
+            self.log("❌ CRITICAL BACKEND BUG: Database schema issue - confessionSlotId NOT NULL constraint", "ERROR")
+            self.test_results.append(("Create Confession from Band", False, "CRITICAL BUG: Database schema issue with confessionSlotId NOT NULL constraint"))
+            return False
         else:
             error_msg = response.json() if response else "No response"
             self.log(f"❌ Confession booking failed: {error_msg}", "ERROR")
