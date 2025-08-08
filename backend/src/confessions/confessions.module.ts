@@ -9,7 +9,7 @@ import { ConfessionBandsModule } from '../confession-bands/confession-bands.modu
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Confession]),
+    TypeOrmModule.forFeature([Confession, ConfessionBand]),
     ConfessionSlotsModule,
     ConfessionBandsModule,
   ],
