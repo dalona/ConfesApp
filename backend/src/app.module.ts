@@ -20,9 +20,10 @@ import { InvitesModule } from './invites/invites.module';
     }),
     TypeOrmModule.forRootAsync({
       useFactory: () => {
-        // Try Supabase PostgreSQL first, fallback to SQLite
-        if (process.env.FALLBACK_TO_SQLITE === 'true') {
-          console.log('⚠️  Using SQLite fallback due to FALLBACK_TO_SQLITE=true');
+        const databaseMode = process.env.DATABASE_MODE || 'sqlite';
+        
+        if (databaseMode === 'sqlite' || process.env.FALLBACK_TO_SQLITE === 'true') {
+          console.log('📦 Using SQLite database for development');
           return {
             type: 'sqlite',
             database: 'confes_app.db',
@@ -32,18 +33,42 @@ import { InvitesModule } from './invites/invites.module';
           };
         }
         
-        // Production Supabase config - try connection string first
-        console.log('🔗 Attempting connection to Supabase PostgreSQL (Connection Pooler)...');
+        if (databaseMode === 'postgres') {
+          console.log('🐘 Attempting connection to Supabase PostgreSQL...');
+          console.log('📍 Host:', process.env.DB_HOST);
+          console.log('🔌 Port:', process.env.DB_PORT_POOLER || '6543');
+          
+          return {
+            type: 'postgres',
+            host: process.env.DB_HOST,
+            port: parseInt(process.env.DB_PORT_POOLER) || 6543,
+            username: process.env.DB_USERNAME,
+            password: process.env.DB_PASSWORD,
+            database: process.env.DB_NAME,
+            entities: [__dirname + '/**/*.entity{.ts,.js}'],
+            synchronize: true,
+            logging: process.env.NODE_ENV === 'development',
+            ssl: {
+              rejectUnauthorized: false,
+              require: true
+            },
+            connectTimeoutMS: 30000,
+            extra: {
+              ssl: {
+                rejectUnauthorized: false
+              }
+            }
+          };
+        }
+        
+        // Default fallback
+        console.log('⚠️  Defaulting to SQLite due to unknown DATABASE_MODE');
         return {
-          type: 'postgres',
-          url: 'postgresql://postgres:3BXF6nSP3hlqggEp@db.xwapildbadeofmvdkqkd.supabase.co:6543/postgres',
+          type: 'sqlite',
+          database: 'confes_app.db',
           entities: [__dirname + '/**/*.entity{.ts,.js}'],
           synchronize: true,
           logging: process.env.NODE_ENV === 'development',
-          ssl: {
-            rejectUnauthorized: false,
-            require: true
-          }
         };
       },
     }),
