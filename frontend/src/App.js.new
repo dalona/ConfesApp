@@ -2,7 +2,7 @@ import React from 'react';
 import { AuthProvider } from './store/auth/AuthProvider';
 import { ThemeProvider } from './store/ThemeProvider';
 import AppRouter from './navigation/AppRouter';
-import './styles/globals.css';
+import './App.css';
 
 function App() {
   return (
