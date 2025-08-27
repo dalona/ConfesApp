@@ -288,7 +288,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Franjas de Confesión Integration"
+    - "Critical ConfessionBand Delete Bug Fix"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
