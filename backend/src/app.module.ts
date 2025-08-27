@@ -20,7 +20,11 @@ import { InvitesModule } from './invites/invites.module';
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      url: process.env.DATABASE_URL,
+      host: process.env.DB_HOST || 'db.xwapildbadeofmvdkqkd.supabase.co',
+      port: parseInt(process.env.DB_PORT) || 5432,
+      username: process.env.DB_USERNAME || 'postgres',
+      password: process.env.DB_PASSWORD || '3BXF6nSP3hlqggEp',
+      database: process.env.DB_NAME || 'postgres',
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
       logging: process.env.NODE_ENV === 'development',
