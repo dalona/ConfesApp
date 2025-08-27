@@ -126,9 +126,28 @@ export class ConfessionBandsService {
   async remove(id: string, priestId: string): Promise<{ message: string }> {
     const band = await this.findOne(id, priestId);
 
-    // Verificar si hay reservas activas
-    if (band.currentBookings > 0) {
-      throw new BadRequestException('No se puede eliminar una franja que tiene reservas activas. Cancela las reservas primero.');
+    // Find all confessions associated with this band (regardless of status)
+    const associatedConfessions = await this.confessionsRepository.find({
+      where: { confessionBandId: id }
+    });
+
+    // Handle associated confessions before deletion
+    if (associatedConfessions.length > 0) {
+      // Cancel active confessions and nullify the confessionBandId for all
+      for (const confession of associatedConfessions) {
+        if (confession.status === ConfessionStatus.BOOKED) {
+          // Cancel active bookings
+          await this.confessionsRepository.update(confession.id, {
+            status: ConfessionStatus.CANCELLED,
+            confessionBandId: null
+          });
+        } else {
+          // For other statuses (completed, cancelled, etc.), just remove the reference
+          await this.confessionsRepository.update(confession.id, {
+            confessionBandId: null
+          });
+        }
+      }
     }
 
     // Si es parte de una serie recurrente, solo eliminar esta instancia
@@ -139,6 +158,34 @@ export class ConfessionBandsService {
 
     // Si es la franja padre de una serie recurrente, eliminar todas las instancias futuras
     if (band.isRecurrent) {
+      // First handle confessions from child bands
+      const childBands = await this.bandsRepository.find({
+        where: {
+          parentBandId: id,
+          startTime: MoreThan(new Date())
+        }
+      });
+
+      for (const childBand of childBands) {
+        const childConfessions = await this.confessionsRepository.find({
+          where: { confessionBandId: childBand.id }
+        });
+
+        for (const confession of childConfessions) {
+          if (confession.status === ConfessionStatus.BOOKED) {
+            await this.confessionsRepository.update(confession.id, {
+              status: ConfessionStatus.CANCELLED,
+              confessionBandId: null
+            });
+          } else {
+            await this.confessionsRepository.update(confession.id, {
+              confessionBandId: null
+            });
+          }
+        }
+      }
+
+      // Now delete the child bands
       await this.bandsRepository.delete({
         parentBandId: id,
         startTime: MoreThan(new Date())
