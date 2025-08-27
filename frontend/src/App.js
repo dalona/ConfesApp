@@ -2152,8 +2152,17 @@ const FaithfulDashboard = () => {
   const canCancelConfession = (confession) => {
     if (confession.status !== 'booked') return false;
     
+    // Get the confession time from the appropriate source
+    let confessionTime;
+    if (confession.confessionBand) {
+      confessionTime = new Date(confession.confessionBand.startTime);
+    } else if (confession.confessionSlot) {
+      confessionTime = new Date(confession.confessionSlot.startTime);
+    } else {
+      confessionTime = new Date(confession.scheduledTime);
+    }
+    
     // Check if confession is at least 2 hours in the future
-    const confessionTime = new Date(confession.scheduledTime || confession.confessionSlot?.startTime);
     const now = new Date();
     const timeDiff = confessionTime.getTime() - now.getTime();
     const twoHoursInMs = 2 * 60 * 60 * 1000;
