@@ -42,7 +42,7 @@ const LandingScreen = ({ onRoleSelect }) => {
               className="mb-12"
             >
               <button
-                onClick={() => onRoleSelect(null)}
+                onClick={() => onRoleSelect('role-select')}
                 className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-8 py-4 rounded-2xl font-semibold text-lg hover:from-purple-700 hover:to-blue-700 transition-all transform hover:scale-105 shadow-lg"
               >
                 Agendar confesión
