@@ -2020,23 +2020,24 @@ const FaithfulDashboard = () => {
   const getConfessionInfo = (confession) => {
     if (confession.confessionSlot) {
       return {
-        startTime: confession.confessionSlot.startTime,
-        endTime: confession.confessionSlot.endTime,
+        startTime: new Date(confession.confessionSlot.startTime),
+        endTime: new Date(confession.confessionSlot.endTime),
         location: confession.confessionSlot.location,
         priest: confession.confessionSlot.priest?.firstName || 'Sacerdote'
       };
     } else if (confession.confessionBand) {
       return {
-        startTime: confession.confessionBand.startTime,
-        endTime: confession.confessionBand.endTime,
+        startTime: new Date(confession.confessionBand.startTime),
+        endTime: new Date(confession.confessionBand.endTime),
         location: confession.confessionBand.location,
         priest: confession.confessionBand.priest?.firstName || 'Sacerdote'
       };
     } else {
       // Fallback for confession without slot or band info
+      const scheduledTime = confession.scheduledTime ? new Date(confession.scheduledTime) : new Date();
       return {
-        startTime: confession.scheduledTime || new Date(),
-        endTime: new Date((confession.scheduledTime || new Date()).getTime() + 60*60*1000),
+        startTime: scheduledTime,
+        endTime: new Date(scheduledTime.getTime() + 60*60*1000),
         location: 'No especificado',
         priest: 'Sacerdote'
       };
