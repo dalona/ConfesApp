@@ -26,12 +26,16 @@ const AppRouter = () => {
   const [priestRegistrationType, setPriestRegistrationType] = useState(null);
 
   // Navigation handlers
-  const handleRoleSelect = (role) => {
-    setSelectedRole(role);
-    if (role === 'faithful') {
-      setCurrentView('faithful-action-select');
-    } else if (role === 'priest') {
-      setCurrentView('priest-action-select');
+  const handleRoleSelect = (roleOrAction) => {
+    if (roleOrAction === 'role-select') {
+      setCurrentView('role-select');
+    } else {
+      setSelectedRole(roleOrAction);
+      if (roleOrAction === 'faithful') {
+        setCurrentView('faithful-action-select');
+      } else if (roleOrAction === 'priest') {
+        setCurrentView('priest-action-select');
+      }
     }
   };
 
