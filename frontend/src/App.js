@@ -2120,6 +2120,9 @@ const FaithfulDashboard = () => {
   };
 
   const cancelConfession = async (confessionId) => {
+    console.log('cancelConfession called with ID:', confessionId);
+    console.log('misConfesiones:', misConfesiones);
+    
     if (!window.confirm('¿Estás seguro de que quieres cancelar esta cita? Esta acción no se puede deshacer.')) {
       return;
     }
@@ -2127,19 +2130,24 @@ const FaithfulDashboard = () => {
     try {
       // Find the confession to determine which system it belongs to
       const confession = misConfesiones.find(c => c.id === confessionId);
+      console.log('Found confession:', confession);
       
       let cancelEndpoint;
       if (confession?.confessionBandId) {
         // This confession was booked through confession bands system
         cancelEndpoint = `${API}/confession-bands/bookings/${confessionId}/cancel`;
+        console.log('Using confession bands endpoint:', cancelEndpoint);
       } else {
         // This confession was booked through legacy confession slots system
         cancelEndpoint = `${API}/confessions/${confessionId}/cancel`;
+        console.log('Using legacy confessions endpoint:', cancelEndpoint);
       }
 
-      await axios.patch(cancelEndpoint, {}, {
+      console.log('Making request to:', cancelEndpoint);
+      const response = await axios.patch(cancelEndpoint, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
+      console.log('Cancel response:', response);
       
       fetchData(); // Refresh data
       alert('Cita cancelada exitosamente');
