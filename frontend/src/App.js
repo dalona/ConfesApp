@@ -2055,8 +2055,8 @@ const FaithfulDashboard = () => {
     }
     
     return {
-      startTime: cita.startTime || new Date(),
-      endTime: cita.endTime || new Date(),
+      startTime: cita.startTime ? new Date(cita.startTime) : new Date(),
+      endTime: cita.endTime ? new Date(cita.endTime) : new Date(),
       location: cita.location || 'No especificado'
     };
   };
