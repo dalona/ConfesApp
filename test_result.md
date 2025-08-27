@@ -425,3 +425,15 @@ metadata:
       - working: true
         agent: "testing"
         comment: "✅ BACKEND COMPLETAMENTE FUNCIONAL - TODOS LOS PROBLEMAS REPORTADOS RESUELTOS: Comprehensive diagnostic testing confirms ALL backend functionality is working perfectly. VERIFIED WORKING: ✅ Priest login (padre.parroco@sanmiguel.es), ✅ Faithful login (fiel1@ejemplo.com), ✅ GET /api/confession-bands/my-bands returns 18 existing bands with proper structure, ✅ POST /api/confession-bands creates new bands successfully with future dates, ✅ DELETE /api/confession-bands/my-bands/:id deletes bands successfully, ✅ Date validation working perfectly (past dates rejected with 400 'La hora de inicio debe ser en el futuro'), ✅ GET /api/confessions returns 3 existing confessions for faithful with proper confessionBandId structure, ✅ POST /api/confessions with confessionBandId WORKS PERFECTLY (critical database schema fix verified - confessionSlotId is now nullable), ✅ Both legacy (confession-slots) and new (confession-bands) systems coexist properly. SUCCESS RATE: 88.9% (8/9 tests passed). CRITICAL CONCLUSION: The reported frontend issues (franjas not showing, can't delete, validations not working, can't cancel) are NOT backend problems. All backend APIs are working correctly. The issues are frontend integration problems or JavaScript errors preventing proper API communication."
+
+  - task: "Critical ConfessionBand Delete Bug Fix"
+    implemented: true
+    working: "NA"
+    file: "backend/src/confession-bands/confession-bands.service.ts"
+    stuck_count: 0
+    priority: "critical"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "FOREIGN KEY CONSTRAINT FIX IMPLEMENTED: Modified remove() method in ConfessionBandsService to handle foreign key constraints. CHANGES: 1) Find all confessions associated with band (regardless of status), 2) Cancel active confessions and nullify confessionBandId for all, 3) Handle recurrent bands and child bands properly, 4) Safe cascading deletion logic to prevent SQLite constraint errors. This resolves the 'FOREIGN KEY constraint failed' error that prevented deletion of bands with associated confessions."
