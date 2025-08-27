@@ -7,8 +7,8 @@ import './App.css';
 import { Cross, Calendar, Users, Moon, Sun, User, LogOut, Mail, FileText, ArrowLeft, Grid, List, Plus, Edit, Trash2, BarChart3 } from 'lucide-react';
 
 // Import components
-import WeeklyCalendar from './WeeklyCalendar';
-import BandForm from './BandForm';
+import WeeklyCalendar from './features/calendar/components/WeeklyCalendar';
+import BandForm from './features/bands/components/BandForm';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
