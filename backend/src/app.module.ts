@@ -32,11 +32,12 @@ import { InvitesModule } from './invites/invites.module';
           };
         }
         
-        // Production Supabase config
+        // Production Supabase config with Connection Pooler
+        console.log('🔗 Attempting connection to Supabase PostgreSQL...');
         return {
           type: 'postgres',
           host: process.env.DB_HOST,
-          port: parseInt(process.env.DB_PORT) || 5432,
+          port: parseInt(process.env.DB_PORT) || 6543,
           username: process.env.DB_USERNAME,
           password: process.env.DB_PASSWORD,
           database: process.env.DB_NAME,
@@ -44,7 +45,14 @@ import { InvitesModule } from './invites/invites.module';
           synchronize: true,
           logging: process.env.NODE_ENV === 'development',
           ssl: {
-            rejectUnauthorized: false
+            rejectUnauthorized: false,
+            require: true
+          },
+          extra: {
+            ssl: {
+              rejectUnauthorized: false,
+              require: true
+            }
           }
         };
       },
