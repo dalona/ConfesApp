@@ -295,15 +295,27 @@ test_plan:
 
   - task: "Critical Frontend Date Handling Bug Fix"
     implemented: true
-    working: "NA"
-    file: "frontend/src/App.js"
-    stuck_count: 0
-    priority: "critical"
-    needs_retesting: true
+    working: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "CRITICAL DATE PARSING ERROR FIXED: Resolved TypeError in getConfessionInfo function where confession.scheduledTime was expected to be Date object but was string. CHANGES: 1) Updated getConfessionInfo to properly convert string dates to Date objects using new Date() constructor, 2) Fixed getCitaInfo function for consistency, 3) Ensured all date operations are safe with proper type conversion. Error '(confession.scheduledTime || (intermediate value)).getTime is not a function' should be resolved."
+      - working: true
+        agent: "main"
+        comment: "✅ DATE ERROR FIX VERIFIED - DASHBOARD NOW LOADING! User confirmed faithful dashboard is working and displaying confessions properly. However, discovered new issue: delete/cancel button not working for faithful users."
+
+  - task: "Fix Faithful Cancel Confession Hybrid System"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "HYBRID CANCEL SYSTEM FIX: Fixed cancelConfession function to handle both confession systems. ISSUE: Function was only calling legacy /api/confessions/:id/cancel but needed to determine if confession belongs to new confession-bands system. CHANGES: 1) Check confession.confessionBandId to determine system, 2) Use /api/confession-bands/bookings/:id/cancel for band-based confessions, 3) Use /api/confessions/:id/cancel for legacy slot-based confessions, 4) Updated canCancelConfession to properly get confession time from appropriate source (band vs slot vs scheduledTime)."
 
 agent_communication:
   - agent: "main"
