@@ -293,6 +293,18 @@ test_plan:
   test_all: false
   test_priority: "high_first"
 
+  - task: "Critical Frontend Date Handling Bug Fix"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/App.js"
+    stuck_count: 0
+    priority: "critical"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "CRITICAL DATE PARSING ERROR FIXED: Resolved TypeError in getConfessionInfo function where confession.scheduledTime was expected to be Date object but was string. CHANGES: 1) Updated getConfessionInfo to properly convert string dates to Date objects using new Date() constructor, 2) Fixed getCitaInfo function for consistency, 3) Ensured all date operations are safe with proper type conversion. Error '(confession.scheduledTime || (intermediate value)).getTime is not a function' should be resolved."
+
 agent_communication:
   - agent: "main"
     message: "Complete NestJS backend implemented with JWT auth, user roles (faithful/priest), confession slot management, and booking system. Using SQLite as fallback for demo (user can switch to Supabase PostgreSQL later). Need backend testing to verify all endpoints work properly before building frontend."
