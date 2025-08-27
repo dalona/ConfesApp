@@ -1288,6 +1288,7 @@ const PriestDashboard = () => {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchData(); // Refresh data
+      alert('Franja eliminada exitosamente');
     } catch (error) {
       console.error('Error deleting band:', error);
       alert(error.response?.data?.message || 'Error al eliminar la franja');
