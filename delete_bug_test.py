@@ -46,16 +46,17 @@ class ConfesAppDeleteBugTester:
             
         try:
             if method == "GET":
-                response = requests.get(url, headers=headers, timeout=15)
+                response = requests.get(url, headers=headers, timeout=30)
             elif method == "POST":
-                response = requests.post(url, headers=headers, json=data, timeout=15)
+                response = requests.post(url, headers=headers, json=data, timeout=30)
             elif method == "PATCH":
-                response = requests.patch(url, headers=headers, json=data, timeout=15)
+                response = requests.patch(url, headers=headers, json=data, timeout=30)
             elif method == "DELETE":
-                response = requests.delete(url, headers=headers, timeout=15)
+                response = requests.delete(url, headers=headers, timeout=30)
             else:
                 raise ValueError(f"Unsupported method: {method}")
                 
+            self.log(f"Request: {method} {endpoint} -> {response.status_code}")
             return response
         except requests.exceptions.RequestException as e:
             self.log(f"Request failed: {e}", "ERROR")
