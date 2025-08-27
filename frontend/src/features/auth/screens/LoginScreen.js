@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Cross, ArrowLeft, User, Mail, Lock, Phone, FileText, Building } from 'lucide-react';
 import { useAuth } from '../../../hooks/useAuth';
-import { authService } from '../../../services/authService';
+import { authService } from '../services/authService';
 
 const LoginScreen = ({ 
   role, 
