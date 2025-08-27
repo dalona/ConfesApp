@@ -19,12 +19,15 @@ import { InvitesModule } from './invites/invites.module';
       isGlobal: true,
     }),
     TypeOrmModule.forRoot({
-      type: 'sqlite',
-      database: 'confes_app.db',
+      type: 'postgres',
+      url: process.env.DATABASE_URL,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
       logging: process.env.NODE_ENV === 'development',
-    } as any),
+      ssl: {
+        rejectUnauthorized: false
+      }
+    }),
     AuthModule,
     UsersModule,
     DiocesesModule,
