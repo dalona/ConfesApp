@@ -32,27 +32,17 @@ import { InvitesModule } from './invites/invites.module';
           };
         }
         
-        // Production Supabase config with Connection Pooler
-        console.log('🔗 Attempting connection to Supabase PostgreSQL...');
+        // Production Supabase config - try connection string first
+        console.log('🔗 Attempting connection to Supabase PostgreSQL (Connection Pooler)...');
         return {
           type: 'postgres',
-          host: process.env.DB_HOST,
-          port: parseInt(process.env.DB_PORT) || 6543,
-          username: process.env.DB_USERNAME,
-          password: process.env.DB_PASSWORD,
-          database: process.env.DB_NAME,
+          url: 'postgresql://postgres:3BXF6nSP3hlqggEp@db.xwapildbadeofmvdkqkd.supabase.co:6543/postgres',
           entities: [__dirname + '/**/*.entity{.ts,.js}'],
           synchronize: true,
           logging: process.env.NODE_ENV === 'development',
           ssl: {
             rejectUnauthorized: false,
             require: true
-          },
-          extra: {
-            ssl: {
-              rejectUnauthorized: false,
-              require: true
-            }
           }
         };
       },
