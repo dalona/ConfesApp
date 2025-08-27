@@ -18,19 +18,36 @@ import { InvitesModule } from './invites/invites.module';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: process.env.DB_HOST || 'db.xwapildbadeofmvdkqkd.supabase.co',
-      port: parseInt(process.env.DB_PORT) || 5432,
-      username: process.env.DB_USERNAME || 'postgres',
-      password: process.env.DB_PASSWORD || '3BXF6nSP3hlqggEp',
-      database: process.env.DB_NAME || 'postgres',
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      synchronize: true,
-      logging: process.env.NODE_ENV === 'development',
-      ssl: {
-        rejectUnauthorized: false
-      }
+    TypeOrmModule.forRootAsync({
+      useFactory: () => {
+        // Try Supabase PostgreSQL first, fallback to SQLite
+        if (process.env.FALLBACK_TO_SQLITE === 'true') {
+          console.log('⚠️  Using SQLite fallback due to FALLBACK_TO_SQLITE=true');
+          return {
+            type: 'sqlite',
+            database: 'confes_app.db',
+            entities: [__dirname + '/**/*.entity{.ts,.js}'],
+            synchronize: true,
+            logging: process.env.NODE_ENV === 'development',
+          };
+        }
+        
+        // Production Supabase config
+        return {
+          type: 'postgres',
+          host: process.env.DB_HOST,
+          port: parseInt(process.env.DB_PORT) || 5432,
+          username: process.env.DB_USERNAME,
+          password: process.env.DB_PASSWORD,
+          database: process.env.DB_NAME,
+          entities: [__dirname + '/**/*.entity{.ts,.js}'],
+          synchronize: true,
+          logging: process.env.NODE_ENV === 'development',
+          ssl: {
+            rejectUnauthorized: false
+          }
+        };
+      },
     }),
     AuthModule,
     UsersModule,
