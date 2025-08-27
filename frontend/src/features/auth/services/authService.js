@@ -1,11 +1,8 @@
-import axios from 'axios';
-import { API_BASE_URL } from '../utils/constants';
-
-const API = `${API_BASE_URL}/api`;
+import apiClient from '../../../services/apiClient';
 
 export const authService = {
   login: async (email, password) => {
-    const response = await axios.post(`${API}/auth/login`, {
+    const response = await apiClient.post('/auth/login', {
       email,
       password,
     });
@@ -13,22 +10,22 @@ export const authService = {
   },
 
   register: async (userData) => {
-    const response = await axios.post(`${API}/auth/register`, userData);
+    const response = await apiClient.post('/auth/register', userData);
     return response.data;
   },
 
   registerPriest: async (priestData) => {
-    const response = await axios.post(`${API}/auth/register-priest`, priestData);
+    const response = await apiClient.post('/auth/register-priest', priestData);
     return response.data;
   },
 
   registerFromInvite: async (token, userData) => {
-    const response = await axios.post(`${API}/auth/register-from-invite/${token}`, userData);
+    const response = await apiClient.post(`/auth/register-from-invite/${token}`, userData);
     return response.data;
   },
 
   validateInvite: async (token) => {
-    const response = await axios.get(`${API}/invites/validate/${token}`);
+    const response = await apiClient.get(`/invites/validate/${token}`);
     return response.data;
   },
 };
