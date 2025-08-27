@@ -2125,9 +2125,22 @@ const FaithfulDashboard = () => {
     }
 
     try {
-      await axios.patch(`${API}/confessions/${confessionId}/cancel`, {}, {
+      // Find the confession to determine which system it belongs to
+      const confession = misConfesiones.find(c => c.id === confessionId);
+      
+      let cancelEndpoint;
+      if (confession?.confessionBandId) {
+        // This confession was booked through confession bands system
+        cancelEndpoint = `${API}/confession-bands/bookings/${confessionId}/cancel`;
+      } else {
+        // This confession was booked through legacy confession slots system
+        cancelEndpoint = `${API}/confessions/${confessionId}/cancel`;
+      }
+
+      await axios.patch(cancelEndpoint, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
+      
       fetchData(); // Refresh data
       alert('Cita cancelada exitosamente');
     } catch (error) {
