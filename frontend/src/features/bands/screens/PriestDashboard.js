@@ -66,17 +66,22 @@ const PriestDashboard = () => {
   };
 
   const handleDeleteBand = async (bandId) => {
-    if (!window.confirm('¿Estás seguro de que quieres eliminar esta franja? Esta acción no se puede deshacer.')) {
-      return;
-    }
+    setBandToDelete(bandId);
+    setShowDeleteConfirm(true);
+  };
 
-    try {
-      await deleteBand(bandId);
-      alert('Franja eliminada exitosamente');
-    } catch (error) {
-      console.error('Error deleting band:', error);
-      alert(error.response?.data?.message || 'Error al eliminar la franja');
+  const confirmDeleteBand = async () => {
+    if (bandToDelete) {
+      try {
+        await deleteBand(bandToDelete);
+        alert('Franja eliminada exitosamente');
+      } catch (error) {
+        console.error('Error deleting band:', error);
+        alert(error.response?.data?.message || 'Error al eliminar la franja');
+      }
     }
+    setShowDeleteConfirm(false);
+    setBandToDelete(null);
   };
 
   const tabs = [
