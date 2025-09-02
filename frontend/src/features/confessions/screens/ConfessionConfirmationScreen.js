@@ -86,7 +86,7 @@ const ConfessionConfirmationScreen = ({ confessionData, onBackToDashboard }) => 
                 <div>
                   <p className="text-sm text-gray-500 dark:text-gray-400">Hora</p>
                   <p className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-                    {formatTime(confessionData?.startTime || new Date())} - {formatTime(confessionData?.endTime || new Date())}
+                    {formatTime(data?.startTime || new Date())} - {formatTime(data?.endTime || new Date())}
                   </p>
                 </div>
               </div>
