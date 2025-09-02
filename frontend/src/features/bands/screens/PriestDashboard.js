@@ -18,6 +18,8 @@ const PriestDashboard = () => {
   const [activeTab, setActiveTab] = useState('calendar');
   const [selectedBand, setSelectedBand] = useState(null);
   const [showBandForm, setShowBandForm] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [bandToDelete, setBandToDelete] = useState(null);
 
   const handleCreateBand = (date) => {
     setSelectedBand({
