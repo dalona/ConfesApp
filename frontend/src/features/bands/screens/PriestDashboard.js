@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Cross, LogOut, Moon, Sun, Calendar, List, Plus } from 'lucide-react';
+import { Cross, LogOut, Moon, Sun, Calendar, List, Plus, Trash2 } from 'lucide-react';
 import { useAuth } from '../../../hooks/useAuth';
 import { useTheme } from '../../../store/ThemeProvider';
 import { useBands } from '../hooks/useBands';
