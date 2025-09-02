@@ -177,7 +177,7 @@ const BandForm = ({ band, onSave, onCancel }) => {
             </div>
           </div>
           <button
-            onClick={onClose}
+            onClick={onCancel}
             className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-colors"
           >
             <X className="w-6 h-6 text-gray-500" />
