@@ -28,9 +28,28 @@ export async function runSeed(dataSource: DataSource) {
     await parishRepository.clear();
     await dioceseRepository.clear();
 
-    // 1. Crear Obispo
-    console.log('👑 Creando obispo...');
+    // 1. Crear Admin del Sistema
+    console.log('🛡️ Creando administrador del sistema...');
     const hashedPassword = await bcrypt.hash('Pass123!', 12);
+    
+    const admin = userRepository.create({
+      email: 'admin@confesapp.com',
+      password: hashedPassword,
+      firstName: 'Sistema',
+      lastName: 'Administrador',
+      role: UserRole.ADMIN,
+      phone: '+34 900 000 000',
+      isActive: true,
+      canConfess: false,
+      available: false,
+      address: 'Sede Central ConfesApp',
+      city: 'Madrid',
+      state: 'Madrid',
+      country: 'España',
+    });
+
+    // 2. Crear Obispo
+    console.log('👑 Creando obispo...');
     
     const bishop = userRepository.create({
       email: 'obispo@diocesis.com',
