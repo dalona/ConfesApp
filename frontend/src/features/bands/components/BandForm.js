@@ -145,8 +145,6 @@ const BandForm = ({ band, onSave, onCancel }) => {
     }
   };
 
-  if (!isOpen) return null;
-
   return (
     <motion.div 
       initial={{ opacity: 0 }}
