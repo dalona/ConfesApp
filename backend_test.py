@@ -522,9 +522,13 @@ class ConfesAppTester:
                 self.log("✅ Role-based access working: Faithful cannot access priest endpoints")
                 self.test_results.append(("Role-based Access (Priest endpoints)", True, "Faithful correctly denied access to priest endpoints"))
                 return True
+            elif response:
+                self.log(f"❌ Role-based access failed: Faithful can access priest endpoints (status: {response.status_code})", "ERROR")
+                self.test_results.append(("Role-based Access (Priest endpoints)", False, f"Faithful can access priest endpoints (status: {response.status_code})"))
+                return False
             else:
-                self.log("❌ Role-based access failed: Faithful can access priest endpoints", "ERROR")
-                self.test_results.append(("Role-based Access (Priest endpoints)", False, "Faithful can access priest endpoints"))
+                self.log("❌ Role-based access test failed: No response", "ERROR")
+                self.test_results.append(("Role-based Access (Priest endpoints)", False, "No response"))
                 return False
         else:
             self.log("❌ Cannot test role-based access: No faithful token", "ERROR")
