@@ -112,7 +112,7 @@ const ConfessionConfirmationScreen = ({ confessionData, onBackToDashboard }) => 
                 <div>
                   <p className="text-sm text-gray-500 dark:text-gray-400">Ubicación</p>
                   <p className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-                    {confessionData?.location || 'Confesionario Principal'}
+                    {data?.location || 'Confesionario Principal'}
                   </p>
                 </div>
               </div>
