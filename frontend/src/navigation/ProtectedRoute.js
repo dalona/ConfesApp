@@ -3,7 +3,7 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 
-const ProtectedRoute = ({ children, requiredRole }) => {
+const ProtectedRoute = ({ children, requiredRole, allowedRoles }) => {
   const { user, loading } = useAuth();
   const location = useLocation();
 
@@ -16,9 +16,15 @@ const ProtectedRoute = ({ children, requiredRole }) => {
     return <Navigate to="/" state={{ from: location }} replace />;
   }
 
+  // Check role permissions
   if (requiredRole && user.role !== requiredRole) {
-    // User doesn't have required role, redirect to their dashboard
-    return <Navigate to="/dashboard" replace />;
+    // User doesn't have required role, redirect to their dashboard or show unauthorized
+    return <Navigate to="/unauthorized" state={{ attemptedRole: requiredRole, currentRole: user.role }} replace />;
+  }
+
+  if (allowedRoles && !allowedRoles.includes(user.role)) {
+    // User's role is not in allowed roles list
+    return <Navigate to="/unauthorized" state={{ attemptedRole: allowedRoles[0], currentRole: user.role }} replace />;
   }
 
   return children;
