@@ -9,11 +9,13 @@ import { bandsService } from '../../bands/services/bandsService';
 import LoadingSpinner from '../../../components/ui/LoadingSpinner';
 
 const FaithfulDashboard = () => {
+  const navigate = useNavigate();
   const { user, logout } = useAuth();
   const { darkMode, toggleTheme } = useTheme();
   const [loading, setLoading] = useState(true);
   const [citasDisponibles, setCitasDisponibles] = useState([]);
   const [misConfesiones, setMisConfesiones] = useState([]);
+  const [showMenu, setShowMenu] = useState(false);
 
   useEffect(() => {
     fetchData();
