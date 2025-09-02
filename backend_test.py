@@ -366,16 +366,165 @@ class ConfesAppTester:
             data = response.json()
             if isinstance(data, list):
                 self.log(f"✅ Priest bands retrieved successfully: {len(data)} bands found")
-                self.test_results.append(("GET Priest Bands", True, f"{len(data)} bands found"))
+                self.test_results.append(("GET Priest Bands Overview", True, f"{len(data)} bands found"))
                 return True
             else:
                 self.log(f"❌ Get bands failed: Expected array, got {type(data)}", "ERROR")
-                self.test_results.append(("GET Priest Bands", False, f"Expected array, got {type(data)}"))
+                self.test_results.append(("GET Priest Bands Overview", False, f"Expected array, got {type(data)}"))
                 return False
         else:
             error_msg = response.json() if response else "No response"
             self.log(f"❌ Get bands failed: {error_msg}", "ERROR")
-            self.test_results.append(("GET Priest Bands", False, str(error_msg)))
+            self.test_results.append(("GET Priest Bands Overview", False, str(error_msg)))
+            return False
+
+    # ===== CONFESSION BOOKING AND CONFIRMATION FLOW =====
+
+    def test_11_get_available_bands_faithful(self):
+        """Test 11: GET AVAILABLE BANDS - /api/confession-bands/available (Faithful)"""
+        if not self.faithful_token:
+            self.log("❌ Cannot test available bands: No faithful token", "ERROR")
+            self.test_results.append(("GET Available Bands (Faithful)", False, "No faithful token"))
+            return False
+            
+        self.log("📅 Test 11: GET AVAILABLE BANDS - /api/confession-bands/available (Faithful)")
+        
+        response = self.make_request("GET", "/confession-bands/available", token=self.faithful_token)
+        
+        if response and response.status_code == 200:
+            data = response.json()
+            if isinstance(data, list):
+                available_bands = [band for band in data if band.get("status") == "available"]
+                self.log(f"✅ Available bands retrieved successfully: {len(available_bands)} available bands found")
+                self.test_results.append(("GET Available Bands (Faithful)", True, f"{len(available_bands)} available bands found"))
+                return True
+            else:
+                self.log(f"❌ Get available bands failed: Expected array, got {type(data)}", "ERROR")
+                self.test_results.append(("GET Available Bands (Faithful)", False, f"Expected array, got {type(data)}"))
+                return False
+        else:
+            error_msg = response.json() if response else "No response"
+            self.log(f"❌ Get available bands failed: {error_msg}", "ERROR")
+            self.test_results.append(("GET Available Bands (Faithful)", False, str(error_msg)))
+            return False
+
+    def test_12_book_confession_from_band(self):
+        """Test 12: BOOK CONFESSION FROM BAND - POST /api/confession-bands/book"""
+        if not self.faithful_token:
+            self.log("❌ Cannot test booking: No faithful token", "ERROR")
+            self.test_results.append(("Book Confession from Band", False, "No faithful token"))
+            return False
+            
+        self.log("📝 Test 12: BOOK CONFESSION FROM BAND - POST /api/confession-bands/book")
+        
+        # First get available bands to book from
+        response = self.make_request("GET", "/confession-bands/available", token=self.faithful_token)
+        
+        if not response or response.status_code != 200:
+            self.log("❌ Cannot get available bands for booking", "ERROR")
+            self.test_results.append(("Book Confession from Band", False, "Cannot get available bands"))
+            return False
+            
+        available_bands = response.json()
+        available_band = next((band for band in available_bands if band.get("status") == "available"), None)
+        
+        if not available_band:
+            self.log("❌ No available bands found for booking", "ERROR")
+            self.test_results.append(("Book Confession from Band", False, "No available bands"))
+            return False
+            
+        # Book the confession
+        booking_data = {
+            "confessionBandId": available_band["id"],
+            "notes": "Test booking from navigation features testing"
+        }
+        
+        response = self.make_request("POST", "/confession-bands/book", booking_data, self.faithful_token)
+        
+        if response and response.status_code == 201:
+            data = response.json()
+            if data.get("id"):
+                self.test_confession_id = data["id"]
+                self.log(f"✅ Confession booked successfully: {self.test_confession_id}")
+                self.test_results.append(("Book Confession from Band", True, f"Confession booked: {self.test_confession_id}"))
+                return True
+            else:
+                self.log("❌ Booking failed: No confession ID returned", "ERROR")
+                self.test_results.append(("Book Confession from Band", False, "No confession ID returned"))
+                return False
+        else:
+            error_msg = response.json() if response else "No response"
+            self.log(f"❌ Booking failed: {error_msg}", "ERROR")
+            self.test_results.append(("Book Confession from Band", False, str(error_msg)))
+            return False
+
+    def test_13_cancel_confession_booking(self):
+        """Test 13: CANCEL CONFESSION BOOKING - PATCH /api/confession-bands/bookings/:id/cancel"""
+        if not self.faithful_token or not self.test_confession_id:
+            self.log("❌ Cannot test cancellation: Missing token or confession ID", "ERROR")
+            self.test_results.append(("Cancel Confession Booking", False, "Missing token or confession ID"))
+            return False
+            
+        self.log("❌ Test 13: CANCEL CONFESSION BOOKING - PATCH /api/confession-bands/bookings/:id/cancel")
+        
+        response = self.make_request("PATCH", f"/confession-bands/bookings/{self.test_confession_id}/cancel", token=self.faithful_token)
+        
+        if response and response.status_code == 200:
+            data = response.json()
+            if data.get("status") == "cancelled":
+                self.log("✅ Confession cancelled successfully")
+                self.test_results.append(("Cancel Confession Booking", True, "Confession cancelled successfully"))
+                return True
+            else:
+                self.log(f"❌ Cancellation failed: Expected status 'cancelled', got '{data.get('status')}'", "ERROR")
+                self.test_results.append(("Cancel Confession Booking", False, f"Expected status 'cancelled', got '{data.get('status')}'"))
+                return False
+        else:
+            error_msg = response.json() if response else "No response"
+            self.log(f"❌ Cancellation failed: {error_msg}", "ERROR")
+            self.test_results.append(("Cancel Confession Booking", False, str(error_msg)))
+            return False
+
+    # ===== ROLE-BASED ACCESS CONTROL TESTS =====
+
+    def test_14_role_based_access_bishop_endpoints(self):
+        """Test 14: ROLE-BASED ACCESS - Bishop endpoints with different roles"""
+        self.log("🔒 Test 14: ROLE-BASED ACCESS - Bishop endpoints with different roles")
+        
+        # Test bishop endpoint with priest token (should fail)
+        if self.priest_token:
+            response = self.make_request("GET", "/dioceses/my-diocese/info", token=self.priest_token)
+            if response and response.status_code == 403:
+                self.log("✅ Role-based access working: Priest cannot access bishop endpoints")
+                self.test_results.append(("Role-based Access (Bishop endpoints)", True, "Priest correctly denied access to bishop endpoints"))
+                return True
+            else:
+                self.log("❌ Role-based access failed: Priest can access bishop endpoints", "ERROR")
+                self.test_results.append(("Role-based Access (Bishop endpoints)", False, "Priest can access bishop endpoints"))
+                return False
+        else:
+            self.log("❌ Cannot test role-based access: No priest token", "ERROR")
+            self.test_results.append(("Role-based Access (Bishop endpoints)", False, "No priest token"))
+            return False
+
+    def test_15_role_based_access_priest_endpoints(self):
+        """Test 15: ROLE-BASED ACCESS - Priest endpoints with different roles"""
+        self.log("🔒 Test 15: ROLE-BASED ACCESS - Priest endpoints with different roles")
+        
+        # Test priest endpoint with faithful token (should fail)
+        if self.faithful_token:
+            response = self.make_request("GET", "/confession-bands/my-bands", token=self.faithful_token)
+            if response and response.status_code == 403:
+                self.log("✅ Role-based access working: Faithful cannot access priest endpoints")
+                self.test_results.append(("Role-based Access (Priest endpoints)", True, "Faithful correctly denied access to priest endpoints"))
+                return True
+            else:
+                self.log("❌ Role-based access failed: Faithful can access priest endpoints", "ERROR")
+                self.test_results.append(("Role-based Access (Priest endpoints)", False, "Faithful can access priest endpoints"))
+                return False
+        else:
+            self.log("❌ Cannot test role-based access: No faithful token", "ERROR")
+            self.test_results.append(("Role-based Access (Priest endpoints)", False, "No faithful token"))
             return False
 
     def test_3_create_new_band(self):
