@@ -115,9 +115,9 @@ const UnauthorizedAccessScreen = ({ attemptedRole, currentRole }) => {
             transition={{ delay: 0.8 }}
             className="flex flex-col sm:flex-row gap-4"
           >
-            {currentRole && (
+            {stateCurrentRole && (
               <button
-                onClick={() => navigate(`/dashboard/${currentRole}`)}
+                onClick={() => navigate('/dashboard')}
                 className="flex-1 flex items-center justify-center px-6 py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-2xl font-semibold hover:from-blue-700 hover:to-blue-800 transition-all transform hover:scale-105 shadow-lg"
               >
                 <Home className="w-5 h-5 mr-2" />
