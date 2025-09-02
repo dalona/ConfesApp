@@ -125,52 +125,46 @@ const PriestDashboard = () => {
               </button>
               
               {showMenu && (
-                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 z-50">
-                  <div className="p-2">
-                    <button
-                      onClick={() => {
-                        navigate('/confession/history');
-                        setShowMenu(false);
-                      }}
-                      className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center"
-                    >
-                      <History className="w-4 h-4 mr-2 text-gray-500" />
-                      <span className="text-gray-700 dark:text-gray-300">Historial</span>
-                    </button>
-                    
-                    <button
-                      onClick={() => {
-                        // This would open a confession requests list
-                        setShowMenu(false);
-                      }}
-                      className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center"
-                    >
-                      <FileText className="w-4 h-4 mr-2 text-gray-500" />
-                      <span className="text-gray-700 dark:text-gray-300">Solicitudes</span>
-                    </button>
-                    
-                    <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
+                <div className="absolute right-0 mt-3 w-56 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 z-50 overflow-hidden">
+                  <div className="py-2">
+                    <div className="px-4 py-2 bg-purple-50 dark:bg-purple-900/20 border-b border-gray-200 dark:border-gray-700">
+                      <p className="text-sm font-semibold text-purple-800 dark:text-purple-200">Navegación Rápida</p>
+                    </div>
                     
                     <button
                       onClick={() => {
                         navigate('/dashboard/parish');
                         setShowMenu(false);
                       }}
-                      className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center"
+                      className="w-full text-left px-4 py-3 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-colors flex items-center border-b border-gray-100 dark:border-gray-700"
                     >
-                      <Church className="w-4 h-4 mr-2 text-gray-500" />
-                      <span className="text-gray-700 dark:text-gray-300">Panel Parroquial</span>
+                      <Church className="w-5 h-5 mr-3 text-purple-600 dark:text-purple-400" />
+                      <div>
+                        <span className="font-medium text-gray-900 dark:text-gray-100">Panel Parroquial</span>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">Gestión completa</p>
+                      </div>
                     </button>
                     
                     <button
                       onClick={() => {
-                        navigate('/dashboard');
+                        navigate('/confession/history');
                         setShowMenu(false);
                       }}
-                      className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center"
+                      className="w-full text-left px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center"
                     >
-                      <Cross className="w-4 h-4 mr-2 text-gray-500" />
-                      <span className="text-gray-700 dark:text-gray-300">Inicio</span>
+                      <History className="w-5 h-5 mr-3 text-gray-500" />
+                      <span className="text-gray-700 dark:text-gray-300">Historial de Confesiones</span>
+                    </button>
+                    
+                    <button
+                      onClick={() => {
+                        setShowMenu(false);
+                        alert('Próximamente: Lista de solicitudes pendientes');
+                      }}
+                      className="w-full text-left px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center"
+                    >
+                      <FileText className="w-5 h-5 mr-3 text-gray-500" />
+                      <span className="text-gray-700 dark:text-gray-300">Solicitudes Pendientes</span>
                     </button>
                   </div>
                 </div>
