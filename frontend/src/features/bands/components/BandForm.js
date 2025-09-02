@@ -378,7 +378,7 @@ const BandForm = ({ band, onSave, onCancel }) => {
             </button>
             <button
               type="button"
-              onClick={onClose}
+              onClick={onCancel}
               disabled={loading}
               className="px-8 py-4 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-xl font-semibold hover:bg-gray-300 dark:hover:bg-gray-500 transition-all"
             >
