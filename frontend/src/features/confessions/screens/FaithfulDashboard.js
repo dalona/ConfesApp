@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Cross, User, LogOut, Moon, Sun, Calendar, Trash2 } from 'lucide-react';
+import { Cross, User, LogOut, Moon, Sun, Calendar, Trash2, History, Menu } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../hooks/useAuth';
 import { useTheme } from '../../../store/ThemeProvider';
 import { confessionsService } from '../services/confessionsService';
