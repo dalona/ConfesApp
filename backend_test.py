@@ -445,7 +445,7 @@ class ConfesAppTester:
 
 if __name__ == "__main__":
     tester = ConfesAppTester()
-    passed, failed = tester.run_critical_fixes_testing_sequence()
+    passed, failed = tester.run_priest_dashboard_workflow_testing()
     
     # Exit with error code if any tests failed
     exit(0 if failed == 0 else 1)
