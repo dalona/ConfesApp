@@ -7,6 +7,11 @@ import { useAuth } from '../../../hooks/useAuth';
 const UnauthorizedAccessScreen = ({ attemptedRole, currentRole }) => {
   const navigate = useNavigate();
   const { logout } = useAuth();
+  const location = useLocation();
+  
+  // Get role information from navigation state or props
+  const stateAttemptedRole = location.state?.attemptedRole || attemptedRole;
+  const stateCurrentRole = location.state?.currentRole || currentRole;
 
   const getRoleDisplayName = (role) => {
     const roleNames = {
