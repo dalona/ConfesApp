@@ -300,7 +300,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Critical ConfessionBand Delete Bug Fix"
+    - "Priest Dashboard Band Management Workflow Testing"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
