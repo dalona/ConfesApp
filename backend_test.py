@@ -139,7 +139,219 @@ class ConfesAppTester:
             self.test_results.append(("Priest Login", False, str(error_msg)))
             return False
 
-    def test_2_get_priest_bands(self):
+    def test_3_faithful_login(self):
+        """Test 3: LOGIN AS FAITHFUL - fiel1@ejemplo.com"""
+        self.log("🙏 Test 3: LOGIN AS FAITHFUL - fiel1@ejemplo.com")
+        
+        login_data = {
+            "email": "fiel1@ejemplo.com",
+            "password": "Pass123!"
+        }
+        
+        response = self.make_request("POST", "/auth/login", login_data)
+        
+        if response and response.status_code == 201:
+            data = response.json()
+            if data.get("access_token") and data.get("user"):
+                self.faithful_token = data["access_token"]
+                self.faithful_user = data["user"]
+                
+                # Verify role is 'faithful'
+                if self.faithful_user.get("role") == "faithful":
+                    self.log("✅ Faithful login successful with correct role")
+                    self.test_results.append(("Faithful Login", True, "Login successful with role: faithful"))
+                    return True
+                else:
+                    self.log(f"❌ Faithful login failed: Wrong role {self.faithful_user.get('role')}", "ERROR")
+                    self.test_results.append(("Faithful Login", False, f"Wrong role: {self.faithful_user.get('role')}"))
+                    return False
+            else:
+                self.log("❌ Faithful login failed: Missing token or user data", "ERROR")
+                self.test_results.append(("Faithful Login", False, "Missing token or user data"))
+                return False
+        else:
+            error_msg = response.json() if response else "No response"
+            self.log(f"❌ Faithful login failed: {error_msg}", "ERROR")
+            self.test_results.append(("Faithful Login", False, str(error_msg)))
+            return False
+
+    # ===== BISHOP DASHBOARD ENDPOINTS =====
+
+    def test_4_get_dioceses(self):
+        """Test 4: GET DIOCESES - /api/dioceses (Bishop Dashboard)"""
+        if not self.bishop_token:
+            self.log("❌ Cannot test dioceses: No bishop token", "ERROR")
+            self.test_results.append(("GET Dioceses", False, "No bishop token"))
+            return False
+            
+        self.log("🏛️ Test 4: GET DIOCESES - /api/dioceses (Bishop Dashboard)")
+        
+        response = self.make_request("GET", "/dioceses", token=self.bishop_token)
+        
+        if response and response.status_code == 200:
+            data = response.json()
+            if isinstance(data, list):
+                self.log(f"✅ Dioceses retrieved successfully: {len(data)} dioceses found")
+                if len(data) > 0:
+                    self.diocese_id = data[0].get("id")
+                self.test_results.append(("GET Dioceses", True, f"{len(data)} dioceses found"))
+                return True
+            else:
+                self.log(f"❌ Get dioceses failed: Expected array, got {type(data)}", "ERROR")
+                self.test_results.append(("GET Dioceses", False, f"Expected array, got {type(data)}"))
+                return False
+        else:
+            error_msg = response.json() if response else "No response"
+            self.log(f"❌ Get dioceses failed: {error_msg}", "ERROR")
+            self.test_results.append(("GET Dioceses", False, str(error_msg)))
+            return False
+
+    def test_5_get_parishes(self):
+        """Test 5: GET PARISHES - /api/parishes (Bishop Dashboard)"""
+        if not self.bishop_token:
+            self.log("❌ Cannot test parishes: No bishop token", "ERROR")
+            self.test_results.append(("GET Parishes", False, "No bishop token"))
+            return False
+            
+        self.log("⛪ Test 5: GET PARISHES - /api/parishes (Bishop Dashboard)")
+        
+        response = self.make_request("GET", "/parishes", token=self.bishop_token)
+        
+        if response and response.status_code == 200:
+            data = response.json()
+            if isinstance(data, list):
+                self.log(f"✅ Parishes retrieved successfully: {len(data)} parishes found")
+                self.parish_ids = [parish.get("id") for parish in data if parish.get("id")]
+                self.test_results.append(("GET Parishes", True, f"{len(data)} parishes found"))
+                return True
+            else:
+                self.log(f"❌ Get parishes failed: Expected array, got {type(data)}", "ERROR")
+                self.test_results.append(("GET Parishes", False, f"Expected array, got {type(data)}"))
+                return False
+        else:
+            error_msg = response.json() if response else "No response"
+            self.log(f"❌ Get parishes failed: {error_msg}", "ERROR")
+            self.test_results.append(("GET Parishes", False, str(error_msg)))
+            return False
+
+    def test_6_get_users_with_role_filtering(self):
+        """Test 6: GET USERS WITH ROLE FILTERING - /api/users (Bishop Dashboard)"""
+        if not self.bishop_token:
+            self.log("❌ Cannot test users: No bishop token", "ERROR")
+            self.test_results.append(("GET Users with Role Filtering", False, "No bishop token"))
+            return False
+            
+        self.log("👥 Test 6: GET USERS WITH ROLE FILTERING - /api/users (Bishop Dashboard)")
+        
+        response = self.make_request("GET", "/users", token=self.bishop_token)
+        
+        if response and response.status_code == 200:
+            data = response.json()
+            if isinstance(data, list):
+                # Check for different roles
+                priests = [user for user in data if user.get("role") == "priest"]
+                faithful = [user for user in data if user.get("role") == "faithful"]
+                bishops = [user for user in data if user.get("role") == "bishop"]
+                
+                self.log(f"✅ Users retrieved successfully: {len(priests)} priests, {len(faithful)} faithful, {len(bishops)} bishops")
+                self.test_results.append(("GET Users with Role Filtering", True, f"Total: {len(data)} users (priests: {len(priests)}, faithful: {len(faithful)}, bishops: {len(bishops)})"))
+                return True
+            else:
+                self.log(f"❌ Get users failed: Expected array, got {type(data)}", "ERROR")
+                self.test_results.append(("GET Users with Role Filtering", False, f"Expected array, got {type(data)}"))
+                return False
+        else:
+            error_msg = response.json() if response else "No response"
+            self.log(f"❌ Get users failed: {error_msg}", "ERROR")
+            self.test_results.append(("GET Users with Role Filtering", False, str(error_msg)))
+            return False
+
+    def test_7_get_priests_only(self):
+        """Test 7: GET PRIESTS ONLY - /api/users/priests (Bishop Dashboard)"""
+        if not self.bishop_token:
+            self.log("❌ Cannot test priests: No bishop token", "ERROR")
+            self.test_results.append(("GET Priests Only", False, "No bishop token"))
+            return False
+            
+        self.log("👨‍💼 Test 7: GET PRIESTS ONLY - /api/users/priests (Bishop Dashboard)")
+        
+        response = self.make_request("GET", "/users/priests", token=self.bishop_token)
+        
+        if response and response.status_code == 200:
+            data = response.json()
+            if isinstance(data, list):
+                self.log(f"✅ Priests retrieved successfully: {len(data)} priests found")
+                self.test_results.append(("GET Priests Only", True, f"{len(data)} priests found"))
+                return True
+            else:
+                self.log(f"❌ Get priests failed: Expected array, got {type(data)}", "ERROR")
+                self.test_results.append(("GET Priests Only", False, f"Expected array, got {type(data)}"))
+                return False
+        else:
+            error_msg = response.json() if response else "No response"
+            self.log(f"❌ Get priests failed: {error_msg}", "ERROR")
+            self.test_results.append(("GET Priests Only", False, str(error_msg)))
+            return False
+
+    # ===== CONFESSION HISTORY ENDPOINTS =====
+
+    def test_8_get_confession_history_faithful(self):
+        """Test 8: GET CONFESSION HISTORY - /api/confessions (Faithful User)"""
+        if not self.faithful_token:
+            self.log("❌ Cannot test confession history: No faithful token", "ERROR")
+            self.test_results.append(("GET Confession History (Faithful)", False, "No faithful token"))
+            return False
+            
+        self.log("📜 Test 8: GET CONFESSION HISTORY - /api/confessions (Faithful User)")
+        
+        response = self.make_request("GET", "/confessions", token=self.faithful_token)
+        
+        if response and response.status_code == 200:
+            data = response.json()
+            if isinstance(data, list):
+                self.log(f"✅ Confession history retrieved successfully: {len(data)} confessions found")
+                self.test_results.append(("GET Confession History (Faithful)", True, f"{len(data)} confessions found"))
+                return True
+            else:
+                self.log(f"❌ Get confession history failed: Expected array, got {type(data)}", "ERROR")
+                self.test_results.append(("GET Confession History (Faithful)", False, f"Expected array, got {type(data)}"))
+                return False
+        else:
+            error_msg = response.json() if response else "No response"
+            self.log(f"❌ Get confession history failed: {error_msg}", "ERROR")
+            self.test_results.append(("GET Confession History (Faithful)", False, str(error_msg)))
+            return False
+
+    def test_9_get_confession_history_priest(self):
+        """Test 9: GET CONFESSION HISTORY - /api/confessions (Priest User)"""
+        if not self.priest_token:
+            self.log("❌ Cannot test confession history: No priest token", "ERROR")
+            self.test_results.append(("GET Confession History (Priest)", False, "No priest token"))
+            return False
+            
+        self.log("📜 Test 9: GET CONFESSION HISTORY - /api/confessions (Priest User)")
+        
+        response = self.make_request("GET", "/confessions", token=self.priest_token)
+        
+        if response and response.status_code == 200:
+            data = response.json()
+            if isinstance(data, list):
+                self.log(f"✅ Confession history retrieved successfully: {len(data)} confessions found")
+                self.test_results.append(("GET Confession History (Priest)", True, f"{len(data)} confessions found"))
+                return True
+            else:
+                self.log(f"❌ Get confession history failed: Expected array, got {type(data)}", "ERROR")
+                self.test_results.append(("GET Confession History (Priest)", False, f"Expected array, got {type(data)}"))
+                return False
+        else:
+            error_msg = response.json() if response else "No response"
+            self.log(f"❌ Get confession history failed: {error_msg}", "ERROR")
+            self.test_results.append(("GET Confession History (Priest)", False, str(error_msg)))
+            return False
+
+    # ===== CONFESSION BANDS OVERVIEW =====
+
+    def test_10_get_priest_bands(self):
         """Test 2: GET PRIEST BANDS - /api/confession-bands/my-bands"""
         if not self.priest_token:
             self.log("❌ Cannot test get bands: No priest token", "ERROR")
