@@ -104,8 +104,8 @@ class ConfesAppTester:
             return False
 
     def test_2_priest_login(self):
-        """Test 1: LOGIN AS PRIEST - padre.parroco@sanmiguel.es"""
-        self.log("🔐 Test 1: LOGIN AS PRIEST - padre.parroco@sanmiguel.es")
+        """Test 2: LOGIN AS PRIEST - padre.parroco@sanmiguel.es"""
+        self.log("🔐 Test 2: LOGIN AS PRIEST - padre.parroco@sanmiguel.es")
         
         login_data = {
             "email": "padre.parroco@sanmiguel.es",
