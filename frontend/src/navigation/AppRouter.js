@@ -22,12 +22,6 @@ import ProtectedRoute from './ProtectedRoute';
 import PublicRoute from './PublicRoute';
 
 const AppRouter = () => {
-  const { loading } = useAuth();
-
-  if (loading) {
-    return <LoadingSpinner text="Cargando aplicación..." />;
-  }
-
   return (
     <AnimatePresence mode="wait">
       <Routes>
