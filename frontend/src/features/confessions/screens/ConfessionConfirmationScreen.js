@@ -5,6 +5,10 @@ import { useNavigate, useLocation } from 'react-router-dom';
 
 const ConfessionConfirmationScreen = ({ confessionData, onBackToDashboard }) => {
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Get confession data from navigation state or props
+  const data = location.state?.confessionData || confessionData;
 
   const formatDate = (date) => {
     return new Date(date).toLocaleDateString('es-ES', {
