@@ -12,7 +12,7 @@ import time
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://confes-scheduler.preview.emergentagent.com/api"
+BASE_URL = "https://faith-connect-34.preview.emergentagent.com/api"
 HEADERS = {"Content-Type": "application/json"}
 
 class PriestRegistrationTester:
