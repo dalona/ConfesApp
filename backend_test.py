@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-ConfesApp Backend API Testing Suite - PRIEST DASHBOARD BAND MANAGEMENT
+ConfesApp Backend API Testing Suite - NAVIGATION FEATURES INTEGRATION
 Tests the NestJS backend for Catholic confession booking system
-Focus: Complete band management workflow for priest dashboard
+Focus: Bishop Dashboard endpoints, Confession history, Role-based access control, and Navigation features
 """
 
 import requests
@@ -20,14 +20,18 @@ class ConfesAppTester:
         self.base_url = BASE_URL
         self.headers = HEADERS.copy()
         # Test users from review request
+        self.bishop_token = None
         self.priest_token = None
         self.faithful_token = None
+        self.bishop_user = None
         self.priest_user = None
         self.faithful_user = None
-        # Test data for band management workflow
+        # Test data for navigation features
         self.test_band_id = None
         self.created_band_ids = []
         self.test_confession_id = None
+        self.diocese_id = None
+        self.parish_ids = []
         # Results tracking
         self.test_results = []
         
