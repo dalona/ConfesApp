@@ -61,11 +61,11 @@ class ConfesAppTester:
             self.log(f"Request failed: {e}", "ERROR")
             return None
 
-    # ===== MEJORAS CRÍTICAS TESTING SEQUENCE =====
+    # ===== PRIEST DASHBOARD BAND MANAGEMENT WORKFLOW =====
 
     def test_1_priest_login(self):
-        """Test 1: LOGIN COMO SACERDOTE SEED"""
-        self.log("🔐 Test 1: LOGIN COMO SACERDOTE SEED")
+        """Test 1: LOGIN AS PRIEST - padre.parroco@sanmiguel.es"""
+        self.log("🔐 Test 1: LOGIN AS PRIEST - padre.parroco@sanmiguel.es")
         
         login_data = {
             "email": "padre.parroco@sanmiguel.es",
@@ -99,62 +99,49 @@ class ConfesAppTester:
             self.test_results.append(("Priest Login", False, str(error_msg)))
             return False
 
-    def test_2_faithful_login(self):
-        """Test 2: LOGIN COMO FIEL SEED"""
-        self.log("🔐 Test 2: LOGIN COMO FIEL SEED")
+    def test_2_get_priest_bands(self):
+        """Test 2: GET PRIEST BANDS - /api/confession-bands/my-bands"""
+        if not self.priest_token:
+            self.log("❌ Cannot test get bands: No priest token", "ERROR")
+            self.test_results.append(("GET Priest Bands", False, "No priest token"))
+            return False
+            
+        self.log("📋 Test 2: GET PRIEST BANDS - /api/confession-bands/my-bands")
         
-        login_data = {
-            "email": "fiel1@ejemplo.com",
-            "password": "Pass123!"
-        }
+        response = self.make_request("GET", "/confession-bands/my-bands", token=self.priest_token)
         
-        response = self.make_request("POST", "/auth/login", login_data)
-        
-        if response and response.status_code == 201:
+        if response and response.status_code == 200:
             data = response.json()
-            if data.get("access_token") and data.get("user"):
-                self.faithful_token = data["access_token"]
-                self.faithful_user = data["user"]
-                
-                # Verify role is 'faithful'
-                if self.faithful_user.get("role") == "faithful":
-                    self.log("✅ Faithful login successful with correct role")
-                    self.test_results.append(("Faithful Login", True, "Login successful with role: faithful"))
-                    return True
-                else:
-                    self.log(f"❌ Faithful login failed: Wrong role {self.faithful_user.get('role')}", "ERROR")
-                    self.test_results.append(("Faithful Login", False, f"Wrong role: {self.faithful_user.get('role')}"))
-                    return False
+            if isinstance(data, list):
+                self.log(f"✅ Priest bands retrieved successfully: {len(data)} bands found")
+                self.test_results.append(("GET Priest Bands", True, f"{len(data)} bands found"))
+                return True
             else:
-                self.log("❌ Faithful login failed: Missing token or user data", "ERROR")
-                self.test_results.append(("Faithful Login", False, "Missing token or user data"))
+                self.log(f"❌ Get bands failed: Expected array, got {type(data)}", "ERROR")
+                self.test_results.append(("GET Priest Bands", False, f"Expected array, got {type(data)}"))
                 return False
         else:
             error_msg = response.json() if response else "No response"
-            self.log(f"❌ Faithful login failed: {error_msg}", "ERROR")
-            self.test_results.append(("Faithful Login", False, str(error_msg)))
+            self.log(f"❌ Get bands failed: {error_msg}", "ERROR")
+            self.test_results.append(("GET Priest Bands", False, str(error_msg)))
             return False
 
-    def test_3_create_confession_band(self):
-        """Test 3: CREAR FRANJA DE CONFESIÓN (SISTEMA NUEVO)"""
+    def test_3_create_new_band(self):
+        """Test 3: CREATE NEW BAND - POST /api/confession-bands"""
         if not self.priest_token:
             self.log("❌ Cannot test band creation: No priest token", "ERROR")
-            self.test_results.append(("Create Confession Band", False, "No priest token"))
+            self.test_results.append(("CREATE New Band", False, "No priest token"))
             return False
             
-        self.log("📅 Test 3: CREAR FRANJA DE CONFESIÓN (SISTEMA NUEVO)")
+        self.log("📅 Test 3: CREATE NEW BAND - POST /api/confession-bands")
         
-        # Create band for tomorrow (future date)
-        tomorrow = datetime.now() + timedelta(days=1)
-        start_time = tomorrow.replace(hour=15, minute=0, second=0, microsecond=0)
-        end_time = start_time + timedelta(hours=1)
-        
+        # Create band for September 3rd, 2025 as specified in review request
         band_data = {
-            "startTime": start_time.isoformat() + "Z",
-            "endTime": end_time.isoformat() + "Z",
+            "startTime": "2025-09-03T10:00:00.000Z",
+            "endTime": "2025-09-03T11:00:00.000Z", 
             "location": "Confesionario Principal",
-            "maxCapacity": 3,
-            "notes": "Franja post-fix testing",
+            "maxCapacity": 5,
+            "notes": "Franja de prueba para testing",
             "isRecurrent": False
         }
         
@@ -164,288 +151,264 @@ class ConfesAppTester:
             data = response.json()
             if data.get("id"):
                 self.test_band_id = data["id"]
-                self.log(f"✅ Confession band created successfully: {self.test_band_id}")
-                self.test_results.append(("Create Confession Band", True, f"Band created with ID: {self.test_band_id}"))
+                self.created_band_ids.append(self.test_band_id)
+                self.log(f"✅ New band created successfully: {self.test_band_id}")
+                self.test_results.append(("CREATE New Band", True, f"Band created with ID: {self.test_band_id}"))
                 return True
             else:
                 self.log("❌ Band creation failed: No ID returned", "ERROR")
-                self.test_results.append(("Create Confession Band", False, "No ID returned"))
+                self.test_results.append(("CREATE New Band", False, "No ID returned"))
                 return False
         else:
             error_msg = response.json() if response else "No response"
             self.log(f"❌ Band creation failed: {error_msg}", "ERROR")
-            self.test_results.append(("Create Confession Band", False, str(error_msg)))
+            self.test_results.append(("CREATE New Band", False, str(error_msg)))
             return False
 
-    def test_4_create_confession_from_band(self):
-        """Test 4: CREAR CONFESIÓN DESDE BANDA (FIEL) - CRITICAL TEST"""
-        if not self.faithful_token or not self.test_band_id:
-            self.log("❌ Cannot test confession booking: Missing token or band ID", "ERROR")
-            self.test_results.append(("Create Confession from Band", False, "Missing token or band ID"))
+    def test_4_verify_band_creation(self):
+        """Test 4: VERIFY BAND CREATION - GET /api/confession-bands/my-bands"""
+        if not self.priest_token or not self.test_band_id:
+            self.log("❌ Cannot verify band creation: Missing token or band ID", "ERROR")
+            self.test_results.append(("VERIFY Band Creation", False, "Missing token or band ID"))
             return False
             
-        self.log("📝 Test 4: CREAR CONFESIÓN DESDE BANDA (FIEL) - CRITICAL TEST")
+        self.log("🔍 Test 4: VERIFY BAND CREATION - GET /api/confession-bands/my-bands")
         
-        # This is the critical test - should work now after database schema fix
-        booking_data = {
-            "confessionBandId": self.test_band_id
-        }
-        
-        response = self.make_request("POST", "/confessions", booking_data, self.faithful_token)
-        
-        if response and response.status_code == 201:
-            data = response.json()
-            if data.get("id"):
-                self.test_confession_id = data["id"]
-                self.log(f"✅ CRITICAL FIX VERIFIED: Confession booked successfully: {self.test_confession_id}")
-                self.test_results.append(("Create Confession from Band", True, f"CRITICAL FIX WORKING: Confession booked with ID: {self.test_confession_id}"))
-                return True
-            else:
-                self.log("❌ Confession booking failed: No ID returned", "ERROR")
-                self.test_results.append(("Create Confession from Band", False, "No ID returned"))
-                return False
-        elif response and response.status_code == 500:
-            # This was the previous critical bug
-            error_data = response.json() if response else {}
-            if "confessionSlotId" in str(error_data) and "NOT NULL" in str(error_data):
-                self.log("❌ CRITICAL BUG STILL EXISTS: Database schema issue - confessionSlotId NOT NULL constraint", "ERROR")
-                self.test_results.append(("Create Confession from Band", False, "CRITICAL BUG: Database schema issue with confessionSlotId NOT NULL constraint"))
-                return False
-            else:
-                self.log(f"❌ Confession booking failed with 500: {error_data}", "ERROR")
-                self.test_results.append(("Create Confession from Band", False, f"500 error: {error_data}"))
-                return False
-        else:
-            error_msg = response.json() if response else "No response"
-            self.log(f"❌ Confession booking failed: {error_msg}", "ERROR")
-            self.test_results.append(("Create Confession from Band", False, str(error_msg)))
-            return False
-
-    def test_5_list_faithful_confessions(self):
-        """Test 5: LISTAR CONFESIONES DEL FIEL"""
-        if not self.faithful_token:
-            self.log("❌ Cannot test listing confessions: No faithful token", "ERROR")
-            self.test_results.append(("List Faithful Confessions", False, "No faithful token"))
-            return False
-            
-        self.log("📋 Test 5: LISTAR CONFESIONES DEL FIEL")
-        
-        response = self.make_request("GET", "/confessions", token=self.faithful_token)
+        response = self.make_request("GET", "/confession-bands/my-bands", token=self.priest_token)
         
         if response and response.status_code == 200:
             data = response.json()
             if isinstance(data, list):
-                self.log(f"✅ Faithful confessions retrieved: {len(data)} confessions found")
-                self.test_results.append(("List Faithful Confessions", True, f"{len(data)} confessions found"))
-                return True
+                # Look for our created band
+                created_band = next((band for band in data if band.get("id") == self.test_band_id), None)
+                if created_band:
+                    self.log(f"✅ Created band verified in list: {created_band.get('location')} at {created_band.get('startTime')}")
+                    self.test_results.append(("VERIFY Band Creation", True, f"Band found with correct data: {created_band.get('location')}"))
+                    return True
+                else:
+                    self.log(f"❌ Created band not found in list", "ERROR")
+                    self.test_results.append(("VERIFY Band Creation", False, "Created band not found in list"))
+                    return False
             else:
-                self.log(f"❌ Listing confessions failed: Expected array, got {type(data)}", "ERROR")
-                self.test_results.append(("List Faithful Confessions", False, f"Expected array, got {type(data)}"))
+                self.log(f"❌ Verification failed: Expected array, got {type(data)}", "ERROR")
+                self.test_results.append(("VERIFY Band Creation", False, f"Expected array, got {type(data)}"))
                 return False
         else:
             error_msg = response.json() if response else "No response"
-            self.log(f"❌ Listing confessions failed: {error_msg}", "ERROR")
-            self.test_results.append(("List Faithful Confessions", False, str(error_msg)))
+            self.log(f"❌ Verification failed: {error_msg}", "ERROR")
+            self.test_results.append(("VERIFY Band Creation", False, str(error_msg)))
             return False
 
-    def test_6_cancel_confession_from_band(self):
-        """Test 6: CANCELAR CONFESIÓN DESDE BANDA"""
-        if not self.faithful_token or not self.test_confession_id:
-            self.log("❌ Cannot test confession cancellation: Missing token or confession ID", "ERROR")
-            self.test_results.append(("Cancel Confession from Band", False, "Missing token or confession ID"))
+    def test_5_update_existing_band(self):
+        """Test 5: UPDATE EXISTING BAND - PUT /api/confession-bands/my-bands/:id"""
+        if not self.priest_token or not self.test_band_id:
+            self.log("❌ Cannot test band update: Missing token or band ID", "ERROR")
+            self.test_results.append(("UPDATE Existing Band", False, "Missing token or band ID"))
             return False
             
-        self.log("❌ Test 6: CANCELAR CONFESIÓN DESDE BANDA")
+        self.log("✏️ Test 5: UPDATE EXISTING BAND - PUT /api/confession-bands/my-bands/:id")
         
-        response = self.make_request("PATCH", f"/confessions/{self.test_confession_id}/cancel", {}, self.faithful_token)
+        # Update band data
+        update_data = {
+            "location": "Confesionario Secundario",
+            "maxCapacity": 3,
+            "notes": "Franja actualizada para testing - capacidad reducida"
+        }
+        
+        response = self.make_request("PATCH", f"/confession-bands/my-bands/{self.test_band_id}", update_data, self.priest_token)
+        
+        if response and response.status_code == 200:
+            data = response.json()
+            if data.get("id") == self.test_band_id:
+                # Verify the updates were applied
+                if (data.get("location") == update_data["location"] and 
+                    data.get("maxCapacity") == update_data["maxCapacity"]):
+                    self.log(f"✅ Band updated successfully: {data.get('location')}, capacity: {data.get('maxCapacity')}")
+                    self.test_results.append(("UPDATE Existing Band", True, f"Band updated: {data.get('location')}, capacity: {data.get('maxCapacity')}"))
+                    return True
+                else:
+                    self.log("❌ Band update failed: Changes not reflected", "ERROR")
+                    self.test_results.append(("UPDATE Existing Band", False, "Changes not reflected in response"))
+                    return False
+            else:
+                self.log("❌ Band update failed: Wrong band ID returned", "ERROR")
+                self.test_results.append(("UPDATE Existing Band", False, "Wrong band ID returned"))
+                return False
+        else:
+            error_msg = response.json() if response else "No response"
+            self.log(f"❌ Band update failed: {error_msg}", "ERROR")
+            self.test_results.append(("UPDATE Existing Band", False, str(error_msg)))
+            return False
+
+    def test_6_change_band_status_to_cancelled(self):
+        """Test 6: CHANGE BAND STATUS TO CANCELLED - PATCH /api/confession-bands/my-bands/:id/status"""
+        if not self.priest_token or not self.test_band_id:
+            self.log("❌ Cannot test status change: Missing token or band ID", "ERROR")
+            self.test_results.append(("CHANGE Status to Cancelled", False, "Missing token or band ID"))
+            return False
+            
+        self.log("🚫 Test 6: CHANGE BAND STATUS TO CANCELLED - PATCH /api/confession-bands/my-bands/:id/status")
+        
+        status_data = {
+            "status": "cancelled"
+        }
+        
+        response = self.make_request("PATCH", f"/confession-bands/my-bands/{self.test_band_id}/status", status_data, self.priest_token)
         
         if response and response.status_code == 200:
             data = response.json()
             if data.get("status") == "cancelled":
-                self.log("✅ Confession cancelled successfully")
-                self.test_results.append(("Cancel Confession from Band", True, "Confession status changed to cancelled"))
+                self.log("✅ Band status changed to cancelled successfully")
+                self.test_results.append(("CHANGE Status to Cancelled", True, "Status changed to cancelled"))
                 return True
             else:
-                self.log(f"❌ Cancellation failed: Status not updated to cancelled, got {data.get('status')}", "ERROR")
-                self.test_results.append(("Cancel Confession from Band", False, f"Status not updated, got {data.get('status')}"))
+                self.log(f"❌ Status change failed: Expected 'cancelled', got '{data.get('status')}'", "ERROR")
+                self.test_results.append(("CHANGE Status to Cancelled", False, f"Expected 'cancelled', got '{data.get('status')}'"))
                 return False
         else:
             error_msg = response.json() if response else "No response"
-            self.log(f"❌ Cancellation failed: {error_msg}", "ERROR")
-            self.test_results.append(("Cancel Confession from Band", False, str(error_msg)))
+            self.log(f"❌ Status change failed: {error_msg}", "ERROR")
+            self.test_results.append(("CHANGE Status to Cancelled", False, str(error_msg)))
             return False
 
-    def test_7_multiple_confessions_capacity_test(self):
-        """Test 7: CREAR MÚLTIPLES CONFESIONES EN LA MISMA BANDA"""
-        if not self.faithful_token or not self.test_band_id:
-            self.log("❌ Cannot test capacity limits: Missing token or band ID", "ERROR")
-            self.test_results.append(("Multiple Confessions Capacity Test", False, "Missing token or band ID"))
+    def test_7_change_band_status_to_available(self):
+        """Test 7: CHANGE BAND STATUS TO AVAILABLE - PATCH /api/confession-bands/my-bands/:id/status"""
+        if not self.priest_token or not self.test_band_id:
+            self.log("❌ Cannot test status change: Missing token or band ID", "ERROR")
+            self.test_results.append(("CHANGE Status to Available", False, "Missing token or band ID"))
             return False
             
-        self.log("📊 Test 7: CREAR MÚLTIPLES CONFESIONES EN LA MISMA BANDA")
+        self.log("✅ Test 7: CHANGE BAND STATUS TO AVAILABLE - PATCH /api/confession-bands/my-bands/:id/status")
         
-        # Create multiple confessions up to maxCapacity (3)
-        confession_ids = []
-        success_count = 0
+        status_data = {
+            "status": "available"
+        }
         
-        for i in range(4):  # Try to create 4 confessions (1 more than capacity)
-            booking_data = {
-                "confessionBandId": self.test_band_id
-            }
-            
-            response = self.make_request("POST", "/confessions", booking_data, self.faithful_token)
-            
-            if response and response.status_code == 201:
-                data = response.json()
-                if data.get("id"):
-                    confession_ids.append(data["id"])
-                    success_count += 1
-                    self.log(f"✅ Confession {i+1} created: {data['id']}")
-                else:
-                    self.log(f"❌ Confession {i+1} failed: No ID returned", "ERROR")
-            elif response and response.status_code == 400:
-                # Expected behavior when capacity is reached
-                self.log(f"✅ Capacity limit reached at confession {i+1} (expected)")
-                break
-            else:
-                error_msg = response.json() if response else "No response"
-                self.log(f"❌ Confession {i+1} failed: {error_msg}", "ERROR")
-        
-        # Store confession IDs for cleanup
-        self.test_confession_ids.extend(confession_ids)
-        
-        if success_count >= 2:  # Should be able to create at least 2 more (we already created 1)
-            self.log(f"✅ Capacity test passed: Created {success_count} additional confessions")
-            self.test_results.append(("Multiple Confessions Capacity Test", True, f"Created {success_count} additional confessions, capacity limit working"))
-            return True
-        else:
-            self.log(f"❌ Capacity test failed: Only created {success_count} additional confessions", "ERROR")
-            self.test_results.append(("Multiple Confessions Capacity Test", False, f"Only created {success_count} additional confessions"))
-            return False
-
-    def test_8_legacy_confession_slots_system(self):
-        """Test 8: PROBAR SISTEMA LEGACY (CONFESSION-SLOTS)"""
-        if not self.faithful_token or not self.priest_token:
-            self.log("❌ Cannot test legacy system: Missing tokens", "ERROR")
-            self.test_results.append(("Legacy Confession Slots System", False, "Missing tokens"))
-            return False
-            
-        self.log("🔄 Test 8: PROBAR SISTEMA LEGACY (CONFESSION-SLOTS)")
-        
-        # First, try to get available confession slots
-        response = self.make_request("GET", "/confession-slots/available")
+        response = self.make_request("PATCH", f"/confession-bands/my-bands/{self.test_band_id}/status", status_data, self.priest_token)
         
         if response and response.status_code == 200:
             data = response.json()
-            if isinstance(data, list) and len(data) > 0:
-                # Use the first available slot
-                slot_id = data[0].get("id")
-                if slot_id:
-                    # Try to book using legacy system
-                    booking_data = {
-                        "confessionSlotId": slot_id
-                    }
-                    
-                    response = self.make_request("POST", "/confessions", booking_data, self.faithful_token)
-                    
-                    if response and response.status_code == 201:
-                        confession_data = response.json()
-                        if confession_data.get("id"):
-                            self.log("✅ Legacy confession-slots system working")
-                            self.test_results.append(("Legacy Confession Slots System", True, f"Booked confession using slot {slot_id}"))
-                            return True
-                        else:
-                            self.log("❌ Legacy booking failed: No confession ID returned", "ERROR")
-                            self.test_results.append(("Legacy Confession Slots System", False, "No confession ID returned"))
-                            return False
-                    else:
-                        error_msg = response.json() if response else "No response"
-                        self.log(f"❌ Legacy booking failed: {error_msg}", "ERROR")
-                        self.test_results.append(("Legacy Confession Slots System", False, str(error_msg)))
-                        return False
-                else:
-                    self.log("❌ No slot ID found in available slots", "ERROR")
-                    self.test_results.append(("Legacy Confession Slots System", False, "No slot ID found"))
-                    return False
-            else:
-                self.log("⚠️ No available confession slots found - legacy system may not have data")
-                self.test_results.append(("Legacy Confession Slots System", True, "No available slots found (expected for new system)"))
+            if data.get("status") == "available":
+                self.log("✅ Band status changed to available successfully")
+                self.test_results.append(("CHANGE Status to Available", True, "Status changed to available"))
                 return True
+            else:
+                self.log(f"❌ Status change failed: Expected 'available', got '{data.get('status')}'", "ERROR")
+                self.test_results.append(("CHANGE Status to Available", False, f"Expected 'available', got '{data.get('status')}'"))
+                return False
         else:
             error_msg = response.json() if response else "No response"
-            self.log(f"❌ Could not get available slots: {error_msg}", "ERROR")
-            self.test_results.append(("Legacy Confession Slots System", False, str(error_msg)))
+            self.log(f"❌ Status change failed: {error_msg}", "ERROR")
+            self.test_results.append(("CHANGE Status to Available", False, str(error_msg)))
             return False
 
-    def test_9_role_security_validation(self):
-        """Test 9: SEGURIDAD Y ROLES"""
-        self.log("🔒 Test 9: SEGURIDAD Y ROLES")
-        
-        success_count = 0
-        total_tests = 0
-        
-        # Test 1: Faithful trying to access priest endpoints (should fail 403)
-        if self.faithful_token:
-            total_tests += 1
-            band_data = {
-                "startTime": "2025-01-09T10:00:00.000Z",
-                "endTime": "2025-01-09T11:00:00.000Z",
-                "location": "Test Location",
-                "maxCapacity": 1
-            }
+    def test_8_delete_band_with_foreign_key_fix(self):
+        """Test 8: DELETE BAND - DELETE /api/confession-bands/my-bands/:id (FOREIGN KEY FIX)"""
+        if not self.priest_token or not self.test_band_id:
+            self.log("❌ Cannot test band deletion: Missing token or band ID", "ERROR")
+            self.test_results.append(("DELETE Band (Foreign Key Fix)", False, "Missing token or band ID"))
+            return False
             
-            try:
-                response = self.make_request("POST", "/confession-bands", band_data, self.faithful_token)
-                
-                if response and response.status_code == 403:
-                    self.log("✅ Security test 1 passed: Faithful cannot create bands")
-                    success_count += 1
-                elif response and response.status_code == 401:
-                    self.log("✅ Security test 1 passed: Unauthorized access blocked")
-                    success_count += 1
-                else:
-                    status = response.status_code if response else "No response"
-                    self.log(f"❌ Security test 1 failed: Expected 403/401, got {status}", "ERROR")
-            except Exception as e:
-                self.log(f"⚠️ Security test 1 network issue: {e}", "ERROR")
+        self.log("🗑️ Test 8: DELETE BAND - DELETE /api/confession-bands/my-bands/:id (FOREIGN KEY FIX)")
         
-        # Test 2: Access without token (should fail 401)
-        total_tests += 1
-        try:
-            response = self.make_request("GET", "/confession-bands/my-bands")
-            
-            if response and response.status_code == 401:
-                self.log("✅ Security test 2 passed: Unauthorized access blocked")
-                success_count += 1
+        response = self.make_request("DELETE", f"/confession-bands/my-bands/{self.test_band_id}", token=self.priest_token)
+        
+        if response and response.status_code == 200:
+            data = response.json()
+            if data.get("message"):
+                self.log(f"✅ Band deleted successfully: {data.get('message')}")
+                self.test_results.append(("DELETE Band (Foreign Key Fix)", True, f"Band deleted: {data.get('message')}"))
+                # Remove from our tracking list
+                if self.test_band_id in self.created_band_ids:
+                    self.created_band_ids.remove(self.test_band_id)
+                return True
             else:
-                status = response.status_code if response else "No response"
-                self.log(f"❌ Security test 2 failed: Expected 401, got {status}", "ERROR")
-        except Exception as e:
-            self.log(f"⚠️ Security test 2 network issue: {e}", "ERROR")
-        
-        if success_count >= 1 and total_tests > 0:  # At least one security test passed
-            self.test_results.append(("Role Security Validation", True, f"{success_count}/{total_tests} security tests passed"))
-            return True
+                self.log("❌ Band deletion failed: No success message", "ERROR")
+                self.test_results.append(("DELETE Band (Foreign Key Fix)", False, "No success message"))
+                return False
         else:
-            self.test_results.append(("Role Security Validation", False, f"Only {success_count}/{total_tests} security tests passed"))
+            error_msg = response.json() if response else "No response"
+            self.log(f"❌ Band deletion failed: {error_msg}", "ERROR")
+            self.test_results.append(("DELETE Band (Foreign Key Fix)", False, str(error_msg)))
             return False
 
-    def run_critical_fixes_testing_sequence(self):
-        """Run the complete testing sequence for critical fixes"""
-        self.log("🚀 INICIANDO TESTING DE MEJORAS CRÍTICAS - VERIFICACIÓN DE FIXES")
+    def test_9_create_band_with_validation_errors(self):
+        """Test 9: CREATE BAND WITH VALIDATION ERRORS - Test proper validation"""
+        if not self.priest_token:
+            self.log("❌ Cannot test validation: No priest token", "ERROR")
+            self.test_results.append(("CREATE Band Validation", False, "No priest token"))
+            return False
+            
+        self.log("⚠️ Test 9: CREATE BAND WITH VALIDATION ERRORS - Test proper validation")
+        
+        # Try to create band with past date (should fail)
+        yesterday = datetime.now() - timedelta(days=1)
+        invalid_band_data = {
+            "startTime": yesterday.isoformat() + "Z",
+            "endTime": (yesterday + timedelta(hours=1)).isoformat() + "Z",
+            "location": "Test Location",
+            "maxCapacity": 1,
+            "notes": "This should fail - past date",
+            "isRecurrent": False
+        }
+        
+        response = self.make_request("POST", "/confession-bands", invalid_band_data, self.priest_token)
+        
+        if response and response.status_code == 400:
+            error_data = response.json()
+            if "futuro" in str(error_data).lower() or "future" in str(error_data).lower():
+                self.log("✅ Validation working: Past date rejected correctly")
+                self.test_results.append(("CREATE Band Validation", True, "Past date validation working"))
+                return True
+            else:
+                self.log(f"❌ Validation failed: Wrong error message: {error_data}", "ERROR")
+                self.test_results.append(("CREATE Band Validation", False, f"Wrong error message: {error_data}"))
+                return False
+        elif response and response.status_code == 201:
+            # This shouldn't happen - past dates should be rejected
+            self.log("❌ Validation failed: Past date was accepted", "ERROR")
+            self.test_results.append(("CREATE Band Validation", False, "Past date was accepted"))
+            return False
+        else:
+            error_msg = response.json() if response else "No response"
+            self.log(f"❌ Validation test failed: {error_msg}", "ERROR")
+            self.test_results.append(("CREATE Band Validation", False, str(error_msg)))
+            return False
+
+    def cleanup_created_bands(self):
+        """Cleanup any remaining test bands"""
+        if not self.priest_token or not self.created_band_ids:
+            return
+            
+        self.log("🧹 Cleaning up remaining test bands...")
+        
+        for band_id in self.created_band_ids.copy():
+            try:
+                response = self.make_request("DELETE", f"/confession-bands/my-bands/{band_id}", token=self.priest_token)
+                if response and response.status_code == 200:
+                    self.log(f"✅ Cleaned up band: {band_id}")
+                    self.created_band_ids.remove(band_id)
+                else:
+                    self.log(f"⚠️ Could not clean up band: {band_id}")
+            except Exception as e:
+                self.log(f"⚠️ Error cleaning up band {band_id}: {e}")
+
+    def run_priest_dashboard_workflow_testing(self):
+        """Run the complete priest dashboard band management workflow testing"""
+        self.log("🚀 INICIANDO PRIEST DASHBOARD BAND MANAGEMENT WORKFLOW TESTING")
         self.log("=" * 80)
         
         # Testing sequence as specified in review request
         tests = [
-            ("1. LOGIN COMO SACERDOTE SEED", self.test_1_priest_login),
-            ("2. LOGIN COMO FIEL SEED", self.test_2_faithful_login),
-            ("3. CREAR FRANJA DE CONFESIÓN (NUEVO)", self.test_3_create_confession_band),
-            ("4. CREAR CONFESIÓN DESDE BANDA (CRÍTICO)", self.test_4_create_confession_from_band),
-            ("5. LISTAR CONFESIONES DEL FIEL", self.test_5_list_faithful_confessions),
-            ("6. CANCELAR CONFESIÓN DESDE BANDA", self.test_6_cancel_confession_from_band),
-            ("7. MÚLTIPLES CONFESIONES - CAPACIDAD", self.test_7_multiple_confessions_capacity_test),
-            ("8. SISTEMA LEGACY (CONFESSION-SLOTS)", self.test_8_legacy_confession_slots_system),
-            ("9. SEGURIDAD Y ROLES", self.test_9_role_security_validation),
+            ("1. PRIEST LOGIN", self.test_1_priest_login),
+            ("2. GET PRIEST BANDS", self.test_2_get_priest_bands),
+            ("3. CREATE NEW BAND", self.test_3_create_new_band),
+            ("4. VERIFY BAND CREATION", self.test_4_verify_band_creation),
+            ("5. UPDATE EXISTING BAND", self.test_5_update_existing_band),
+            ("6. CHANGE STATUS TO CANCELLED", self.test_6_change_band_status_to_cancelled),
+            ("7. CHANGE STATUS TO AVAILABLE", self.test_7_change_band_status_to_available),
+            ("8. DELETE BAND (FOREIGN KEY FIX)", self.test_8_delete_band_with_foreign_key_fix),
+            ("9. CREATE BAND VALIDATION", self.test_9_create_band_with_validation_errors),
         ]
         
         passed = 0
@@ -462,9 +425,12 @@ class ConfesAppTester:
                 self.log(f"❌ {test_name} failed with exception: {e}", "ERROR")
                 failed += 1
                 self.test_results.append((test_name, False, f"Exception: {e}"))
+        
+        # Cleanup
+        self.cleanup_created_bands()
                 
         self.log("\n" + "=" * 80)
-        self.log("🏁 TESTING DE MEJORAS CRÍTICAS FINALIZADO!")
+        self.log("🏁 PRIEST DASHBOARD BAND MANAGEMENT WORKFLOW TESTING COMPLETE!")
         self.log(f"✅ Passed: {passed}")
         self.log(f"❌ Failed: {failed}")
         self.log(f"📊 Success Rate: {(passed/(passed+failed)*100):.1f}%")
