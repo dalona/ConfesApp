@@ -39,7 +39,7 @@ export class Invite {
   @Column({ unique: true })
   token: string;
 
-  @Column()
+  @Column({ type: 'datetime' })
   expiresAt: Date;
 
   @Column()
@@ -57,13 +57,13 @@ export class Invite {
   @Column({ nullable: true })
   acceptedByUserId: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'datetime', nullable: true })
   acceptedAt: Date;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
   updatedAt: Date;
 
   // Relations

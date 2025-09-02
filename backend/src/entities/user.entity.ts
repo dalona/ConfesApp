@@ -60,7 +60,7 @@ export class User {
   @Column({ default: true })
   available: boolean;
 
-  @Column({ nullable: true })
+  @Column({ type: 'datetime', nullable: true })
   ordinationDate: Date;
 
   // Contact information
@@ -76,10 +76,10 @@ export class User {
   @Column({ nullable: true })
   country: string;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
   updatedAt: Date;
 
   // Relations

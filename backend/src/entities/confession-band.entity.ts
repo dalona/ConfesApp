@@ -61,7 +61,7 @@ export class ConfessionBand {
   @Column({ nullable: true })
   recurrenceDays: string; // JSON array of days [1,2,3,4,5] for Mon-Fri
 
-  @Column({ type: 'date', nullable: true })
+  @Column({ type: 'datetime', nullable: true })
   recurrenceEndDate: Date;
 
   @Column({ default: false })
@@ -70,10 +70,10 @@ export class ConfessionBand {
   @Column({ nullable: true })
   parentBandId: string; // For recurring bands, reference to the original
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
   updatedAt: Date;
 
   // Relations
