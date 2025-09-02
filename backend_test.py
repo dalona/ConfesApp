@@ -435,7 +435,7 @@ class ConfesAppTester:
             
         # Book the confession
         booking_data = {
-            "confessionBandId": available_band["id"],
+            "bandId": available_band["id"],
             "notes": "Test booking from navigation features testing"
         }
         
