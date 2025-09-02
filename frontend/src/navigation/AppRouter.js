@@ -128,7 +128,7 @@ const AppRouter = () => {
         <Route 
           path="/dashboard/parish" 
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={['priest', 'parish_staff', 'coordinator']}>
               <ParishDashboard />
             </ProtectedRoute>
           } 
