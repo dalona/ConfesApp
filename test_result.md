@@ -332,6 +332,8 @@ test_plan:
 agent_communication:
   - agent: "main"
     message: "Complete NestJS backend implemented with JWT auth, user roles (faithful/priest), confession slot management, and booking system. Using SQLite as fallback for demo (user can switch to Supabase PostgreSQL later). Need backend testing to verify all endpoints work properly before building frontend."
+  - agent: "main"
+    message: "NAVIGATION INTEGRATION COMPLETED: Integrated 4 new screens (ConfessionConfirmationScreen, ConfessionRequestDetailScreen, ConfessionHistoryScreen, UnauthorizedAccessScreen) into AppRouter with proper role-based access control. Created comprehensive Bishop Dashboard with 4 main sections: Priests Management (CRUD + parish assignments), Parishes Management, Confession Bands Overview, and Statistics/Reports. Added routes: /dashboard/bishop, /confession/confirmation, /confession/request/:id, /confession/history, /unauthorized. All components follow minimalist design with consistent purple/blue liturgical theme."
   - agent: "testing"
     message: "Backend thoroughly tested - all endpoints working perfectly including JWT authentication, role-based access control, confession slot management, and booking system"
   - agent: "main" 
