@@ -50,7 +50,7 @@ class ConfesAppTester:
             
         try:
             if method == "GET":
-                response = requests.get(url, headers=headers, timeout=10)
+                response = requests.get(url, headers=headers, timeout=30)
             elif method == "POST":
                 response = requests.post(url, headers=headers, json=data, timeout=10)
             elif method == "PATCH":
