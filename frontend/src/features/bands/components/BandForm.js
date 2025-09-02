@@ -153,7 +153,7 @@ const BandForm = ({ band, onSave, onCancel }) => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
-      onClick={(e) => e.target === e.currentTarget && onClose()}
+      onClick={(e) => e.target === e.currentTarget && onCancel()}
     >
       <motion.div 
         initial={{ scale: 0.8, opacity: 0 }}
