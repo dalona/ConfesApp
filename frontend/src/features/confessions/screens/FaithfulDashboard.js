@@ -128,19 +128,30 @@ const FaithfulDashboard = () => {
   const bookConfession = async (citaId) => {
     try {
       const cita = citasDisponibles.find(c => c.id === citaId);
+      let confessionData;
       
       if (cita) {
         if (cita.maxCapacity !== undefined) {
           // This is a confession band
-          await bandsService.bookBand({ bandId: citaId });
+          confessionData = await bandsService.bookBand({ bandId: citaId });
         } else {
           // This is a confession slot (legacy)
-          await confessionsService.createConfession({ confessionSlotId: citaId });
+          confessionData = await confessionsService.createConfession({ confessionSlotId: citaId });
         }
       }
       
-      fetchData();
-      alert('Reserva realizada exitosamente');
+      // Navigate to confirmation screen with booking data
+      navigate('/confession/confirmation', { 
+        state: { 
+          confessionData: {
+            ...confessionData,
+            startTime: cita.startTime,
+            endTime: cita.endTime,
+            location: cita.location,
+            priest: cita.priest
+          }
+        } 
+      });
     } catch (error) {
       console.error('Error booking confession:', error);
       alert(error.response?.data?.message || 'Error al realizar la reserva');
