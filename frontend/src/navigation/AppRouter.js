@@ -135,6 +135,15 @@ const AppRouter = () => {
           } 
         />
 
+        <Route 
+          path="/dashboard/admin" 
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <AdminDashboard />
+            </ProtectedRoute>
+          } 
+        />
+
         {/* New Screens Routes */}
         <Route 
           path="/confession/confirmation" 
