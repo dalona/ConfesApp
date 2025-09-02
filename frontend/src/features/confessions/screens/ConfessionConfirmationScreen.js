@@ -99,7 +99,7 @@ const ConfessionConfirmationScreen = ({ confessionData, onBackToDashboard }) => 
                 <div>
                   <p className="text-sm text-gray-500 dark:text-gray-400">Sacerdote</p>
                   <p className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-                    Padre {confessionData?.priest?.firstName || 'Asignado'}
+                    Padre {data?.priest?.firstName || 'Asignado'}
                   </p>
                 </div>
               </div>
