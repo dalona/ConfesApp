@@ -134,6 +134,15 @@ const AppRouter = () => {
           } 
         />
 
+        <Route 
+          path="/dashboard/parish" 
+          element={
+            <ProtectedRoute>
+              <ParishDashboard />
+            </ProtectedRoute>
+          } 
+        />
+
         {/* New Screens Routes */}
         <Route 
           path="/confession/confirmation" 
