@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Check, Calendar, MapPin, User, Clock, ArrowLeft, Home } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const ConfessionConfirmationScreen = ({ confessionData, onBackToDashboard }) => {
   const navigate = useNavigate();
