@@ -352,13 +352,13 @@ class ConfesAppTester:
     # ===== CONFESSION BANDS OVERVIEW =====
 
     def test_10_get_priest_bands(self):
-        """Test 2: GET PRIEST BANDS - /api/confession-bands/my-bands"""
+        """Test 10: GET PRIEST BANDS - /api/confession-bands/my-bands (Overview)"""
         if not self.priest_token:
             self.log("❌ Cannot test get bands: No priest token", "ERROR")
-            self.test_results.append(("GET Priest Bands", False, "No priest token"))
+            self.test_results.append(("GET Priest Bands Overview", False, "No priest token"))
             return False
             
-        self.log("📋 Test 2: GET PRIEST BANDS - /api/confession-bands/my-bands")
+        self.log("📋 Test 10: GET PRIEST BANDS - /api/confession-bands/my-bands (Overview)")
         
         response = self.make_request("GET", "/confession-bands/my-bands", token=self.priest_token)
         
