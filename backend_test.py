@@ -854,7 +854,7 @@ class ConfesAppTester:
         self.cleanup_created_bands()
                 
         self.log("\n" + "=" * 80)
-        self.log("🏁 PRIEST DASHBOARD BAND MANAGEMENT WORKFLOW TESTING COMPLETE!")
+        self.log("🏁 NAVIGATION FEATURES INTEGRATION TESTING COMPLETE!")
         self.log(f"✅ Passed: {passed}")
         self.log(f"❌ Failed: {failed}")
         self.log(f"📊 Success Rate: {(passed/(passed+failed)*100):.1f}%")
@@ -869,7 +869,7 @@ class ConfesAppTester:
 
 if __name__ == "__main__":
     tester = ConfesAppTester()
-    passed, failed = tester.run_priest_dashboard_workflow_testing()
+    passed, failed = tester.run_navigation_features_testing()
     
     # Exit with error code if any tests failed
     exit(0 if failed == 0 else 1)
