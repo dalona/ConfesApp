@@ -120,7 +120,7 @@ const BandForm = ({ band, onSave, onCancel }) => {
 
       console.log('Submitting band data:', submitData);
       await onSave(submitData);
-      onClose();
+      onCancel(); // Close the form after successful save
     } catch (error) {
       console.error('Error saving band:', error);
       
