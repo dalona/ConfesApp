@@ -794,22 +794,45 @@ class ConfesAppTester:
             except Exception as e:
                 self.log(f"⚠️ Error cleaning up band {band_id}: {e}")
 
-    def run_priest_dashboard_workflow_testing(self):
-        """Run the complete priest dashboard band management workflow testing"""
-        self.log("🚀 INICIANDO PRIEST DASHBOARD BAND MANAGEMENT WORKFLOW TESTING")
+    def run_navigation_features_testing(self):
+        """Run comprehensive testing for navigation features integration"""
+        self.log("🚀 INICIANDO NAVIGATION FEATURES INTEGRATION TESTING")
         self.log("=" * 80)
         
         # Testing sequence as specified in review request
         tests = [
-            ("1. PRIEST LOGIN", self.test_1_priest_login),
-            ("2. GET PRIEST BANDS", self.test_2_get_priest_bands),
-            ("3. CREATE NEW BAND", self.test_3_create_new_band),
-            ("4. VERIFY BAND CREATION", self.test_4_verify_band_creation),
-            ("5. UPDATE EXISTING BAND", self.test_5_update_existing_band),
-            ("6. CHANGE STATUS TO CANCELLED", self.test_6_change_band_status_to_cancelled),
-            ("7. CHANGE STATUS TO AVAILABLE", self.test_7_change_band_status_to_available),
-            ("8. DELETE BAND (FOREIGN KEY FIX)", self.test_8_delete_band_with_foreign_key_fix),
-            ("9. CREATE BAND VALIDATION", self.test_9_create_band_with_validation_errors),
+            # Authentication for all roles
+            ("1. BISHOP LOGIN", self.test_1_bishop_login),
+            ("2. PRIEST LOGIN", self.test_2_priest_login),
+            ("3. FAITHFUL LOGIN", self.test_3_faithful_login),
+            
+            # Bishop Dashboard endpoints
+            ("4. GET DIOCESES", self.test_4_get_dioceses),
+            ("5. GET PARISHES", self.test_5_get_parishes),
+            ("6. GET USERS WITH ROLE FILTERING", self.test_6_get_users_with_role_filtering),
+            ("7. GET PRIESTS ONLY", self.test_7_get_priests_only),
+            
+            # Confession history endpoints
+            ("8. GET CONFESSION HISTORY (FAITHFUL)", self.test_8_get_confession_history_faithful),
+            ("9. GET CONFESSION HISTORY (PRIEST)", self.test_9_get_confession_history_priest),
+            
+            # Confession bands overview
+            ("10. GET PRIEST BANDS OVERVIEW", self.test_10_get_priest_bands),
+            
+            # Confession booking and confirmation flow
+            ("11. GET AVAILABLE BANDS (FAITHFUL)", self.test_11_get_available_bands_faithful),
+            ("12. BOOK CONFESSION FROM BAND", self.test_12_book_confession_from_band),
+            ("13. CANCEL CONFESSION BOOKING", self.test_13_cancel_confession_booking),
+            
+            # Role-based access control
+            ("14. ROLE-BASED ACCESS (BISHOP ENDPOINTS)", self.test_14_role_based_access_bishop_endpoints),
+            ("15. ROLE-BASED ACCESS (PRIEST ENDPOINTS)", self.test_15_role_based_access_priest_endpoints),
+            
+            # Legacy functionality verification
+            ("16. CREATE NEW BAND", self.test_3_create_new_band),
+            ("17. VERIFY BAND CREATION", self.test_4_verify_band_creation),
+            ("18. UPDATE EXISTING BAND", self.test_5_update_existing_band),
+            ("19. DELETE BAND", self.test_8_delete_band_with_foreign_key_fix),
         ]
         
         passed = 0
