@@ -169,6 +169,46 @@ const FaithfulDashboard = () => {
           </div>
           
           <div className="flex items-center space-x-4">
+            {/* Quick Actions Menu */}
+            <div className="relative">
+              <button
+                onClick={() => setShowMenu(!showMenu)}
+                className="p-2 rounded-xl bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-all"
+              >
+                <Menu className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+              </button>
+              
+              {showMenu && (
+                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 z-50">
+                  <div className="p-2">
+                    <button
+                      onClick={() => {
+                        navigate('/confession/history');
+                        setShowMenu(false);
+                      }}
+                      className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center"
+                    >
+                      <History className="w-4 h-4 mr-2 text-gray-500" />
+                      <span className="text-gray-700 dark:text-gray-300">Historial</span>
+                    </button>
+                    
+                    <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
+                    
+                    <button
+                      onClick={() => {
+                        navigate('/dashboard');
+                        setShowMenu(false);
+                      }}
+                      className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center"
+                    >
+                      <Cross className="w-4 h-4 mr-2 text-gray-500" />
+                      <span className="text-gray-700 dark:text-gray-300">Inicio</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+            
             <button
               onClick={toggleTheme}
               className="p-2 rounded-xl bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-all"
