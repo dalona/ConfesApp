@@ -21,7 +21,7 @@ export const AuthProvider = ({ children }) => {
     if (savedUser && token) {
       setUser(JSON.parse(savedUser));
     }
-    setLoading(false);
+    setLoading(false); // Set loading to false immediately since localStorage is synchronous
   }, [token]);
 
   const login = (userData, authToken) => {
