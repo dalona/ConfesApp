@@ -13,10 +13,10 @@ export class PriestParishHistory {
   @Column()
   parishId: string;
 
-  @Column()
+  @Column({ type: 'datetime' })
   startDate: Date;
 
-  @Column({ nullable: true })
+  @Column({ type: 'datetime', nullable: true })
   endDate: Date;
 
   @Column({ default: true })
@@ -34,10 +34,10 @@ export class PriestParishHistory {
   @Column({ nullable: true })
   endedByUserId: string;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
   updatedAt: Date;
 
   // Relations

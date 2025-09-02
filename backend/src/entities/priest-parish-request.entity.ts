@@ -34,16 +34,16 @@ export class PriestParishRequest {
   @Column({ nullable: true })
   reviewedByUserId: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'datetime', nullable: true })
   reviewedAt: Date;
 
-  @Column({ nullable: true })
+  @Column({ type: 'datetime', nullable: true })
   requestedStartDate: Date;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
   updatedAt: Date;
 
   // Relations

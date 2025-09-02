@@ -37,16 +37,16 @@ export class Diocese {
   @Column({ default: true })
   isActive: boolean;
 
-  @Column({ nullable: true })
+  @Column({ type: 'datetime', nullable: true })
   establishedDate: Date;
 
   @Column({ type: 'text', nullable: true })
   description: string;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
   updatedAt: Date;
 
   // Relations

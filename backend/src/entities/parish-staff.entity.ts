@@ -26,10 +26,10 @@ export class ParishStaff {
   })
   role: ParishStaffRole;
 
-  @Column({ nullable: true })
+  @Column({ type: 'datetime', nullable: true })
   startDate: Date;
 
-  @Column({ nullable: true })
+  @Column({ type: 'datetime', nullable: true })
   endDate: Date;
 
   @Column({ default: true })
@@ -41,10 +41,10 @@ export class ParishStaff {
   @Column({ nullable: true })
   assignedByUserId: string;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
   updatedAt: Date;
 
   // Relations

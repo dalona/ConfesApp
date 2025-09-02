@@ -52,7 +52,7 @@ export class Parish {
   @Column({ default: true })
   isActive: boolean;
 
-  @Column({ nullable: true })
+  @Column({ type: 'datetime', nullable: true })
   foundedDate: Date;
 
   @Column({ type: 'text', nullable: true })
@@ -64,10 +64,10 @@ export class Parish {
   @Column({ type: 'simple-array', nullable: true })
   confessionSchedule: string[];
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
   updatedAt: Date;
 
   // Relations
