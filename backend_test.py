@@ -65,9 +65,45 @@ class ConfesAppTester:
             self.log(f"Request failed: {e}", "ERROR")
             return None
 
-    # ===== PRIEST DASHBOARD BAND MANAGEMENT WORKFLOW =====
+    # ===== AUTHENTICATION TESTS FOR ALL ROLES =====
 
-    def test_1_priest_login(self):
+    def test_1_bishop_login(self):
+        """Test 1: LOGIN AS BISHOP - obispo@diocesis.com"""
+        self.log("👑 Test 1: LOGIN AS BISHOP - obispo@diocesis.com")
+        
+        login_data = {
+            "email": "obispo@diocesis.com",
+            "password": "Pass123!"
+        }
+        
+        response = self.make_request("POST", "/auth/login", login_data)
+        
+        if response and response.status_code == 201:
+            data = response.json()
+            if data.get("access_token") and data.get("user"):
+                self.bishop_token = data["access_token"]
+                self.bishop_user = data["user"]
+                
+                # Verify role is 'bishop'
+                if self.bishop_user.get("role") == "bishop":
+                    self.log("✅ Bishop login successful with correct role")
+                    self.test_results.append(("Bishop Login", True, "Login successful with role: bishop"))
+                    return True
+                else:
+                    self.log(f"❌ Bishop login failed: Wrong role {self.bishop_user.get('role')}", "ERROR")
+                    self.test_results.append(("Bishop Login", False, f"Wrong role: {self.bishop_user.get('role')}"))
+                    return False
+            else:
+                self.log("❌ Bishop login failed: Missing token or user data", "ERROR")
+                self.test_results.append(("Bishop Login", False, "Missing token or user data"))
+                return False
+        else:
+            error_msg = response.json() if response else "No response"
+            self.log(f"❌ Bishop login failed: {error_msg}", "ERROR")
+            self.test_results.append(("Bishop Login", False, str(error_msg)))
+            return False
+
+    def test_2_priest_login(self):
         """Test 1: LOGIN AS PRIEST - padre.parroco@sanmiguel.es"""
         self.log("🔐 Test 1: LOGIN AS PRIEST - padre.parroco@sanmiguel.es")
         
