@@ -15,6 +15,13 @@ import CoordinatorRegisterScreen from '../features/auth/screens/CoordinatorRegis
 // Protected Routes
 import FaithfulDashboard from '../features/confessions/screens/FaithfulDashboard';
 import PriestDashboard from '../features/bands/screens/PriestDashboard';
+import BishopDashboard from '../features/bishop/screens/BishopDashboard';
+
+// New Screens
+import ConfessionConfirmationScreen from '../features/confessions/screens/ConfessionConfirmationScreen';
+import ConfessionRequestDetailScreen from '../features/confessions/screens/ConfessionRequestDetailScreen';
+import ConfessionHistoryScreen from '../features/confessions/screens/ConfessionHistoryScreen';
+import UnauthorizedAccessScreen from '../features/auth/screens/UnauthorizedAccessScreen';
 
 // Utils
 import LoadingSpinner from '../components/ui/LoadingSpinner';
