@@ -1,8 +1,12 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Cross, User, Users, ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { ROUTES } from '../../../utils/navigation';
 
-const RoleSelectorScreen = ({ onRoleSelect, onBack }) => {
+const RoleSelectorScreen = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-purple-900 dark:to-blue-900">
       <div className="container mx-auto px-4 py-8 min-h-screen flex flex-col">
@@ -16,7 +20,7 @@ const RoleSelectorScreen = ({ onRoleSelect, onBack }) => {
             <h1 className="text-2xl font-bold text-purple-900 dark:text-purple-100">ConfesApp</h1>
           </div>
           <button
-            onClick={onBack}
+            onClick={() => navigate(ROUTES.HOME)}
             className="flex items-center text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
           >
             <ArrowLeft className="w-5 h-5 mr-2" />
@@ -47,7 +51,7 @@ const RoleSelectorScreen = ({ onRoleSelect, onBack }) => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="cursor-pointer"
-                onClick={() => onRoleSelect('faithful')}
+                onClick={() => navigate(ROUTES.FAITHFUL_ACTION)}
               >
                 <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-xl border-2 border-transparent hover:border-purple-300 dark:hover:border-purple-600 transition-all">
                   <div className="w-20 h-20 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -67,7 +71,7 @@ const RoleSelectorScreen = ({ onRoleSelect, onBack }) => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="cursor-pointer"
-                onClick={() => onRoleSelect('priest')}
+                onClick={() => navigate(ROUTES.PRIEST_ACTION)}
               >
                 <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-xl border-2 border-transparent hover:border-purple-300 dark:hover:border-purple-600 transition-all">
                   <div className="w-20 h-20 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-6">

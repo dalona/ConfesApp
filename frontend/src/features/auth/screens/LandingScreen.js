@@ -1,8 +1,12 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Cross, Calendar, Users } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { ROUTES } from '../../../utils/navigation';
 
-const LandingScreen = ({ onRoleSelect }) => {
+const LandingScreen = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-purple-900 dark:to-blue-900">
       <div className="container mx-auto px-4 py-8 min-h-screen flex flex-col">
@@ -42,7 +46,7 @@ const LandingScreen = ({ onRoleSelect }) => {
               className="mb-12"
             >
               <button
-                onClick={() => onRoleSelect('role-select')}
+                onClick={() => navigate(ROUTES.SELECT_ROLE)}
                 className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-8 py-4 rounded-2xl font-semibold text-lg hover:from-purple-700 hover:to-blue-700 transition-all transform hover:scale-105 shadow-lg"
               >
                 Agendar confesión
