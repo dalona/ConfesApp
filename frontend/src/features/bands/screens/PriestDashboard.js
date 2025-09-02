@@ -12,6 +12,7 @@ import WeeklyCalendar from '../../calendar/components/WeeklyCalendar';
 import BandForm from '../components/BandForm';
 
 const PriestDashboard = () => {
+  const navigate = useNavigate();
   const { user, logout } = useAuth();
   const { darkMode, toggleTheme } = useTheme();
   const { bands, loading, createBand, updateBand, deleteBand, refreshBands } = useBands();
@@ -21,6 +22,7 @@ const PriestDashboard = () => {
   const [showBandForm, setShowBandForm] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [bandToDelete, setBandToDelete] = useState(null);
+  const [showMenu, setShowMenu] = useState(false);
 
   const handleCreateBand = (date) => {
     setSelectedBand({
