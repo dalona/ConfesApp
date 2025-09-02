@@ -1,8 +1,20 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Cross, ArrowLeft, Mail, FileText } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { getLoginRoute, ROUTES } from '../../../utils/navigation';
 
-const PriestRegistrationTypeScreen = ({ onTypeSelect, onBack }) => {
+const PriestRegistrationTypeScreen = () => {
+  const navigate = useNavigate();
+
+  const handleTypeSelect = (type) => {
+    if (type === 'invitation') {
+      navigate(getLoginRoute('priest', 'invitation', false));
+    } else if (type === 'application') {
+      navigate(getLoginRoute('priest', 'application', false));
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-purple-900 dark:to-blue-900">
       <div className="container mx-auto px-4 py-8 min-h-screen flex flex-col">
@@ -16,7 +28,7 @@ const PriestRegistrationTypeScreen = ({ onTypeSelect, onBack }) => {
             <h1 className="text-2xl font-bold text-purple-900 dark:text-purple-100">ConfesApp</h1>
           </div>
           <button
-            onClick={onBack}
+            onClick={() => navigate(ROUTES.PRIEST_ACTION)}
             className="flex items-center text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
           >
             <ArrowLeft className="w-5 h-5 mr-2" />
@@ -47,7 +59,7 @@ const PriestRegistrationTypeScreen = ({ onTypeSelect, onBack }) => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="cursor-pointer"
-                onClick={() => onTypeSelect('invitation')}
+                onClick={() => handleTypeSelect('invitation')}
               >
                 <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-xl border-2 border-transparent hover:border-purple-300 dark:hover:border-purple-600 transition-all">
                   <div className="w-20 h-20 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -69,7 +81,7 @@ const PriestRegistrationTypeScreen = ({ onTypeSelect, onBack }) => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="cursor-pointer"
-                onClick={() => onTypeSelect('application')}
+                onClick={() => handleTypeSelect('application')}
               >
                 <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-xl border-2 border-transparent hover:border-purple-300 dark:hover:border-purple-600 transition-all">
                   <div className="w-20 h-20 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-6">

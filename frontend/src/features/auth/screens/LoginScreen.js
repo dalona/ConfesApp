@@ -1,18 +1,20 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Cross, ArrowLeft, User, Mail, Lock, Phone, FileText, Building } from 'lucide-react';
+import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../hooks/useAuth';
 import { authService } from '../services/authService';
+import { ROUTES } from '../../../utils/navigation';
 
-const LoginScreen = ({ 
-  role, 
-  isLogin, 
-  priestRegistrationType, 
-  onBack, 
-  onSuccess, 
-  onSwitchMode 
-}) => {
+const LoginScreen = () => {
+  const { role } = useParams();
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const { login } = useAuth();
+  
+  const isLogin = searchParams.get('mode') !== 'register';
+  const priestRegistrationType = searchParams.get('type');
+  
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -25,6 +27,7 @@ const LoginScreen = ({
     specialties: '',
     languages: ''
   });
+  
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [generalError, setGeneralError] = useState('');
@@ -49,12 +52,10 @@ const LoginScreen = ({
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
     
-    // Clear error when user starts typing
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
 
-    // Validate on blur
     setTimeout(() => {
       const error = validateField(name, value);
       if (error) {
@@ -73,12 +74,9 @@ const LoginScreen = ({
       let response;
       
       if (isLogin) {
-        // Login
         response = await authService.login(formData.email, formData.password);
       } else {
-        // Registration
         if (role === 'faithful') {
-          // Faithful registration - only send required fields
           const faithfulData = {
             email: formData.email,
             password: formData.password,
@@ -90,7 +88,6 @@ const LoginScreen = ({
           response = await authService.register(faithfulData);
         } else if (role === 'priest') {
           if (priestRegistrationType === 'invitation') {
-            // Register from invitation
             response = await authService.registerFromInvite(formData.invitationToken, {
               email: formData.email,
               password: formData.password,
@@ -99,7 +96,6 @@ const LoginScreen = ({
               phone: formData.phone
             });
           } else {
-            // Direct priest application
             response = await authService.registerPriest({
               email: formData.email,
               password: formData.password,
@@ -116,14 +112,13 @@ const LoginScreen = ({
 
       if (response.access_token && response.user) {
         login(response.user, response.access_token);
-        onSuccess();
+        navigate('/dashboard');
       }
     } catch (error) {
       console.error('Auth error:', error);
       if (error.response?.data?.message) {
         const message = error.response.data.message;
         if (Array.isArray(message)) {
-          // Handle validation errors
           message.forEach(err => {
             if (err.includes('email')) {
               setErrors(prev => ({ ...prev, email: err }));
@@ -141,6 +136,28 @@ const LoginScreen = ({
       }
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleBack = () => {
+    if (role === 'priest') {
+      if (isLogin) {
+        navigate(ROUTES.PRIEST_ACTION);
+      } else {
+        navigate(ROUTES.PRIEST_REGISTRATION_TYPE);
+      }
+    } else if (role === 'faithful') {
+      navigate(ROUTES.FAITHFUL_ACTION);
+    } else {
+      navigate(ROUTES.SELECT_ROLE);
+    }
+  };
+
+  const handleSwitchMode = () => {
+    if (role === 'priest') {
+      navigate(ROUTES.PRIEST_ACTION);
+    } else if (role === 'faithful') {
+      navigate(ROUTES.FAITHFUL_ACTION);
     }
   };
 
@@ -266,8 +283,7 @@ const LoginScreen = ({
               />
             </div>
           );
-        } else {
-          // Application fields
+        } else if (priestRegistrationType === 'application') {
           fields.push(
             <div key="bio">
               <label className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
@@ -291,6 +307,21 @@ const LoginScreen = ({
     return fields;
   };
 
+  const getPageTitle = () => {
+    if (isLogin) return 'Iniciar Sesión';
+    
+    if (role === 'priest') {
+      if (priestRegistrationType === 'invitation') {
+        return 'Registro con Invitación';
+      } else if (priestRegistrationType === 'application') {
+        return 'Solicitud de Acceso';
+      }
+      return 'Registro Sacerdotal';
+    }
+    
+    return 'Registrarse';
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-purple-900 dark:to-blue-900">
       <div className="container mx-auto px-4 py-8 min-h-screen flex flex-col">
@@ -304,7 +335,7 @@ const LoginScreen = ({
             <h1 className="text-2xl font-bold text-purple-900 dark:text-purple-100">ConfesApp</h1>
           </div>
           <button
-            onClick={onBack}
+            onClick={handleBack}
             className="flex items-center text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
           >
             <ArrowLeft className="w-5 h-5 mr-2" />
@@ -323,7 +354,7 @@ const LoginScreen = ({
                 {role === 'priest' ? <Cross className="w-8 h-8 text-white" /> : <User className="w-8 h-8 text-white" />}
               </div>
               <h2 className="text-2xl font-bold text-purple-900 dark:text-purple-100 mb-2">
-                {isLogin ? 'Iniciar Sesión' : 'Registrarse'}
+                {getPageTitle()}
               </h2>
               <p className="text-gray-600 dark:text-gray-300">
                 {role === 'priest' ? 'Acceso para Sacerdotes' : 'Acceso para Fieles'}
@@ -359,16 +390,14 @@ const LoginScreen = ({
                     Procesando...
                   </div>
                 ) : (
-                  isLogin ? 'Iniciar Sesión' : 'Registrarse'
+                  getPageTitle()
                 )}
               </button>
             </form>
 
             <div className="text-center mt-6">
               <button 
-                onClick={() => {
-                  onSwitchMode(!isLogin);
-                }}
+                onClick={handleSwitchMode}
                 className="text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-200 transition-colors"
               >
                 {isLogin ? '¿No tienes cuenta? Regístrate' : '¿Ya tienes cuenta? Inicia sesión'}
