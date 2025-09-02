@@ -54,7 +54,7 @@ class ConfesAppTester:
             elif method == "POST":
                 response = requests.post(url, headers=headers, json=data, timeout=30)
             elif method == "PATCH":
-                response = requests.patch(url, headers=headers, json=data, timeout=10)
+                response = requests.patch(url, headers=headers, json=data, timeout=30)
             elif method == "DELETE":
                 response = requests.delete(url, headers=headers, timeout=10)
             else:
