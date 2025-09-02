@@ -65,13 +65,13 @@ const UnauthorizedAccessScreen = ({ attemptedRole, currentRole }) => {
                 Estás intentando acceder a un panel que no corresponde a tu rol.
               </p>
               
-              {currentRole && attemptedRole && (
+              {stateCurrentRole && stateAttemptedRole && (
                 <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl p-4">
                   <p className="text-yellow-800 dark:text-yellow-200">
-                    <strong>Tu rol actual:</strong> {getRoleDisplayName(currentRole)}
+                    <strong>Tu rol actual:</strong> {getRoleDisplayName(stateCurrentRole)}
                   </p>
                   <p className="text-yellow-800 dark:text-yellow-200">
-                    <strong>Panel solicitado:</strong> {getRoleDisplayName(attemptedRole)}
+                    <strong>Panel solicitado:</strong> {getRoleDisplayName(stateAttemptedRole)}
                   </p>
                 </div>
               )}
