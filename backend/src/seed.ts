@@ -67,6 +67,9 @@ export async function runSeed(dataSource: DataSource) {
       country: 'España',
     });
     
+    const savedAdmin = await userRepository.save(admin);
+    console.log(`✅ Admin creado: ${savedAdmin.email}`);
+    
     const savedBishop = await userRepository.save(bishop);
     console.log(`✅ Obispo creado: ${savedBishop.firstName} ${savedBishop.lastName}`);
 
