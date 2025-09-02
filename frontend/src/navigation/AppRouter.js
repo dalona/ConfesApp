@@ -16,6 +16,7 @@ import CoordinatorRegisterScreen from '../features/auth/screens/CoordinatorRegis
 import FaithfulDashboard from '../features/confessions/screens/FaithfulDashboard';
 import PriestDashboard from '../features/bands/screens/PriestDashboard';
 import BishopDashboard from '../features/bishop/screens/BishopDashboard';
+import ParishDashboard from '../features/parish/screens/ParishDashboard';
 
 // New Screens
 import ConfessionConfirmationScreen from '../features/confessions/screens/ConfessionConfirmationScreen';
