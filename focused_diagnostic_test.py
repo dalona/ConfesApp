@@ -10,7 +10,7 @@ import requests
 import json
 from datetime import datetime, timedelta
 
-BASE_URL = "https://confess-booking.preview.emergentagent.com/api"
+BASE_URL = "https://confes-scheduler.preview.emergentagent.com/api"
 HEADERS = {"Content-Type": "application/json"}
 
 def log(message):
