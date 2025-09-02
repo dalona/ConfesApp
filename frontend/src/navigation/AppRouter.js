@@ -115,6 +115,48 @@ const AppRouter = () => {
           } 
         />
 
+        <Route 
+          path="/dashboard/bishop" 
+          element={
+            <ProtectedRoute requiredRole="bishop">
+              <BishopDashboard />
+            </ProtectedRoute>
+          } 
+        />
+
+        {/* New Screens Routes */}
+        <Route 
+          path="/confession/confirmation" 
+          element={
+            <ProtectedRoute requiredRole="faithful">
+              <ConfessionConfirmationScreen />
+            </ProtectedRoute>
+          } 
+        />
+
+        <Route 
+          path="/confession/request/:id" 
+          element={
+            <ProtectedRoute requiredRole="priest">
+              <ConfessionRequestDetailScreen />
+            </ProtectedRoute>
+          } 
+        />
+
+        <Route 
+          path="/confession/history" 
+          element={
+            <ProtectedRoute>
+              <ConfessionHistoryScreen />
+            </ProtectedRoute>
+          } 
+        />
+
+        <Route 
+          path="/unauthorized" 
+          element={<UnauthorizedAccessScreen />} 
+        />
+
         {/* Redirect based on user role */}
         <Route path="/dashboard" element={<DashboardRedirect />} />
 
