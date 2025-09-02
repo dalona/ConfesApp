@@ -45,16 +45,16 @@ const BandForm = ({ band, onSave, onCancel }) => {
   ];
 
   useEffect(() => {
-    if (initialData) {
+    if (band) {
       setFormData({
-        ...initialData,
-        startTime: new Date(initialData.startTime),
-        endTime: new Date(initialData.endTime),
-        recurrenceEndDate: initialData.recurrenceEndDate ? new Date(initialData.recurrenceEndDate) : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-        recurrenceDays: initialData.recurrenceDays ? JSON.parse(initialData.recurrenceDays) : [],
+        ...band,
+        startTime: new Date(band.startTime),
+        endTime: new Date(band.endTime),
+        recurrenceEndDate: band.recurrenceEndDate ? new Date(band.recurrenceEndDate) : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+        recurrenceDays: band.recurrenceDays ? (typeof band.recurrenceDays === 'string' ? JSON.parse(band.recurrenceDays) : band.recurrenceDays) : [],
       });
     }
-  }, [initialData]);
+  }, [band]);
 
   const validateForm = () => {
     const newErrors = {};
