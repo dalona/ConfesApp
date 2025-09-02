@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-ConfesApp Backend API Testing Suite - MEJORAS CRÍTICAS
+ConfesApp Backend API Testing Suite - PRIEST DASHBOARD BAND MANAGEMENT
 Tests the NestJS backend for Catholic confession booking system
-Focus: Testing critical fixes for database schema and confession-bands system
+Focus: Complete band management workflow for priest dashboard
 """
 
 import requests
@@ -24,11 +24,10 @@ class ConfesAppTester:
         self.faithful_token = None
         self.priest_user = None
         self.faithful_user = None
-        # Test data for franjas/citas
+        # Test data for band management workflow
         self.test_band_id = None
-        self.test_slot_id = None
+        self.created_band_ids = []
         self.test_confession_id = None
-        self.test_confession_ids = []
         # Results tracking
         self.test_results = []
         
