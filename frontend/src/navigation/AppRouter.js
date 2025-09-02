@@ -198,9 +198,10 @@ const DashboardRedirect = () => {
     case 'faithful':
       return <Navigate to="/dashboard/faithful" replace />;
     case 'priest':
-      return <Navigate to="/dashboard/priest" replace />;
+      return <Navigate to="/dashboard/parish" replace />;
+    case 'parish_staff':
     case 'coordinator':
-      return <Navigate to="/dashboard/coordinator" replace />;
+      return <Navigate to="/dashboard/parish" replace />;
     case 'bishop':
       return <Navigate to="/dashboard/bishop" replace />;
     case 'admin':
