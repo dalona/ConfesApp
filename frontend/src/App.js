@@ -268,33 +268,33 @@ const LandingPage = ({ onRoleSelect }) => {
       </motion.div>
       
       {/* Enhanced Hero Section */}
-      <section className="pt-12 pb-16 px-4">
+      <section className="pt-8 pb-12 px-4 sm:pt-12 sm:pb-16">
         <div className="max-w-7xl mx-auto">
           <motion.div 
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="text-center mb-16"
+            className="text-center mb-12 sm:mb-16"
           >
-            <h1 className="text-6xl md:text-7xl font-bold text-purple-900 dark:text-purple-100 mb-6 heading-primary">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-purple-900 dark:text-purple-100 mb-4 sm:mb-6 heading-primary px-2">
               {heroImages[currentHeroImage].title}
             </h1>
-            <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto text-body">
+            <p className="text-lg sm:text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-6 sm:mb-8 max-w-3xl mx-auto text-body px-4">
               Encuentra, agenda y prepárate para tu confesión de manera sencilla y reverente
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => onRoleSelect('role-select')}
-                className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-12 py-4 rounded-full text-lg font-semibold shadow-2xl hover:shadow-purple-500/25 transition-all duration-300 text-ui-semibold"
+                className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-8 sm:px-12 py-3 sm:py-4 rounded-full text-base sm:text-lg font-semibold shadow-2xl hover:shadow-purple-500/25 transition-all duration-300 text-ui-semibold"
               >
                 Agendar confesión
               </motion.button>
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="border-2 border-purple-600 text-purple-600 dark:text-purple-400 dark:border-purple-400 px-12 py-4 rounded-full text-lg font-semibold hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-all duration-300 text-ui-semibold"
+                className="border-2 border-purple-600 text-purple-600 dark:text-purple-400 dark:border-purple-400 px-8 sm:px-12 py-3 sm:py-4 rounded-full text-base sm:text-lg font-semibold hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-all duration-300 text-ui-semibold"
               >
                 Ver cómo funciona
               </motion.button>
