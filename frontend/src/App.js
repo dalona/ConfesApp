@@ -359,8 +359,9 @@ const LandingPage = ({ onRoleSelect }) => {
           </motion.div>
 
           {/* Saints Cards Slider */}
-          <div className="relative">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="relative overflow-hidden">
+            {/* Desktop and Tablet View */}
+            <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {[
                 {
                   name: "San Juan Pablo II",
@@ -398,19 +399,75 @@ const LandingPage = ({ onRoleSelect }) => {
                   initial={{ opacity: 0, y: 50 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: index * 0.1 }}
-                  className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all group"
+                  className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all group min-h-[300px] flex flex-col"
                 >
-                  <div className={`w-16 h-16 rounded-full bg-gradient-to-r ${saint.color} flex items-center justify-center mx-auto mb-6 text-2xl group-hover:scale-110 transition-transform`}>
+                  <div className={`w-16 h-16 rounded-full bg-gradient-to-r ${saint.color} flex items-center justify-center mx-auto mb-6 text-2xl group-hover:scale-110 transition-transform shadow-lg`}>
                     {saint.icon}
                   </div>
                   <h3 className="text-xl text-purple-900 dark:text-purple-100 mb-4 heading-secondary text-center font-bold">
                     {saint.name}
                   </h3>
-                  <blockquote className="text-gray-700 dark:text-gray-300 text-body text-center italic leading-relaxed">
+                  <blockquote className="text-gray-700 dark:text-gray-300 text-body text-center italic leading-relaxed flex-grow flex items-center">
                     "{saint.quote}"
                   </blockquote>
                 </motion.div>
               ))}
+            </div>
+
+            {/* Mobile View - Horizontal Scroll */}
+            <div className="md:hidden">
+              <div className="flex space-x-6 overflow-x-auto pb-4 px-4 -mx-4">
+                {[
+                  {
+                    name: "San Juan Pablo II",
+                    quote: "La confesión es un encuentro con la misericordia de Dios que siempre nos espera con los brazos abiertos.",
+                    icon: "👤",
+                    color: "from-amber-500 to-yellow-600"
+                  },
+                  {
+                    name: "Santa Teresa de Ávila",
+                    quote: "El alma que se confiesa con humildad encuentra en el sacramento un bálsamo que la renueva por completo.",
+                    icon: "🌹",
+                    color: "from-rose-500 to-pink-600"
+                  },
+                  {
+                    name: "San Agustín",
+                    quote: "Dios nos llama a la confesión no para condenarnos, sino para sanarnos y devolvernos la paz.",
+                    icon: "📖",
+                    color: "from-blue-500 to-indigo-600"
+                  },
+                  {
+                    name: "San Pío de Pietrelcina (Padre Pío)",
+                    quote: "La confesión es el canal por el que la gracia de Dios fluye para lavar nuestras almas.",
+                    icon: "✋",
+                    color: "from-purple-500 to-violet-600"
+                  },
+                  {
+                    name: "Santa Faustina Kowalska",
+                    quote: "En la confesión, el alma se sumerge en la infinita misericordia de Dios y sale renovada como un nuevo ser.",
+                    icon: "💧",
+                    color: "from-cyan-500 to-blue-600"
+                  }
+                ].map((saint, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, x: 50 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.6, delay: index * 0.1 }}
+                    className="bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-xl flex-shrink-0 w-80 min-h-[280px] flex flex-col"
+                  >
+                    <div className={`w-14 h-14 rounded-full bg-gradient-to-r ${saint.color} flex items-center justify-center mx-auto mb-4 text-xl shadow-lg`}>
+                      {saint.icon}
+                    </div>
+                    <h3 className="text-lg text-purple-900 dark:text-purple-100 mb-3 heading-secondary text-center font-bold">
+                      {saint.name}
+                    </h3>
+                    <blockquote className="text-gray-700 dark:text-gray-300 text-sm text-center italic leading-relaxed flex-grow flex items-center">
+                      "{saint.quote}"
+                    </blockquote>
+                  </motion.div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
