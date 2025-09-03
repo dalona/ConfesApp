@@ -308,16 +308,16 @@ const LandingPage = ({ onRoleSelect }) => {
             transition={{ duration: 1, delay: 0.3 }}
             className="relative mx-auto max-w-5xl"
           >
-            <div className="rounded-3xl overflow-hidden shadow-3xl relative">
+            <div className="rounded-2xl sm:rounded-3xl overflow-hidden shadow-3xl relative">
               <img 
                 src={heroImages[currentHeroImage].src}
                 alt={heroImages[currentHeroImage].alt}
-                className="w-full h-[500px] object-cover"
+                className="w-full h-[300px] sm:h-[400px] md:h-[500px] object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-purple-900/60 via-transparent to-transparent"></div>
-              <div className="absolute bottom-8 left-8 text-white">
-                <div className="bg-white/20 backdrop-blur-sm px-6 py-3 rounded-2xl">
-                  <p className="text-sm text-ui-medium">Sacramento de la Reconciliación</p>
+              <div className="absolute bottom-4 left-4 sm:bottom-8 sm:left-8 text-white">
+                <div className="bg-white/20 backdrop-blur-sm px-3 py-2 sm:px-6 sm:py-3 rounded-xl sm:rounded-2xl">
+                  <p className="text-xs sm:text-sm text-ui-medium">Sacramento de la Reconciliación</p>
                 </div>
               </div>
             </div>
