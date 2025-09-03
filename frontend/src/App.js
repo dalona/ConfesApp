@@ -341,6 +341,81 @@ const LandingPage = ({ onRoleSelect }) => {
         </div>
       </section>
 
+      {/* Saints Section - What is Confession */}
+      <section id="que-es-la-confesion" className="py-16 px-4 bg-gradient-to-br from-purple-50/50 via-blue-50/50 to-indigo-50/50 dark:from-gray-800/50 dark:via-purple-900/50 dark:to-blue-900/50">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl md:text-5xl text-purple-900 dark:text-purple-100 mb-4 heading-primary">
+              ¿Qué es la Confesión?
+            </h2>
+            <p className="text-xl text-gray-600 dark:text-gray-300 text-body max-w-3xl mx-auto">
+              Descubre la sabiduría de los Santos sobre el Sacramento de la Reconciliación
+            </p>
+          </motion.div>
+
+          {/* Saints Cards Slider */}
+          <div className="relative">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[
+                {
+                  name: "San Juan Pablo II",
+                  quote: "La confesión es un encuentro con la misericordia de Dios que siempre nos espera con los brazos abiertos.",
+                  icon: "👤",
+                  color: "from-amber-500 to-yellow-600"
+                },
+                {
+                  name: "Santa Teresa de Ávila",
+                  quote: "El alma que se confiesa con humildad encuentra en el sacramento un bálsamo que la renueva por completo.",
+                  icon: "🌹",
+                  color: "from-rose-500 to-pink-600"
+                },
+                {
+                  name: "San Agustín",
+                  quote: "Dios nos llama a la confesión no para condenarnos, sino para sanarnos y devolvernos la paz.",
+                  icon: "📖",
+                  color: "from-blue-500 to-indigo-600"
+                },
+                {
+                  name: "San Pío de Pietrelcina (Padre Pío)",
+                  quote: "La confesión es el canal por el que la gracia de Dios fluye para lavar nuestras almas.",
+                  icon: "✋",
+                  color: "from-purple-500 to-violet-600"
+                },
+                {
+                  name: "Santa Faustina Kowalska",
+                  quote: "En la confesión, el alma se sumerge en la infinita misericordia de Dios y sale renovada como un nuevo ser.",
+                  icon: "💧",
+                  color: "from-cyan-500 to-blue-600"
+                }
+              ].map((saint, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all group"
+                >
+                  <div className={`w-16 h-16 rounded-full bg-gradient-to-r ${saint.color} flex items-center justify-center mx-auto mb-6 text-2xl group-hover:scale-110 transition-transform`}>
+                    {saint.icon}
+                  </div>
+                  <h3 className="text-xl text-purple-900 dark:text-purple-100 mb-4 heading-secondary text-center font-bold">
+                    {saint.name}
+                  </h3>
+                  <blockquote className="text-gray-700 dark:text-gray-300 text-body text-center italic leading-relaxed">
+                    "{saint.quote}"
+                  </blockquote>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Statistics Section */}
       <section className="py-16 px-4 bg-white/30 dark:bg-gray-800/30 backdrop-blur-sm">
         <div className="max-w-6xl mx-auto">
