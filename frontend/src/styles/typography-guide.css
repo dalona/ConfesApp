@@ -1,0 +1,90 @@
+/* ===== GUÍA TIPOGRÁFICA CONFESAPP ===== */
+
+/* 
+  Esta guía tipográfica establece la jerarquía visual consistente 
+  para toda la aplicación ConfesApp
+*/
+
+/* ===== TÍTULOS PRINCIPALES (H1, H2) ===== */
+/* Poppins Bold (700) */
+/* Uso: pantallas iniciales, secciones importantes */
+.heading-primary {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+/* ===== SUBTÍTULOS (H3, H4) ===== */
+/* Poppins Medium (500) */
+/* Uso: secciones secundarias, encabezados dentro de páginas */
+.heading-secondary {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+/* ===== TEXTO DE PÁRRAFOS ===== */
+/* Inter Regular (400) */
+/* Uso: descripciones, contenido largo, formularios */
+.text-body {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+/* ===== NOTAS, BOTONES, LABELS PEQUEÑOS ===== */
+/* Inter Medium (500) o SemiBold (600) según la jerarquía */
+/* Uso: botones de acción, menús, mensajes de validación */
+
+.text-ui-medium {
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+}
+
+.text-ui-semibold {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+}
+
+/* ===== EJEMPLOS DE USO ===== */
+
+/*
+TÍTULOS PRINCIPALES:
+<h1 className="text-4xl heading-primary">Título Principal</h1>
+<h2 className="text-3xl heading-primary">Título Secundario Importante</h2>
+
+SUBTÍTULOS:
+<h3 className="text-2xl heading-secondary">Subtítulo</h3>
+<h4 className="text-xl heading-secondary">Subtítulo Menor</h4>
+
+TEXTO DE PÁRRAFOS:
+<p className="text-body">Texto descriptivo largo y contenido de párrafos.</p>
+
+ELEMENTOS DE UI:
+<button className="text-ui-semibold">Botón de Acción</button>
+<label className="text-ui-medium text-sm">Label de Campo</label>
+<span className="text-ui-medium text-xs">Nota explicativa</span>
+*/
+
+/* ===== UTILIDADES ADICIONALES ===== */
+
+/* Para casos especiales donde necesites combinar */
+.heading-primary-large {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+}
+
+.text-body-large {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  line-height: 1.6;
+  font-size: 1.125rem;
+}
+
+.text-ui-button {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.025em;
+}

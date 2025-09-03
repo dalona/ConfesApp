@@ -6,6 +6,10 @@ import './App.css';
 // Icons
 import { Cross, Calendar, Users, Moon, Sun, User, LogOut, Mail, FileText, ArrowLeft, Grid, List, Plus, Edit, Trash2, BarChart3 } from 'lucide-react';
 
+// Images
+import homepageImage from './assets/images/homepage-confession.png';
+import logoImage from './assets/images/logo.png';
+
 // Import components
 import WeeklyCalendar from './features/calendar/components/WeeklyCalendar';
 import BandForm from './features/bands/components/BandForm';
@@ -105,8 +109,8 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center space-x-2">
-            <Cross className="w-8 h-8 text-purple-600" />
-            <span className="text-2xl font-bold text-purple-900 dark:text-purple-300">ConfesApp</span>
+            <img src={logoImage} alt="ConfesApp Logo" className="w-8 h-8" />
+            <span className="text-2xl text-purple-900 dark:text-purple-300 heading-primary">ConfesApp</span>
           </div>
           
           <div className="hidden md:flex items-center space-x-8">
@@ -144,12 +148,121 @@ const Navbar = () => {
 };
 
 const LandingPage = ({ onRoleSelect }) => {
+  const [currentHeroImage, setCurrentHeroImage] = useState(0);
+  const heroImages = [
+    {
+      src: homepageImage,
+      alt: "Confesión - Vuelve a la gracia",
+      title: "Vuelve a la gracia"
+    }
+    // Estructura preparada para más imágenes
+  ];
+
+  const testimonials = [
+    {
+      name: "Padre Juan Carlos",
+      role: "Parroquia San Miguel",
+      text: "ConfesApp ha revolucionado mi ministerio. Más fieles han vuelto al sacramento de la reconciliación.",
+      rating: 5,
+      image: "🙏"
+    },
+    {
+      name: "María González",
+      role: "Fiel de la comunidad",
+      text: "Encontrar tiempo para la confesión nunca había sido tan sencillo. Me ayuda a prepararme espiritualmente.",
+      rating: 5,
+      image: "✨"
+    },
+    {
+      name: "Padre Luis Martín",
+      role: "Catedral del Carmen",
+      text: "La organización de horarios y la preparación de los fieles ha mejorado notablemente.",
+      rating: 5,
+      image: "⛪"
+    }
+  ];
+
+  const stats = [
+    { number: "20+", label: "Parroquias activas", icon: "⛪" },
+    { number: "500+", label: "Confesiones agendadas", icon: "🙏" },
+    { number: "3", label: "Idiomas disponibles", icon: "🌍" },
+    { number: "98%", label: "Satisfacción usuario", icon: "⭐" }
+  ];
+
+  const howItWorks = [
+    {
+      step: 1,
+      title: "Elige tu parroquia",
+      description: "Busca y selecciona la parroquia más cercana a ti",
+      icon: "⛪"
+    },
+    {
+      step: 2,
+      title: "Selecciona horario",
+      description: "Elige el sacerdote y el horario que mejor te convenga",
+      icon: "🗓️"
+    },
+    {
+      step: 3,
+      title: "Prepárate espiritualmente",
+      description: "Recibe guías y recordatorios para una buena confesión",
+      icon: "🙏"
+    }
+  ];
+
+  const roles = [
+    {
+      title: "Obispo",
+      description: "Supervisa todas las parroquias de su diócesis",
+      details: "Visualiza estadísticas globales y acompaña pastoralmente a sacerdotes y coordinadores.",
+      icon: "👑",
+      color: "from-amber-500 to-yellow-600"
+    },
+    {
+      title: "Sacerdote",
+      description: "Gestiona su agenda de confesiones",
+      details: "Sirve al ministerio de la reconciliación como un reflejo del amor redentor de Dios",
+      icon: "✝️",
+      color: "from-purple-600 to-indigo-600",
+      highlight: true
+    },
+    {
+      title: "Coordinador Parroquial",
+      description: "Apoya la organización pastoral",
+      details: "Administra horarios, espacios y notificaciones para facilitar la gestión práctica.",
+      icon: "👥",
+      color: "from-blue-500 to-cyan-600"
+    },
+    {
+      title: "Fiel",
+      description: "Encuentra y agenda su confesión",
+      details: "Accede fácilmente a parroquias, sacerdotes y recibe guías de preparación espiritual.",
+      icon: "🙏",
+      color: "from-green-500 to-emerald-600"
+    }
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-purple-900 dark:to-blue-900">
       <Navbar />
       
-      {/* Hero Section */}
-      <section className="pt-24 pb-12 px-4">
+      {/* Internationalización Banner */}
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="pt-20 pb-4"
+      >
+        <div className="max-w-4xl mx-auto px-4">
+          <div className="bg-gradient-to-r from-purple-600/10 to-blue-600/10 dark:from-purple-400/20 dark:to-blue-400/20 rounded-2xl p-4 text-center border border-purple-200 dark:border-purple-700">
+            <p className="text-purple-800 dark:text-purple-200 text-body">
+              🌍 Disponible en español e inglés <span className="text-purple-600 dark:text-purple-400 font-medium">(pronto más idiomas)</span>
+            </p>
+          </div>
+        </div>
+      </motion.div>
+      
+      {/* Enhanced Hero Section */}
+      <section className="pt-12 pb-16 px-4">
         <div className="max-w-7xl mx-auto">
           <motion.div 
             initial={{ opacity: 0, y: 50 }}
@@ -157,86 +270,388 @@ const LandingPage = ({ onRoleSelect }) => {
             transition={{ duration: 0.8 }}
             className="text-center mb-16"
           >
-            <h1 className="text-6xl md:text-7xl font-bold text-purple-900 dark:text-purple-100 mb-6 font-serif">
-              Vuelve a la gracia
+            <h1 className="text-6xl md:text-7xl font-bold text-purple-900 dark:text-purple-100 mb-6 heading-primary">
+              {heroImages[currentHeroImage].title}
             </h1>
-            <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto">
+            <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto text-body">
               Encuentra, agenda y prepárate para tu confesión de manera sencilla y reverente
             </p>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => onRoleSelect('role-select')}
-              className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-12 py-4 rounded-full text-lg font-semibold shadow-2xl hover:shadow-purple-500/25 transition-all duration-300"
-            >
-              Agendar confesión
-            </motion.button>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => onRoleSelect('role-select')}
+                className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-12 py-4 rounded-full text-lg font-semibold shadow-2xl hover:shadow-purple-500/25 transition-all duration-300 text-ui-semibold"
+              >
+                Agendar confesión
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="border-2 border-purple-600 text-purple-600 dark:text-purple-400 dark:border-purple-400 px-12 py-4 rounded-full text-lg font-semibold hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-all duration-300 text-ui-semibold"
+              >
+                Ver cómo funciona
+              </motion.button>
+            </div>
           </motion.div>
 
-          {/* Hero Image */}
+          {/* Enhanced Hero Image with Carousel Structure */}
           <motion.div 
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1, delay: 0.3 }}
-            className="relative mx-auto max-w-4xl"
+            className="relative mx-auto max-w-5xl"
           >
-            <div className="rounded-3xl overflow-hidden shadow-3xl">
+            <div className="rounded-3xl overflow-hidden shadow-3xl relative">
               <img 
-                src="https://images.unsplash.com/photo-1709319575307-14a677cab867?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2Njl8MHwxfHNlYXJjaHwyfHxjYXRob2xpYyUyMGNvbmZlc3Npb258ZW58MHx8fHwxNzU0NDIxMzM1fDA&ixlib=rb-4.1.0&q=85"
-                alt="Catedral católica"
-                className="w-full h-96 object-cover"
+                src={heroImages[currentHeroImage].src}
+                alt={heroImages[currentHeroImage].alt}
+                className="w-full h-[500px] object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-purple-900/50 to-transparent"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-purple-900/60 via-transparent to-transparent"></div>
+              <div className="absolute bottom-8 left-8 text-white">
+                <div className="bg-white/20 backdrop-blur-sm px-6 py-3 rounded-2xl">
+                  <p className="text-sm text-ui-medium">Sacramento de la Reconciliación</p>
+                </div>
+              </div>
             </div>
+            {/* Carousel indicators (preparado para múltiples imágenes) */}
+            {heroImages.length > 1 && (
+              <div className="flex justify-center mt-6 space-x-2">
+                {heroImages.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentHeroImage(index)}
+                    className={`w-3 h-3 rounded-full transition-all ${
+                      index === currentHeroImage 
+                        ? 'bg-purple-600 w-8' 
+                        : 'bg-purple-300 hover:bg-purple-400'
+                    }`}
+                  />
+                ))}
+              </div>
+            )}
           </motion.div>
+        </div>
+      </section>
+
+      {/* Statistics Section */}
+      <section className="py-16 px-4 bg-white/30 dark:bg-gray-800/30 backdrop-blur-sm">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-4xl md:text-5xl text-purple-900 dark:text-purple-100 mb-4 heading-primary">
+              Impacto y Confianza
+            </h2>
+            <p className="text-xl text-gray-600 dark:text-gray-300 text-body max-w-2xl mx-auto">
+              Miles de fieles y cientos de sacerdotes ya confían en ConfesApp
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {stats.map((stat, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                className="text-center p-6 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all"
+              >
+                <div className="text-4xl mb-4">{stat.icon}</div>
+                <div className="text-3xl md:text-4xl font-bold text-purple-900 dark:text-purple-100 mb-2 heading-primary">
+                  {stat.number}
+                </div>
+                <p className="text-gray-600 dark:text-gray-300 text-sm text-body">
+                  {stat.label}
+                </p>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* Features Section */}
       <section className="py-16 px-4">
         <div className="max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl md:text-5xl text-purple-900 dark:text-purple-100 mb-4 heading-primary">
+              ¿Por qué elegir ConfesApp?
+            </h2>
+            <p className="text-xl text-gray-600 dark:text-gray-300 text-body max-w-3xl mx-auto">
+              Tecnología al servicio de la fe, diseñada con reverencia y simplicidad
+            </p>
+          </motion.div>
+
           <div className="grid md:grid-cols-3 gap-8">
             <motion.div 
               initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              className="text-center p-8 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-3xl shadow-xl"
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="text-center p-8 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-3xl shadow-xl hover:shadow-2xl transition-all group"
             >
-              <Calendar className="w-16 h-16 text-purple-600 mx-auto mb-6" />
-              <h3 className="text-2xl font-bold text-purple-900 dark:text-purple-100 mb-4">Agenda fácil</h3>
-              <p className="text-gray-600 dark:text-gray-300">
+              <div className="w-20 h-20 rounded-full bg-gradient-to-r from-purple-600 to-blue-600 flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
+                <Calendar className="w-10 h-10 text-white" />
+              </div>
+              <h3 className="text-2xl text-purple-900 dark:text-purple-100 mb-4 heading-secondary">Agenda fácil</h3>
+              <p className="text-gray-600 dark:text-gray-300 text-body">
                 Reserva tu tiempo de confesión de manera simple y rápida
               </p>
             </motion.div>
 
             <motion.div 
               initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.7 }}
-              className="text-center p-8 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-3xl shadow-xl"
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="text-center p-8 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-3xl shadow-xl hover:shadow-2xl transition-all group"
             >
-              <Cross className="w-16 h-16 text-purple-600 mx-auto mb-6" />
-              <h3 className="text-2xl font-bold text-purple-900 dark:text-purple-100 mb-4">Ambiente reverente</h3>
-              <p className="text-gray-600 dark:text-gray-300">
+              <div className="w-20 h-20 rounded-full bg-gradient-to-r from-purple-600 to-blue-600 flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
+                <Cross className="w-10 h-10 text-white" />
+              </div>
+              <h3 className="text-2xl text-purple-900 dark:text-purple-100 mb-4 heading-secondary">Ambiente reverente</h3>
+              <p className="text-gray-600 dark:text-gray-300 text-body">
                 Diseñado con respeto y devoción por este sacramento
               </p>
             </motion.div>
 
             <motion.div 
               initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.9 }}
-              className="text-center p-8 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-3xl shadow-xl"
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 }}
+              className="text-center p-8 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-3xl shadow-xl hover:shadow-2xl transition-all group"
             >
-              <Users className="w-16 h-16 text-purple-600 mx-auto mb-6" />
-              <h3 className="text-2xl font-bold text-purple-900 dark:text-purple-100 mb-4">Para todos</h3>
-              <p className="text-gray-600 dark:text-gray-300">
+              <div className="w-20 h-20 rounded-full bg-gradient-to-r from-purple-600 to-blue-600 flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
+                <Users className="w-10 h-10 text-white" />
+              </div>
+              <h3 className="text-2xl text-purple-900 dark:text-purple-100 mb-4 heading-secondary">Para todos</h3>
+              <p className="text-gray-600 dark:text-gray-300 text-body">
                 Fieles y sacerdotes unidos en fe
               </p>
             </motion.div>
           </div>
         </div>
       </section>
+
+      {/* How It Works Section */}
+      <section className="py-16 px-4 bg-gradient-to-r from-purple-900/5 to-blue-900/5 dark:from-purple-900/20 dark:to-blue-900/20">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl md:text-5xl text-purple-900 dark:text-purple-100 mb-4 heading-primary">
+              ¿Cómo funciona?
+            </h2>
+            <p className="text-xl text-gray-600 dark:text-gray-300 text-body max-w-2xl mx-auto">
+              Solo 3 pasos simples para agendar tu confesión
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {howItWorks.map((step, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.2 }}
+                className="text-center relative"
+              >
+                <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all">
+                  <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-6 text-2xl">
+                    {step.icon}
+                  </div>
+                  <div className="w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center mx-auto mb-4 text-sm font-bold absolute -top-4 left-1/2 transform -translate-x-1/2">
+                    {step.step}
+                  </div>
+                  <h3 className="text-xl text-purple-900 dark:text-purple-100 mb-4 heading-secondary">
+                    {step.title}
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-300 text-body">
+                    {step.description}
+                  </p>
+                </div>
+                {index < howItWorks.length - 1 && (
+                  <div className="hidden md:block absolute top-1/2 -right-4 w-8 h-0.5 bg-purple-300 dark:bg-purple-600"></div>
+                )}
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Roles Section */}
+      <section className="py-16 px-4">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl md:text-5xl text-purple-900 dark:text-purple-100 mb-4 heading-primary">
+              Para toda la comunidad católica
+            </h2>
+            <p className="text-xl text-gray-600 dark:text-gray-300 text-body max-w-3xl mx-auto">
+              ConfesApp sirve a cada miembro de la comunidad parroquial
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {roles.map((role, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                className={`p-6 rounded-3xl shadow-xl hover:shadow-2xl transition-all group ${
+                  role.highlight 
+                    ? 'bg-gradient-to-br from-purple-600/10 to-blue-600/10 dark:from-purple-400/20 dark:to-blue-400/20 border-2 border-purple-200 dark:border-purple-600' 
+                    : 'bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm'
+                }`}
+              >
+                <div className={`w-16 h-16 rounded-full bg-gradient-to-r ${role.color} flex items-center justify-center mx-auto mb-6 text-2xl group-hover:scale-110 transition-transform`}>
+                  {role.icon}
+                </div>
+                <h3 className="text-xl text-purple-900 dark:text-purple-100 mb-3 heading-secondary text-center">
+                  {role.title}
+                </h3>
+                <p className="text-purple-700 dark:text-purple-300 mb-3 text-body text-center font-medium">
+                  {role.description}
+                </p>
+                <p className="text-gray-600 dark:text-gray-300 text-sm text-body text-center">
+                  {role.details.includes('amor redentor de Dios') ? (
+                    <>
+                      {role.details.split('como un reflejo del amor redentor de Dios')[0]}
+                      <span className="text-amber-600 dark:text-amber-400 font-medium italic">
+                        como un reflejo del amor redentor de Dios
+                      </span>
+                      {role.details.split('como un reflejo del amor redentor de Dios')[1]}
+                    </>
+                  ) : (
+                    role.details
+                  )}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="py-16 px-4 bg-white/30 dark:bg-gray-800/30 backdrop-blur-sm">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl md:text-5xl text-purple-900 dark:text-purple-100 mb-4 heading-primary">
+              Testimonios
+            </h2>
+            <p className="text-xl text-gray-600 dark:text-gray-300 text-body max-w-2xl mx-auto">
+              Experiencias reales de nuestra comunidad
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {testimonials.map((testimonial, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.2 }}
+                className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all"
+              >
+                <div className="flex items-center mb-6">
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-r from-purple-600 to-blue-600 flex items-center justify-center text-2xl mr-4">
+                    {testimonial.image}
+                  </div>
+                  <div>
+                    <h4 className="text-lg text-purple-900 dark:text-purple-100 heading-secondary">
+                      {testimonial.name}
+                    </h4>
+                    <p className="text-purple-600 dark:text-purple-400 text-sm text-body">
+                      {testimonial.role}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex mb-4">
+                  {[...Array(testimonial.rating)].map((_, i) => (
+                    <span key={i} className="text-amber-400 text-xl">⭐</span>
+                  ))}
+                </div>
+                <p className="text-gray-600 dark:text-gray-300 text-body italic">
+                  "{testimonial.text}"
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="py-16 px-4 bg-purple-900 dark:bg-gray-900 text-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-4 gap-8 mb-12">
+            <div className="md:col-span-2">
+              <div className="flex items-center mb-6">
+                <img src={logoImage} alt="ConfesApp Logo" className="w-10 h-10 mr-3" />
+                <span className="text-2xl heading-primary">ConfesApp</span>
+              </div>
+              <p className="text-purple-100 text-body mb-6 max-w-md">
+                Tecnología al servicio de la fe. Facilitamos el encuentro con la gracia divina a través del sacramento de la reconciliación.
+              </p>
+              <div className="flex space-x-4">
+                <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors cursor-pointer">
+                  <Mail className="w-5 h-5" />
+                </div>
+                <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors cursor-pointer">
+                  <Users className="w-5 h-5" />
+                </div>
+              </div>
+            </div>
+            
+            <div>
+              <h4 className="text-lg heading-secondary mb-4">Enlaces</h4>
+              <ul className="space-y-2 text-body">
+                <li><a href="#" className="text-purple-100 hover:text-white transition-colors">Inicio</a></li>
+                <li><a href="#" className="text-purple-100 hover:text-white transition-colors">Características</a></li>
+                <li><a href="#" className="text-purple-100 hover:text-white transition-colors">Cómo funciona</a></li>
+                <li><a href="#" className="text-purple-100 hover:text-white transition-colors">FAQ</a></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h4 className="text-lg heading-secondary mb-4">Contacto</h4>
+              <ul className="space-y-2 text-body">
+                <li className="text-purple-100">contacto@confesapp.com</li>
+                <li className="text-purple-100">Soporte técnico</li>
+                <li className="text-purple-100">Guía pastoral</li>
+              </ul>
+            </div>
+          </div>
+          
+          <div className="border-t border-purple-800 pt-8 text-center">
+            <p className="text-purple-100 text-body italic text-lg mb-4">
+              "ConfesApp – Volviendo a la gracia"
+            </p>
+            <p className="text-purple-200 text-sm">
+              © 2025 ConfesApp. Hecho con ❤️ para la comunidad católica.
+            </p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };
@@ -268,10 +683,10 @@ const RoleSelector = ({ onRoleSelect, onBack }) => {
         transition={{ duration: 0.5 }}
         className="max-w-6xl mx-auto text-center"
       >
-        <h2 className="text-4xl md:text-5xl font-bold text-purple-900 dark:text-purple-100 mb-4 font-serif">
+        <h2 className="text-4xl md:text-5xl text-purple-900 dark:text-purple-100 mb-4 heading-primary">
           ¿Cómo deseas usar ConfesApp?
         </h2>
-        <p className="text-lg text-gray-600 dark:text-gray-300 mb-12">
+        <p className="text-lg text-gray-600 dark:text-gray-300 mb-12 text-body">
           Selecciona tu rol para comenzar
         </p>
 
@@ -290,10 +705,10 @@ const RoleSelector = ({ onRoleSelect, onBack }) => {
               <div className={`w-16 h-16 rounded-full bg-gradient-to-r ${role.gradient} flex items-center justify-center mx-auto mb-4`}>
                 <role.icon className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-xl font-bold text-purple-900 dark:text-purple-100 mb-2">
+              <h3 className="text-xl text-purple-900 dark:text-purple-100 mb-2 heading-secondary">
                 {role.title}
               </h3>
-              <p className="text-gray-600 dark:text-gray-400 text-sm">
+              <p className="text-gray-600 dark:text-gray-400 text-sm text-body">
                 {role.description}
               </p>
             </motion.div>
@@ -2563,7 +2978,7 @@ const FaithfulActionSelector = ({ onBack, onActionSelect }) => {
         transition={{ duration: 0.5 }}
         className="max-w-4xl mx-auto text-center"
       >
-        <h2 className="text-4xl md:text-5xl font-bold text-purple-900 dark:text-purple-100 mb-4 font-serif">
+        <h2 className="text-4xl md:text-5xl text-purple-900 dark:text-purple-100 mb-4 heading-primary">
           Acceso para Fieles
         </h2>
         <p className="text-lg text-gray-600 dark:text-gray-300 mb-12">
@@ -2637,7 +3052,7 @@ const PriestActionSelector = ({ onBack, onActionSelect }) => {
         transition={{ duration: 0.5 }}
         className="max-w-4xl mx-auto text-center"
       >
-        <h2 className="text-4xl md:text-5xl font-bold text-purple-900 dark:text-purple-100 mb-4 font-serif">
+        <h2 className="text-4xl md:text-5xl text-purple-900 dark:text-purple-100 mb-4 heading-primary">
           Acceso para Sacerdotes
         </h2>
         <p className="text-lg text-gray-600 dark:text-gray-300 mb-12">
@@ -2711,7 +3126,7 @@ const PriestRegistrationTypeSelector = ({ onBack, onTypeSelect }) => {
         transition={{ duration: 0.5 }}
         className="max-w-4xl mx-auto text-center"
       >
-        <h2 className="text-4xl md:text-5xl font-bold text-purple-900 dark:text-purple-100 mb-4 font-serif">
+        <h2 className="text-4xl md:text-5xl text-purple-900 dark:text-purple-100 mb-4 heading-primary">
           Registro de Sacerdote
         </h2>
         <p className="text-lg text-gray-600 dark:text-gray-300 mb-12">

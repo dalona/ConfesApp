@@ -4,6 +4,8 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
 :root {
   /* Liturgical Colors */
   --purple-deep: #4B2E83;
@@ -24,7 +26,8 @@
 }
 
 body {
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
   line-height: 1.6;
   color: #2D3748;
   background: linear-gradient(135deg, #FAF9F6 0%, #E6E6FA 100%);
@@ -37,6 +40,47 @@ body {
 
 .font-serif {
   font-family: 'Playfair Display', serif;
+}
+
+/* ===== GUÍA TIPOGRÁFICA CONFESAPP ===== */
+
+/* Títulos principales (H1, H2) - Poppins Bold (700) */
+.heading-primary {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+/* Subtítulos (H3, H4) - Poppins Medium (500) */  
+.heading-secondary {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+/* Texto de párrafos - Inter Regular (400) */
+.text-body {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+/* Notas, botones, labels pequeños - Inter Medium/SemiBold */
+.text-ui-medium {
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+}
+
+.text-ui-semibold {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+}
+
+/* Mantener compatibilidad con clase anterior */
+.font-trajan {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.025em;
 }
 
 /* Custom Scrollbar */
