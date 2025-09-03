@@ -4,7 +4,7 @@ import axios from 'axios';
 import './App.css';
 
 // Icons
-import { Cross, Calendar, Users, Moon, Sun, User, LogOut, Mail, FileText, ArrowLeft, Grid, List, Plus, Edit, Trash2, BarChart3 } from 'lucide-react';
+import { Cross, Calendar, Users, Moon, Sun, User, LogOut, Mail, FileText, ArrowLeft, Grid, List, Plus, Edit, Trash2, BarChart3, Bird } from 'lucide-react';
 
 // Images
 import homepageImage from './assets/images/homepage-confession.png';
