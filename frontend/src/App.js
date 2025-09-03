@@ -113,10 +113,10 @@ const Navbar = () => {
       className="fixed top-0 w-full z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-purple-100 dark:border-purple-800"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-14 sm:h-16">
           <div className="flex items-center space-x-2">
-            <img src={logoImage} alt="ConfesApp Logo" className="w-8 h-8" />
-            <span className="text-2xl text-purple-900 dark:text-purple-300 heading-primary">ConfesApp</span>
+            <img src={logoImage} alt="ConfesApp Logo" className="w-7 h-7 sm:w-8 sm:h-8" />
+            <span className="text-xl sm:text-2xl text-purple-900 dark:text-purple-300 heading-primary">ConfesApp</span>
           </div>
           
           <div className="hidden md:flex items-center space-x-8">
@@ -125,7 +125,7 @@ const Navbar = () => {
             <a href="#" className="text-gray-700 dark:text-gray-300 hover:text-purple-600 transition-colors">Parroquias</a>
           </div>
 
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 sm:space-x-4">
             <button 
               onClick={toggleTheme}
               className="p-2 rounded-full bg-purple-100 dark:bg-purple-800 text-purple-600 dark:text-purple-300 hover:bg-purple-200 dark:hover:bg-purple-700 transition-colors"
