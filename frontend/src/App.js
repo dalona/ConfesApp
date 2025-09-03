@@ -439,7 +439,7 @@ const LandingPage = ({ onRoleSelect }) => {
               </div>
               <h3 className="text-2xl text-purple-900 dark:text-purple-100 mb-4 heading-secondary">Para todos</h3>
               <p className="text-gray-600 dark:text-gray-300 text-body">
-                Fieles y sacerdotes unidos en fe
+                Un solo cuerpo en el amor de Cristo. Un solo corazón, una sola Iglesia.
               </p>
             </motion.div>
           </div>
