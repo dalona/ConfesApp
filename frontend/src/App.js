@@ -525,7 +525,7 @@ const LandingPage = ({ onRoleSelect }) => {
                     : 'bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm'
                 }`}
               >
-                <div className={`w-16 h-16 rounded-full bg-gradient-to-r ${role.color} flex items-center justify-center mx-auto mb-6 text-2xl group-hover:scale-110 transition-transform`}>
+                <div className={`w-20 h-20 rounded-full bg-gradient-to-r ${role.color} flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform shadow-lg`}>
                   {role.icon}
                 </div>
                 <h3 className="text-xl text-purple-900 dark:text-purple-100 mb-3 heading-secondary text-center">
