@@ -121,7 +121,7 @@ const Navbar = () => {
           
           <div className="hidden md:flex items-center space-x-8">
             <a href="#" className="text-gray-700 dark:text-gray-300 hover:text-purple-600 transition-colors">Inicio</a>
-            <a href="#" className="text-gray-700 dark:text-gray-300 hover:text-purple-600 transition-colors">¿Qué es la confesión?</a>
+            <a href="#que-es-la-confesion" className="text-gray-700 dark:text-gray-300 hover:text-purple-600 transition-colors">¿Qué es la confesión?</a>
             <a href="#" className="text-gray-700 dark:text-gray-300 hover:text-purple-600 transition-colors">Parroquias</a>
           </div>
 
