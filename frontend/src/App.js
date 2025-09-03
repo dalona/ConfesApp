@@ -205,7 +205,7 @@ const LandingPage = ({ onRoleSelect }) => {
     {
       step: 2,
       title: "Selecciona horario",
-      description: "Elige el sacerdote y el horario que mejor te convenga",
+      description: "Elige la franja de horario disponible y asegura tu espacio",
       icon: "🗓️"
     },
     {
