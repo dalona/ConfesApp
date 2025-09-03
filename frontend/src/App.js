@@ -10,6 +10,12 @@ import { Cross, Calendar, Users, Moon, Sun, User, LogOut, Mail, FileText, ArrowL
 import homepageImage from './assets/images/homepage-confession.png';
 import logoImage from './assets/images/logo.png';
 
+// Role Icons
+import bishopIcon from './assets/images/roles/bishop.png';
+import priestIcon from './assets/images/roles/priest.png';
+import coordinatorIcon from './assets/images/roles/coordinator.png';
+import faithfulIcon from './assets/images/roles/faithful.png';
+
 // Import components
 import WeeklyCalendar from './features/calendar/components/WeeklyCalendar';
 import BandForm from './features/bands/components/BandForm';
