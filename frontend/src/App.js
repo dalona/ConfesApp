@@ -221,14 +221,14 @@ const LandingPage = ({ onRoleSelect }) => {
       title: "Obispo",
       description: "Supervisa todas las parroquias de su diócesis",
       details: "Visualiza estadísticas globales y acompaña pastoralmente a sacerdotes y coordinadores.",
-      icon: "👑",
+      icon: <img src={bishopIcon} alt="Obispo" className="w-8 h-8" />,
       color: "from-amber-500 to-yellow-600"
     },
     {
       title: "Sacerdote",
       description: "Gestiona su agenda de confesiones",
       details: "Sirve al ministerio de la reconciliación como un reflejo del amor redentor de Dios",
-      icon: "✝️",
+      icon: <img src={priestIcon} alt="Sacerdote" className="w-8 h-8" />,
       color: "from-purple-600 to-indigo-600",
       highlight: true
     },
@@ -236,14 +236,14 @@ const LandingPage = ({ onRoleSelect }) => {
       title: "Coordinador Parroquial",
       description: "Apoya la organización pastoral",
       details: "Administra horarios, espacios y notificaciones para facilitar la gestión práctica.",
-      icon: "👥",
+      icon: <img src={coordinatorIcon} alt="Coordinador" className="w-8 h-8" />,
       color: "from-blue-500 to-cyan-600"
     },
     {
       title: "Fiel",
       description: "Encuentra y agenda su confesión",
       details: "Accede fácilmente a parroquias, sacerdotes y recibe guías de preparación espiritual.",
-      icon: "🙏",
+      icon: <img src={faithfulIcon} alt="Fiel" className="w-8 h-8" />,
       color: "from-green-500 to-emerald-600"
     }
   ];
