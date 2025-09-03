@@ -735,11 +735,7 @@ const LandingPage = ({ onRoleSelect }) => {
                 initial={{ opacity: 0, y: 50 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
-                className={`p-6 rounded-3xl shadow-xl hover:shadow-2xl transition-all group ${
-                  role.highlight 
-                    ? 'bg-gradient-to-br from-purple-600/10 to-blue-600/10 dark:from-purple-400/20 dark:to-blue-400/20 border-2 border-purple-200 dark:border-purple-600' 
-                    : 'bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm'
-                }`}
+                className={`p-6 rounded-3xl shadow-xl hover:shadow-2xl transition-all group bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm`}
               >
                 <div className={`w-20 h-20 rounded-full bg-gradient-to-r ${role.color} flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform shadow-lg`}>
                   {role.icon}
