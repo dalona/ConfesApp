@@ -458,7 +458,7 @@ const LandingPage = ({ onRoleSelect }) => {
 
             {/* Mobile View - Horizontal Scroll */}
             <div className="md:hidden">
-              <div className="flex space-x-6 overflow-x-auto pb-4 px-4 -mx-4">
+              <div className="flex space-x-4 overflow-x-auto pb-4 px-4 -mx-4 scrollbar-hide">
                 {[
                   {
                     name: "San Juan Pablo II",
@@ -489,22 +489,64 @@ const LandingPage = ({ onRoleSelect }) => {
                     quote: "En la confesión, el alma se sumerge en la infinita misericordia de Dios y sale renovada como un nuevo ser.",
                     icon: "💧",
                     color: "from-cyan-500 to-blue-600"
+                  },
+                  {
+                    name: "San Ignacio de Loyola",
+                    quote: "La confesión es un acto de humildad que nos une más estrechamente al corazón de Cristo.",
+                    icon: "⚡",
+                    color: "from-orange-500 to-red-600"
+                  },
+                  {
+                    name: "Santa Teresa de Lisieux",
+                    quote: "En la confesión encontramos la dulce voz de Dios que nos invita a empezar de nuevo con amor.",
+                    icon: "🌸",
+                    color: "from-pink-500 to-rose-600"
+                  },
+                  {
+                    name: "San Juan María Vianney",
+                    quote: "El buen Dios, al instituir la confesión, pensó en ti y en mí, para darnos una medicina divina.",
+                    icon: "💊",
+                    color: "from-green-500 to-teal-600"
+                  },
+                  {
+                    name: "San Francisco de Asís",
+                    quote: "Confesar nuestros pecados es abrir la puerta a la paz que solo Dios puede dar.",
+                    icon: "🕊️",
+                    color: "from-gray-500 to-slate-600"
+                  },
+                  {
+                    name: "Santa Catalina de Siena",
+                    quote: "La confesión es el espejo donde el alma se mira para encontrar la luz de la verdad y la redención.",
+                    icon: "🪞",
+                    color: "from-indigo-500 to-purple-600"
+                  },
+                  {
+                    name: "San Alfonso María de Ligorio",
+                    quote: "La confesión es un acto de amor que nos devuelve al estado de gracia y nos llena de la alegría de ser hijos de Dios.",
+                    icon: "❤️",
+                    color: "from-red-500 to-pink-600"
+                  },
+                  {
+                    name: "San Juan Bosco",
+                    quote: "En la confesión, el alma encuentra a un padre que la escucha y la guía hacia la salvación con infinita bondad.",
+                    icon: "👨‍🏫",
+                    color: "from-emerald-500 to-green-600"
                   }
                 ].map((saint, index) => (
                   <motion.div
                     key={index}
                     initial={{ opacity: 0, x: 50 }}
                     whileInView={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.6, delay: index * 0.1 }}
-                    className="bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-xl flex-shrink-0 w-80 min-h-[280px] flex flex-col"
+                    transition={{ duration: 0.6, delay: index * 0.05 }}
+                    className="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-xl flex-shrink-0 w-72 min-h-[260px] flex flex-col"
                   >
-                    <div className={`w-14 h-14 rounded-full bg-gradient-to-r ${saint.color} flex items-center justify-center mx-auto mb-4 text-xl shadow-lg`}>
+                    <div className={`w-12 h-12 rounded-full bg-gradient-to-r ${saint.color} flex items-center justify-center mx-auto mb-3 text-lg shadow-lg`}>
                       {saint.icon}
                     </div>
-                    <h3 className="text-lg text-purple-900 dark:text-purple-100 mb-3 heading-secondary text-center font-bold">
+                    <h3 className="text-base text-purple-900 dark:text-purple-100 mb-2 heading-secondary text-center font-bold">
                       {saint.name}
                     </h3>
-                    <blockquote className="text-gray-700 dark:text-gray-300 text-sm text-center italic leading-relaxed flex-grow flex items-center">
+                    <blockquote className="text-gray-700 dark:text-gray-300 text-xs text-center italic leading-relaxed flex-grow flex items-center px-2">
                       "{saint.quote}"
                     </blockquote>
                   </motion.div>
