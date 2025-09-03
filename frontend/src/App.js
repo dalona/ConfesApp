@@ -558,36 +558,36 @@ const LandingPage = ({ onRoleSelect }) => {
       </section>
 
       {/* Statistics Section */}
-      <section className="py-16 px-4 bg-white/30 dark:bg-gray-800/30 backdrop-blur-sm">
+      <section className="py-12 px-4 bg-white/30 dark:bg-gray-800/30 backdrop-blur-sm sm:py-16">
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-center mb-12"
+            className="text-center mb-8 sm:mb-12 px-4"
           >
-            <h2 className="text-4xl md:text-5xl text-purple-900 dark:text-purple-100 mb-4 heading-primary">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl text-purple-900 dark:text-purple-100 mb-3 sm:mb-4 heading-primary">
               Impacto y Confianza
             </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300 text-body max-w-2xl mx-auto">
+            <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 text-body max-w-2xl mx-auto">
               Miles de fieles y cientos de sacerdotes ya confían en ConfesApp
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
             {stats.map((stat, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
-                className="text-center p-6 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all"
+                className="text-center p-4 sm:p-6 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-xl sm:rounded-2xl shadow-lg hover:shadow-xl transition-all"
               >
-                <div className="text-4xl mb-4">{stat.icon}</div>
-                <div className="text-3xl md:text-4xl font-bold text-purple-900 dark:text-purple-100 mb-2 heading-primary">
+                <div className="text-2xl sm:text-3xl md:text-4xl mb-2 sm:mb-4">{stat.icon}</div>
+                <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-purple-900 dark:text-purple-100 mb-1 sm:mb-2 heading-primary">
                   {stat.number}
                 </div>
-                <p className="text-gray-600 dark:text-gray-300 text-sm text-body">
+                <p className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm text-body">
                   {stat.label}
                 </p>
               </motion.div>
