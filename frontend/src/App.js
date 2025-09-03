@@ -636,7 +636,7 @@ const LandingPage = ({ onRoleSelect }) => {
               className="text-center p-8 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-3xl shadow-xl hover:shadow-2xl transition-all group"
             >
               <div className="w-20 h-20 rounded-full bg-gradient-to-r from-purple-600 to-blue-600 flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
-                <Bird className="w-10 h-10 text-white" />
+                <Candle className="w-10 h-10 text-white" />
               </div>
               <h3 className="text-2xl text-purple-900 dark:text-purple-100 mb-4 heading-secondary">Ambiente reverente</h3>
               <p className="text-gray-600 dark:text-gray-300 text-body">
