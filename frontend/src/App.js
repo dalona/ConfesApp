@@ -221,14 +221,14 @@ const LandingPage = ({ onRoleSelect }) => {
       title: "Obispo",
       description: "Supervisa todas las parroquias de su diócesis",
       details: "Visualiza estadísticas globales y acompaña pastoralmente a sacerdotes y coordinadores.",
-      icon: <img src={bishopIcon} alt="Obispo" className="w-8 h-8" />,
+      icon: <img src={bishopIcon} alt="Obispo" className="w-12 h-12 object-cover rounded-full bg-white p-1" />,
       color: "from-amber-500 to-yellow-600"
     },
     {
       title: "Sacerdote",
       description: "Gestiona su agenda de confesiones",
       details: "Sirve al ministerio de la reconciliación como un reflejo del amor redentor de Dios",
-      icon: <img src={priestIcon} alt="Sacerdote" className="w-8 h-8" />,
+      icon: <img src={priestIcon} alt="Sacerdote" className="w-12 h-12 object-cover rounded-full bg-white p-1" />,
       color: "from-purple-600 to-indigo-600",
       highlight: true
     },
@@ -236,14 +236,14 @@ const LandingPage = ({ onRoleSelect }) => {
       title: "Coordinador Parroquial",
       description: "Apoya la organización pastoral",
       details: "Administra horarios, espacios y notificaciones para facilitar la gestión práctica.",
-      icon: <img src={coordinatorIcon} alt="Coordinador" className="w-8 h-8" />,
+      icon: <img src={coordinatorIcon} alt="Coordinador" className="w-12 h-12 object-cover rounded-full bg-white p-1" />,
       color: "from-blue-500 to-cyan-600"
     },
     {
       title: "Fiel",
       description: "Encuentra y agenda su confesión",
       details: "Accede fácilmente a parroquias, sacerdotes y recibe guías de preparación espiritual.",
-      icon: <img src={faithfulIcon} alt="Fiel" className="w-8 h-8" />,
+      icon: <img src={faithfulIcon} alt="Fiel" className="w-12 h-12 object-cover rounded-full bg-white p-1" />,
       color: "from-green-500 to-emerald-600"
     }
   ];
